@@ -172,7 +172,7 @@
 <script>
   const SUPABASE_URL = 'https://gocjvrnncymudpwwtnyt.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY2p2cm5uY3ltdWRwd3d0bnl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4Njc3OTEsImV4cCI6MjA5NzQ0Mzc5MX0.AWpb9az3J9wN9pNstuV9vF9KSKBRN1BGECsWs-4wU4g';
-  const APP_PASSWORD = 'flurton';
+  const APP_PASSWORD = 'izPNxYopywiHcenh';
 </script>
 
 <!-- LOGIN -->
@@ -666,9 +666,9 @@ function renderShipmentModal() {
       </div>
       <div class="section-title" style="margin-top:16px">2 · Revues ciblées</div>
       <div class="revue-checkboxes">${REVUES.map(r=>`
-        <label class="revue-check${selectedRevues.has(r.id)?' active':''}" onclick="toggleRevue('${r.id}',this)">
-          <input type="checkbox" ${selectedRevues.has(r.id)?'checked':''}> ${r.full}
-        </label>`).join('')}
+        <div class="revue-check${selectedRevues.has(r.id)?' active':''}" onclick="toggleRevue('${r.id}',this)">
+          ${r.full}
+        </div>`).join('')}
       </div>
       <div class="section-title" style="margin-top:16px">3 · Détails de l'envoi</div>
       <div class="grid-3">
