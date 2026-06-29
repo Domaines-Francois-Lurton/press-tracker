@@ -212,10 +212,13 @@
 <!-- CONFIGURATION -->
 <script>
   const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyBxYfGMN0flUtVVR03O9frPYe7hOB5fIR4",
-    authDomain: "press-tracker-fba80.firebaseapp.com",
-    projectId: "press-tracker-fba80",
-    appId: "1:736498795498:web:63a8f92b75b4e55e0c2a6e"
+    apiKey: "AIzaSyBnc5x5WCVl-n_yLsoi9bRNOrsnNm8ziLU",
+    authDomain: "press-tracker-dfl.firebaseapp.com",
+    projectId: "press-tracker-dfl",
+    storageBucket: "press-tracker-dfl.firebasestorage.app",
+    messagingSenderId: "938062044902",
+    appId: "1:938062044902:web:f35c3d8948ea982d48e527",
+    measurementId: "G-WSXHYTKGQY"
   };
   const APP_PASSWORD = "flurton";
 </script>
@@ -420,28 +423,38 @@ function initApp() {
     }
   }
 
-  unsubWines = db.collection('wines').orderBy('pays').orderBy('nom')
+  setTimeout(function() {
+    if (document.getElementById('loadingOverlay').style.display !== 'none') {
+      console.warn('Firestore timeout — vérifiez que la base Firestore est créée dans la console Firebase.');
+      loaded.wines = true; loaded.shipments = true; loaded.items = true;
+      checkReady();
+    }
+  }, 8000);
+
+  unsubWines = db.collection('wines')
     .onSnapshot(snap => {
       wines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      wines.sort((a, b) => (a.pays || '').localeCompare(b.pays || '') || (a.nom || '').localeCompare(b.nom || ''));
       loaded.wines = true;
       checkReady();
       if (loaded.items) { buildFilters(); renderAll(); }
-    });
+    }, err => { console.error('wines error:', err); loaded.wines = true; checkReady(); });
 
-  unsubShipments = db.collection('shipments').orderBy('dateEnvoi', 'desc')
+  unsubShipments = db.collection('shipments')
     .onSnapshot(snap => {
       shipments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      shipments.sort((a, b) => (b.dateEnvoi || '').localeCompare(a.dateEnvoi || ''));
       loaded.shipments = true;
       checkReady();
-    });
+    }, err => { console.error('shipments error:', err); loaded.shipments = true; checkReady(); });
 
-  unsubItems = db.collection('shipmentItems').orderBy('createdAt', 'desc')
+  unsubItems = db.collection('shipmentItems')
     .onSnapshot(snap => {
       shipmentItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       loaded.items = true;
       checkReady();
       if (loaded.wines) renderAll();
-    });
+    }, err => { console.error('items error:', err); loaded.items = true; checkReady(); });
 }
 
 // ═══════════════════════════════════════════════════════════
