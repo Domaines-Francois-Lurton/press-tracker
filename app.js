@@ -122,7 +122,17 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function closeModal() { document.querySelector('.modal-overlay')?.remove(); }
+let modalDirty = false;
+
+function closeModal() {
+  document.querySelector('.modal-overlay')?.remove();
+  modalDirty = false;
+}
+
+function safeCloseModal() {
+  if (modalDirty && !confirm('Des modifications non enregistrées seront perdues. Continuer ?')) return;
+  closeModal();
+}
 
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
 
@@ -402,11 +412,11 @@ function openEditItem(itemId, wineId) {
   const r = REVUES.find(x => x.id === item.revueId);
   closeModal();
 
-  const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
     '<div class="modal-header">' +
       '<div class="modal-title">Modifier — ' + esc(w ? w.nom : '') + ' / ' + (r ? r.full : '') + '</div>' +
-      '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">&times;</button>' +
     '</div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
@@ -422,7 +432,7 @@ function openEditItem(itemId, wineId) {
       '<div class="field"><label>Commentaire</label><textarea id="ei_comment">' + esc(item.commentaire || '') + '</textarea></div>' +
     '</div>' +
     '<div class="modal-footer">' +
-      '<button class="btn btn-sm" onclick="closeModal()">Annuler</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">Annuler</button>' +
       '<button class="btn btn-sm btn-primary" id="btnSaveItem" onclick="saveItem(\'' + itemId + '\',\'' + wineId + '\')">Enregistrer</button>' +
     '</div>' +
   '</div></div>';
@@ -466,11 +476,11 @@ function openShipmentModal(preselect) {
 
 function renderShipmentModal() {
   const today = new Date().toISOString().split('T')[0];
-  const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal modal-lg">' +
     '<div class="modal-header">' +
       '<div class="modal-title">Nouvel envoi groupé</div>' +
-      '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">&times;</button>' +
     '</div>' +
     '<div class="modal-body">' +
       '<div class="section-title">1 · Vins à envoyer <span class="selected-count" id="wineCount">(' + selectedWines.size + ' sélectionné' + (selectedWines.size > 1 ? 's' : '') + ')</span></div>' +
@@ -482,20 +492,21 @@ function renderShipmentModal() {
       '<div class="revue-checkboxes">' + REVUES.map(r =>
         '<div class="revue-check' + (selectedRevues.has(r.id) ? ' active' : '') + '" onclick="toggleRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
       ).join('') + '</div>' +
+      '<div id="sh_deadlines_wrap" style="display:none;margin-top:12px">' +
+        '<div class="section-title">Deadlines par revue</div>' +
+        '<div id="sh_deadlines" class="grid-2" style="gap:8px"></div>' +
+      '</div>' +
       '<div class="section-title" style="margin-top:16px">3 · Détails de l\'envoi</div>' +
       '<div class="grid-3">' +
         '<div class="field"><label>Date d\'envoi *</label><input type="date" id="sh_date" value="' + today + '"></div>' +
         '<div class="field"><label>Numéro de tracking</label><input id="sh_tracking" placeholder="ex: FEDEX 1234567890"></div>' +
         '<div class="field"><label>Intermédiaire</label><input id="sh_inter" placeholder="ex: Winesellers"></div>' +
       '</div>' +
-      '<div class="grid-2">' +
-        '<div class="field"><label>Deadline (même pour tous)</label><input type="date" id="sh_deadline"></div>' +
-        '<div class="field"><label>Commentaire</label><input id="sh_comment" placeholder="Optionnel"></div>' +
-      '</div>' +
+      '<div class="field"><label>Commentaire</label><input id="sh_comment" placeholder="Optionnel"></div>' +
     '</div>' +
     '<div class="modal-footer">' +
       '<div style="font-size:12px;color:var(--text-muted);margin-right:auto" id="shipmentSummary">' + selectedWines.size + ' vin(s) · ' + selectedRevues.size + ' revue(s)</div>' +
-      '<button class="btn btn-sm" onclick="closeModal()">Annuler</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">Annuler</button>' +
       '<button class="btn btn-sm btn-primary" id="btnSaveShipment" onclick="saveShipment()">Enregistrer l\'envoi</button>' +
     '</div>' +
   '</div></div>';
@@ -534,6 +545,24 @@ function toggleRevue(id, el) {
   else selectedRevues.add(id);
   el.classList.toggle('active', selectedRevues.has(id));
   updateShipmentCounts();
+  renderDeadlines();
+}
+
+function renderDeadlines() {
+  const wrap = document.getElementById('sh_deadlines_wrap');
+  if (!wrap) return;
+  if (!selectedRevues.size) { wrap.style.display = 'none'; return; }
+  const current = {};
+  [...selectedRevues].forEach(rid => {
+    const el = document.getElementById('sh_dl_' + rid);
+    if (el) current[rid] = el.value;
+  });
+  wrap.style.display = 'block';
+  document.getElementById('sh_deadlines').innerHTML = [...selectedRevues].map(rid => {
+    const r = REVUES.find(x => x.id === rid);
+    return '<div class="field" style="margin-bottom:8px"><label>' + r.full + '</label>' +
+      '<input type="date" id="sh_dl_' + rid + '" value="' + (current[rid] || '') + '"></div>';
+  }).join('');
 }
 
 function updateShipmentCounts() {
@@ -566,13 +595,14 @@ async function saveShipment() {
     selectedWines.forEach(wid => {
       selectedRevues.forEach(rid => {
         const ref = db.collection('shipmentItems').doc();
+        const dlEl = document.getElementById('sh_dl_' + rid);
         batch.set(ref, {
           shipmentId: shipRef.id,
           wineId: wid,
           revueId: rid,
           statut: 'envoyé',
           note: null,
-          deadline: document.getElementById('sh_deadline').value || null,
+          deadline: (dlEl && dlEl.value) || null,
           dateReception: null,
           commentaire: document.getElementById('sh_comment').value || null,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -598,34 +628,51 @@ function renderCatalogue() {
   const search = (document.getElementById('catSearch').value || '').toLowerCase();
   const fPays = document.getElementById('catFilterPays').value;
   const fCouleur = document.getElementById('catFilterCouleur').value;
+  const fSent = (document.getElementById('catFilterSent') || {}).value || '';
+  const wrs = getWineRevueStatus();
+
   const filtered = wines.filter(w => {
     if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.domaine || '').toLowerCase().includes(search)) return false;
     if (fPays && w.pays !== fPays) return false;
     if (fCouleur && w.couleur !== fCouleur) return false;
+    if (fSent) {
+      const allPending = Object.values(wrs[w.id] || {}).every(x => x.statut === 'pending');
+      if (fSent === 'none' && !allPending) return false;
+      if (fSent === 'any' && allPending) return false;
+    }
     return true;
   });
+
   const tbody = document.getElementById('catTableBody');
   document.getElementById('catEmpty').style.display = filtered.length ? 'none' : 'block';
-  tbody.innerHTML = filtered.map(w =>
-    '<tr onclick="openEditWineModal(\'' + w.id + '\')">' +
+  tbody.innerHTML = filtered.map(w => {
+    const sent = Object.values(wrs[w.id] || {}).filter(x => x.statut !== 'pending').length;
+    const sentBadge = sent === 0
+      ? '<span style="color:var(--text-faint);font-size:11px">—</span>'
+      : '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 7px;border-radius:10px;font-weight:500">' + sent + '/' + REVUES.length + '</span>';
+    return '<tr onclick="openEditWineModal(\'' + w.id + '\')">' +
       '<td>' + esc(w.pays) + '</td>' +
-      '<td><strong>' + esc(w.nom) + '</strong>' + (w.domaine ? '<br><span style="font-size:11px;color:var(--text-muted)">' + esc(w.domaine) + '</span>' : '') + '</td>' +
+      '<td><strong>' + esc(w.nom) + '</strong>' +
+        (w.domaine ? '<br><span style="font-size:11px;color:var(--text-muted)">' + esc(w.domaine) + '</span>' : '') +
+        (w.lienExterne ? ' <a href="' + esc(w.lienExterne) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Lien externe" style="margin-left:4px;text-decoration:none;font-size:12px">🔗</a>' : '') +
+      '</td>' +
       '<td style="font-size:12px">' + esc(w.appellation) + '</td>' +
       '<td>' + couleurBadge(w.couleur) + '</td>' +
       '<td>' + (w.millesime || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + esc(w.cepage || '') + '</td>' +
+      '<td>' + sentBadge + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + fmtDate(w.createdAt) + '</td>' +
       '<td onclick="event.stopPropagation()"><button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + w.id + '\')">Supprimer</button></td>' +
-    '</tr>'
-  ).join('');
+    '</tr>';
+  }).join('');
 }
 
 // ── ADD WINE ──────────────────────────────────────────────
 
 function openAddWineModal() {
-  const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
-    '<div class="modal-header"><div class="modal-title">Ajouter un vin</div><button class="btn btn-sm" onclick="closeModal()">&times;</button></div>' +
+    '<div class="modal-header"><div class="modal-title">Ajouter un vin</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
         '<div class="field"><label>Pays *</label><input id="aw_pays" placeholder="ex: France"></div>' +
@@ -641,7 +688,7 @@ function openAddWineModal() {
       '<div class="field"><label>Commentaire</label><textarea id="aw_comment" placeholder="Notes internes, observations..."></textarea></div>' +
     '</div>' +
     '<div class="modal-footer">' +
-      '<button class="btn btn-sm" onclick="closeModal()">Annuler</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">Annuler</button>' +
       '<button class="btn btn-sm btn-primary" id="btnSaveWine" onclick="saveWine()">Ajouter</button>' +
     '</div>' +
   '</div></div>';
@@ -689,9 +736,9 @@ function openEditWineModal(wineId) {
   if (!w) return;
   closeModal();
 
-  const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
-    '<div class="modal-header"><div class="modal-title">Modifier — ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="closeModal()">&times;</button></div>' +
+    '<div class="modal-header"><div class="modal-title">Modifier — ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
         '<div class="field"><label>Pays *</label><input id="ew_pays" value="' + esc(w.pays || '') + '"></div>' +
@@ -711,7 +758,7 @@ function openEditWineModal(wineId) {
     '<div class="modal-footer">' +
       '<button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + wineId + '\')">Supprimer</button>' +
       '<div style="flex:1"></div>' +
-      '<button class="btn btn-sm" onclick="closeModal()">Annuler</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">Annuler</button>' +
       '<button class="btn btn-sm btn-primary" id="btnUpdateWine" onclick="updateWine(\'' + wineId + '\')">Enregistrer</button>' +
     '</div>' +
   '</div></div>';
@@ -744,6 +791,7 @@ async function updateWine(wineId) {
     });
     closeModal();
     toast('Vin modifié');
+    setTimeout(() => openWineDetail(wineId), 200);
   } catch (e) {
     alert('Erreur : ' + e.message);
     btn.disabled = false;
@@ -772,9 +820,9 @@ let parsedPaste = [];
 
 function openPasteModal() {
   parsedPaste = [];
-  const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal modal-lg">' +
-    '<div class="modal-header"><div class="modal-title">Import en bloc</div><button class="btn btn-sm" onclick="closeModal()">&times;</button></div>' +
+    '<div class="modal-header"><div class="modal-title">Import en bloc</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Collez un tableau (Excel ou texte) avec les colonnes :<br>' +
         '<strong>Pays · Appellation · Nom · Couleur · Millésime · Cépage · Degré</strong><br>' +
@@ -783,7 +831,7 @@ function openPasteModal() {
       '<div id="pastePreview"></div>' +
     '</div>' +
     '<div class="modal-footer">' +
-      '<button class="btn btn-sm" onclick="closeModal()">Annuler</button>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">Annuler</button>' +
       '<button class="btn btn-sm btn-primary" id="btnImport" onclick="importPaste()" disabled>Importer</button>' +
     '</div>' +
   '</div></div>';
@@ -933,7 +981,11 @@ document.getElementById('filterStatut').addEventListener('change', renderTracker
 document.getElementById('catSearch').addEventListener('input', renderCatalogue);
 document.getElementById('catFilterPays').addEventListener('change', renderCatalogue);
 document.getElementById('catFilterCouleur').addEventListener('change', renderCatalogue);
+document.getElementById('catFilterSent').addEventListener('change', renderCatalogue);
 document.getElementById('alertFilter').addEventListener('change', renderAlerts);
+
+document.addEventListener('input', e => { if (e.target.closest && e.target.closest('.modal')) modalDirty = true; });
+document.addEventListener('change', e => { if (e.target.closest && e.target.closest('.modal')) modalDirty = true; });
 
 window.addEventListener('resize', () => {
   if (window.innerWidth <= 768 && trackerView === 'table') setTrackerView('card');

@@ -120,11 +120,16 @@
             <option value="">Toutes couleurs</option>
             <option>Rouge</option><option>Blanc</option><option>Rosé</option><option>Orange</option>
           </select>
+          <select class="filter-select" id="catFilterSent">
+            <option value="">Tous</option>
+            <option value="none">Non soumis</option>
+            <option value="any">Soumis</option>
+          </select>
         </div>
         <div class="tbl-wrap">
           <table class="cat-table">
             <thead>
-              <tr><th>Pays</th><th>Nom du vin</th><th>Appellation</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Ajouté</th><th></th></tr>
+              <tr><th>Pays</th><th>Nom du vin</th><th>Appellation</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Envois</th><th>Ajouté</th><th></th></tr>
             </thead>
             <tbody id="catTableBody"></tbody>
           </table>
