@@ -266,10 +266,10 @@ function renderTracker() {
   document.getElementById('statEnvois').textContent = shipmentItems.length;
   document.getElementById('statNotes').textContent = shipmentItems.filter(i => i.note).length;
   document.getElementById('statAlerts').textContent = alerts30.length;
-  ['alert-badge', 'alert-badge-m'].forEach(id => {
-    const ab = document.getElementById(id);
-    if (ab) { ab.textContent = alerts30.length; ab.style.display = alerts30.length ? 'inline' : 'none'; }
-  });
+  const abDesk = document.getElementById('alert-badge');
+  if (abDesk) { abDesk.textContent = alerts30.length; abDesk.style.display = alerts30.length ? 'inline' : 'none'; }
+  const abMob = document.getElementById('alert-badge-m');
+  if (abMob) { abMob.textContent = alerts30.length; abMob.style.display = alerts30.length ? 'flex' : 'none'; }
 
   const c = document.getElementById('trackerContent');
   if (!filtered.length) { c.innerHTML = '<div class="empty">Aucun vin trouvé.</div>'; return; }
@@ -493,7 +493,7 @@ function renderShipmentModal() {
         '<div class="revue-check' + (selectedRevues.has(r.id) ? ' active' : '') + '" onclick="toggleRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
       ).join('') + '</div>' +
       '<div id="sh_deadlines_wrap" style="display:none;margin-top:12px">' +
-        '<div class="section-title">Deadlines par revue</div>' +
+        '<div class="section-title">Date d\'envoi souhaitée</div>' +
         '<div id="sh_deadlines" class="grid-2" style="gap:8px"></div>' +
       '</div>' +
       '<div class="section-title" style="margin-top:16px">3 · Détails de l\'envoi</div>' +
@@ -904,10 +904,10 @@ function renderAlerts() {
   const alerts = getAlerts(days);
   const c30 = getAlerts(30).length;
 
-  ['alert-badge', 'alert-badge-m'].forEach(id => {
-    const ab = document.getElementById(id);
-    if (ab) { ab.textContent = c30; ab.style.display = c30 ? 'inline' : 'none'; }
-  });
+  const abDesk2 = document.getElementById('alert-badge');
+  if (abDesk2) { abDesk2.textContent = c30; abDesk2.style.display = c30 ? 'inline' : 'none'; }
+  const abMob2 = document.getElementById('alert-badge-m');
+  if (abMob2) { abMob2.textContent = c30; abMob2.style.display = c30 ? 'flex' : 'none'; }
 
   const list = document.getElementById('alertsList');
   if (!list) return;
