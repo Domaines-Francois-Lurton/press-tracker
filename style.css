@@ -78,8 +78,12 @@ textarea { resize: vertical; min-height: 80px; }
 .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff44; border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
 .spinner-dark { border-color: var(--border); border-top-color: var(--accent); }
 @keyframes spin { to { transform: rotate(360deg); } }
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #fff; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; z-index: 9999; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #fff; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; z-index: 9999; opacity: 0; transition: opacity 0.2s; pointer-events: none; max-width: 320px; }
 .toast.show { opacity: 1; }
+.toast.toast-error { background: var(--red-text); }
+.toast.toast-warn { background: #bf6e00; }
+.confirm-overlay { z-index: 600; align-items: center; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.confirm-overlay .modal { height: auto; min-height: auto; max-height: 90vh; }
 .loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
 .loading-overlay .spinner { width: 28px; height: 28px; border-width: 3px; border-color: var(--border); border-top-color: var(--accent); }
 
