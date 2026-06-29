@@ -107,7 +107,8 @@
     <div class="page" id="page-catalogue">
       <div class="page-header">
         <div class="page-title">Catalogue des vins</div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-danger" id="btnDeleteSelected" style="display:none" onclick="deleteSelectedWines()">Supprimer (0)</button>
           <button class="btn" id="btnPaste">📋 Import bloc</button>
           <button class="btn btn-primary" id="btnAddWine">+ Ajouter un vin</button>
         </div>
@@ -129,7 +130,7 @@
         <div class="tbl-wrap">
           <table class="cat-table">
             <thead>
-              <tr><th>Pays</th><th>Nom du vin</th><th>Appellation</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Envois</th><th>Ajouté</th><th></th></tr>
+              <tr><th style="width:32px"><input type="checkbox" id="catSelectAll" onclick="toggleSelectAll()"></th><th>Pays</th><th>Domaine / Marque</th><th>Dénomination</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Envois</th><th>Ajouté</th><th></th></tr>
             </thead>
             <tbody id="catTableBody"></tbody>
           </table>

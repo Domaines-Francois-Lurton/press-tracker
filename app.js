@@ -1,6 +1,6 @@
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CONSTANTS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const REVUES = [
   { id: 'ws',  label: 'WS',     full: 'Wine Spectator' },
@@ -17,11 +17,36 @@ let wines = [];
 let shipments = [];
 let shipmentItems = [];
 let trackerView = 'table';
+let trackerSort = { col: 'pays', dir: 1 };
+
+function setTrackerSort(col) {
+  if (trackerSort.col === col) trackerSort.dir *= -1;
+  else { trackerSort.col = col; trackerSort.dir = col === 'millesime' ? -1 : 1; }
+  renderTracker();
+}
+
+function applyTrackerSort(arr, wrs) {
+  const { col, dir } = trackerSort;
+  return [...arr].sort((a, b) => {
+    let va, vb;
+    if (col === 'pays')       { va = (a.pays || '').toLowerCase();       vb = (b.pays || '').toLowerCase(); }
+    else if (col === 'marque'){ va = (a.appellation || '').toLowerCase(); vb = (b.appellation || '').toLowerCase(); }
+    else if (col === 'denom') { va = (a.nom || '').toLowerCase();         vb = (b.nom || '').toLowerCase(); }
+    else if (col === 'mil')   { va = parseFloat(a.millesime) || 0;        vb = parseFloat(b.millesime) || 0; }
+    else if (col === 'couleur'){ va = (a.couleur || '').toLowerCase();    vb = (b.couleur || '').toLowerCase(); }
+    else if (col === 'note') {
+      const bestNote = w => Math.max(-1, ...Object.values(wrs[w.id] || {}).map(x => parseFloat(x.note) || -1));
+      va = bestNote(a); vb = bestNote(b);
+    }
+    else return 0;
+    return va < vb ? -dir : va > vb ? dir : 0;
+  });
+}
 let unsubWines, unsubShipments, unsubItems;
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // AUTH
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function doLogin() {
   const pwd = document.getElementById('pwdInput').value;
@@ -43,9 +68,9 @@ function doLogout() {
   location.reload();
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FIREBASE INIT & REALTIME
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function initApp() {
   document.getElementById('loadingOverlay').style.display = 'flex';
@@ -92,9 +117,9 @@ function initApp() {
   }, err => { console.error('items:', err); loaded.items = true; checkReady(); });
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // NAVIGATION
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -111,15 +136,32 @@ document.addEventListener('click', e => {
   if (tab) showPage(tab.dataset.page);
 });
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // HELPERS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-function toast(msg) {
+function toast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  t.className = 'toast show' + (type ? ' toast-' + type : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), type === 'error' ? 4500 : 2500);
+}
+
+let _confirmCb = null;
+function confirmModal(msg, onConfirm, confirmLabel, confirmClass) {
+  _confirmCb = onConfirm;
+  const html = '<div class="modal-overlay confirm-overlay" onclick="if(event.target===this)this.remove()">' +
+    '<div class="modal" style="max-width:380px;width:90%">' +
+      '<div class="modal-body" style="padding:24px 20px 12px">' +
+        '<p style="font-size:14px;line-height:1.6;color:var(--text)">' + esc(msg) + '</p>' +
+      '</div>' +
+      '<div class="modal-footer">' +
+        '<button class="btn btn-sm" onclick="this.closest(\'.confirm-overlay\').remove()">Annuler</button>' +
+        '<button class="btn btn-sm ' + (confirmClass || 'btn-danger') + '" onclick="this.closest(\'.confirm-overlay\').remove();_confirmCb&&_confirmCb()">' + (confirmLabel || 'Confirmer') + '</button>' +
+      '</div>' +
+    '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
 let modalDirty = false;
@@ -130,14 +172,14 @@ function closeModal() {
 }
 
 function safeCloseModal() {
-  if (modalDirty && !confirm('Des modifications non enregistrées seront perdues. Continuer ?')) return;
-  closeModal();
+  if (!modalDirty) { closeModal(); return; }
+  confirmModal('Des modifications non enregistrées seront perdues. Continuer ?', closeModal, 'Quitter', 'btn-primary');
 }
 
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
 
 function fmtDate(d) {
-  if (!d) return '—';
+  if (!d) return '–';
   const dt = d.toDate ? d.toDate() : new Date(d);
   return dt.toLocaleDateString('fr-FR');
 }
@@ -165,9 +207,9 @@ function renderAll() {
   renderAlerts();
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // WINE-REVUE STATUS MATRIX
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function getWineRevueStatus() {
   const result = {};
@@ -215,9 +257,9 @@ function getAlerts(days) {
   return alerts.sort((a, b) => a.days - b.days);
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FILTERS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function buildFilters() {
   const pays = [...new Set(wines.map(w => w.pays).filter(Boolean))].sort();
@@ -231,9 +273,9 @@ function buildFilters() {
   revSel.innerHTML = '<option value="">Toutes les revues</option>' + REVUES.map(r => '<option value="' + r.id + '"' + (r.id === curRev ? ' selected' : '') + '>' + r.full + '</option>').join('');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TRACKER
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function setTrackerView(v) {
   trackerView = v;
@@ -280,33 +322,39 @@ function renderTracker() {
   }
 
   if (trackerView === 'table') {
+    const sorted = applyTrackerSort(filtered, wrs);
+    const si = (col, label) => {
+      const active = trackerSort.col === col;
+      const arrow = active ? (trackerSort.dir === 1 ? ' ↑' : ' ↓') : '';
+      return '<th style="cursor:pointer;user-select:none' + (active ? ';color:var(--accent)' : '') + '" onclick="setTrackerSort(\'' + col + '\')">' + label + arrow + '</th>';
+    };
     c.innerHTML = '<div class="tbl-wrap"><table>' +
-      '<thead><tr><th>Pays</th><th>Vin</th><th>Appellation</th><th>Mill.</th><th>Couleur</th>' +
+      '<thead><tr>' + si('pays','Pays') + si('marque','Domaine / Marque') + si('denom','Dénomination') + si('mil','Mill.') + si('couleur','Couleur') +
       REVUES.map(r => '<th>' + r.label + '</th>').join('') + '</tr></thead><tbody>' +
-      filtered.map(w => {
+      sorted.map(w => {
         const hasAlert = alerts30.some(a => a.wine.id === w.id);
         return '<tr onclick="openWineDetail(\'' + w.id + '\')"' + (hasAlert ? ' style="background:#faeeda22"' : '') + '>' +
           '<td>' + esc(w.pays) + '</td>' +
-          '<td><strong>' + esc(w.nom) + '</strong>' + (w.domaine ? '<br><span style="color:var(--text-muted);font-size:11px">' + esc(w.domaine) + '</span>' : '') + '</td>' +
-          '<td style="font-size:11px">' + esc(w.appellation) + '</td>' +
+          '<td><strong>' + esc(w.appellation) + '</strong></td>' +
+          '<td style="font-size:11px">' + esc(w.nom) + '</td>' +
           '<td>' + (w.millesime || '') + '</td>' +
           '<td>' + couleurBadge(w.couleur) + '</td>' +
           REVUES.map(r => {
             const info = wrs[w.id] && wrs[w.id][r.id];
-            if (!info || info.statut === 'pending') return '<td><span style="color:var(--text-faint)">—</span></td>';
+            if (!info || info.statut === 'pending') return '<td><span style="color:var(--text-faint)">–</span></td>';
             if (info.note) return '<td>' + statutBadge('noté') + ' <span class="note-pill">' + esc(info.note) + '</span></td>';
             const d = info.deadline ? daysUntil(info.deadline) : null;
             const tag = d !== null && d <= 30 ? '<span class="deadline-tag ' + (d <= 7 ? 'deadline-urgent' : 'deadline-soon') + '">J-' + d + '</span>' : '';
             return '<td>' + statutBadge(info.statut) + ' ' + tag + '</td>';
           }).join('') + '</tr>';
       }).join('') + '</tbody></table></div>';
-  } else {
+  } else if (trackerView === 'card') {
     c.innerHTML = '<div class="card-grid">' + filtered.map(w => {
       const hasAlert = alerts30.some(a => a.wine.id === w.id);
       return '<div class="wine-card' + (hasAlert ? ' alert-card' : '') + '" onclick="openWineDetail(\'' + w.id + '\')">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
-        '<div><div class="card-name">' + esc(w.nom) + ' ' + (w.millesime || '') + '</div>' +
-        '<div class="card-meta">' + esc(w.appellation) + ' · ' + esc(w.pays) + (w.domaine ? ' · ' + esc(w.domaine) : '') + '</div></div>' +
+        '<div><div class="card-name">' + esc(w.appellation) + ' ' + (w.millesime || '') + '</div>' +
+        '<div class="card-meta">' + esc(w.nom) + ' · ' + esc(w.pays) + '</div></div>' +
         couleurBadge(w.couleur) + '</div>' +
         '<div class="card-pills">' + REVUES.map(r => {
           const info = wrs[w.id] && wrs[w.id][r.id];
@@ -322,9 +370,9 @@ function renderTracker() {
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // WINE DETAIL MODAL
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function openWineDetail(wineId) {
   const w = wines.find(x => x.id === wineId);
@@ -337,14 +385,13 @@ function openWineDetail(wineId) {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
   '<div class="modal modal-lg">' +
     '<div class="modal-header">' +
-      '<div class="modal-title">' + esc(w.nom) + ' ' + (w.millesime || '') + ' — ' + esc(w.pays) + '</div>' +
+      '<div class="modal-title">' + esc(w.appellation) + ' ' + (w.millesime || '') + ' – ' + esc(w.pays) + '</div>' +
       '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
     '</div>' +
     '<div class="modal-body">' +
       '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">' +
         couleurBadge(w.couleur) +
-        '<span style="font-size:13px;color:var(--text-muted)">' + esc(w.appellation) + '</span>' +
-        (w.domaine ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.domaine) + '</span>' : '') +
+        '<span style="font-size:13px;color:var(--text-muted)">' + esc(w.nom) + '</span>' +
         (w.cepage ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.cepage) + '</span>' : '') +
         (w.degre ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.degre) + '°</span>' : '') +
       '</div>' +
@@ -358,7 +405,7 @@ function openWineDetail(wineId) {
           return '<div style="background:var(--bg);border-radius:var(--radius);padding:10px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
               '<span style="font-size:11px;font-weight:600;color:var(--text-muted)">' + r.full + '</span>' +
-              (info && info.statut !== 'pending' && info.itemId ? '<button class="btn btn-sm" onclick="openEditItem(\'' + info.itemId + '\',\'' + wineId + '\')">✏</button>' : '') +
+              (info && info.statut !== 'pending' && info.itemId ? '<button class="btn btn-sm" onclick="openEditItem(\'' + info.itemId + '\',\'' + wineId + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V7C19 7.55228 19.4477 8 20 8C20.5523 8 21 7.55228 21 7V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM22.1213 10.7071C20.9497 9.53553 19.0503 9.53553 17.8787 10.7071L16.1989 12.3869L11.2929 17.2929C11.1647 17.4211 11.0738 17.5816 11.0299 17.7575L10.0299 21.7575C9.94466 22.0982 10.0445 22.4587 10.2929 22.7071C10.5413 22.9555 10.9018 23.0553 11.2425 22.9701L15.2425 21.9701C15.4184 21.9262 15.5789 21.8353 15.7071 21.7071L20.5556 16.8586L22.2929 15.1213C23.4645 13.9497 23.4645 12.0503 22.2929 10.8787L22.1213 10.7071ZM18.3068 13.1074L19.2929 12.1213C19.6834 11.7308 20.3166 11.7308 20.7071 12.1213L20.8787 12.2929C21.2692 12.6834 21.2692 13.3166 20.8787 13.7071L19.8622 14.7236L18.3068 13.1074ZM16.8923 14.5219L18.4477 16.1381L14.4888 20.097L12.3744 20.6256L12.903 18.5112L16.8923 14.5219Z" fill="currentColor"/></svg></button>' : '') +
             '</div>' +
             (info && info.statut && info.statut !== 'pending' ?
               statutBadge(info.statut) +
@@ -376,15 +423,19 @@ function openWineDetail(wineId) {
         return '<div style="background:var(--bg);border-radius:var(--radius);padding:10px;margin-bottom:8px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px">' +
             '<span style="font-size:12px;font-weight:500">Envoi du ' + fmtDate(s.dateEnvoi) + '</span>' +
-            '<span style="font-size:11px;color:var(--text-muted)">' + esc(s.tracking || '') + (s.intermediaire ? ' · ' + esc(s.intermediaire) : '') + '</span>' +
+            '<span style="display:flex;align-items:center;gap:6px">' +
+              '<span style="font-size:11px;color:var(--text-muted)">' + esc(s.tracking || '') + (s.intermediaire ? ' · ' + esc(s.intermediaire) : '') + '</span>' +
+              '<button class="btn btn-sm btn-danger" style="padding:1px 6px;font-size:11px" onclick="deleteShipment(\'' + s.id + '\',\'' + wineId + '\')">&times;</button>' +
+            '</span>' +
           '</div>' +
           items.map(i => {
             const rev = REVUES.find(r => r.id === i.revueId);
-            return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-top:4px;flex-wrap:wrap">' +
+            return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-top:4px;flex-wrap:wrap">' +
               '<span style="color:var(--text-muted);min-width:100px">' + (rev ? rev.full : i.revueId) + '</span>' +
               statutBadge(i.statut) +
               (i.note ? '<span class="note-pill">' + esc(i.note) + '</span>' : '') +
-              '<button class="btn btn-sm" onclick="openEditItem(\'' + i.id + '\',\'' + wineId + '\')">✏</button>' +
+              '<button class="btn btn-sm" onclick="openEditItem(\'' + i.id + '\',\'' + wineId + '\')">Modifier</button>' +
+              '<button class="btn btn-sm btn-danger" onclick="deleteItem(\'' + i.id + '\',\'' + wineId + '\')">Supprimer</button>' +
             '</div>';
           }).join('') +
         '</div>';
@@ -392,7 +443,7 @@ function openWineDetail(wineId) {
     '</div>' +
     '<div class="modal-footer" style="flex-wrap:wrap">' +
       '<button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + wineId + '\')">Supprimer</button>' +
-      '<button class="btn btn-sm" onclick="closeModal();openEditWineModal(\'' + wineId + '\')">✏ Modifier le vin</button>' +
+      '<button class="btn btn-sm" onclick="closeModal();openEditWineModal(\'' + wineId + '\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:5px" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V7C19 7.55228 19.4477 8 20 8C20.5523 8 21 7.55228 21 7V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM22.1213 10.7071C20.9497 9.53553 19.0503 9.53553 17.8787 10.7071L16.1989 12.3869L11.2929 17.2929C11.1647 17.4211 11.0738 17.5816 11.0299 17.7575L10.0299 21.7575C9.94466 22.0982 10.0445 22.4587 10.2929 22.7071C10.5413 22.9555 10.9018 23.0553 11.2425 22.9701L15.2425 21.9701C15.4184 21.9262 15.5789 21.8353 15.7071 21.7071L20.5556 16.8586L22.2929 15.1213C23.4645 13.9497 23.4645 12.0503 22.2929 10.8787L22.1213 10.7071ZM18.3068 13.1074L19.2929 12.1213C19.6834 11.7308 20.3166 11.7308 20.7071 12.1213L20.8787 12.2929C21.2692 12.6834 21.2692 13.3166 20.8787 13.7071L19.8622 14.7236L18.3068 13.1074ZM16.8923 14.5219L18.4477 16.1381L14.4888 20.097L12.3744 20.6256L12.903 18.5112L16.8923 14.5219Z" fill="currentColor"/></svg>Modifier le vin</button>' +
       '<div style="flex:1"></div>' +
       '<button class="btn btn-sm" onclick="closeModal()">Fermer</button>' +
       '<button class="btn btn-sm btn-primary" onclick="closeModal();openShipmentModal(\'' + wineId + '\')">+ Nouvel envoi</button>' +
@@ -401,9 +452,9 @@ function openWineDetail(wineId) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EDIT SHIPMENT ITEM
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function openEditItem(itemId, wineId) {
   const item = shipmentItems.find(i => i.id === itemId);
@@ -415,7 +466,7 @@ function openEditItem(itemId, wineId) {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
     '<div class="modal-header">' +
-      '<div class="modal-title">Modifier — ' + esc(w ? w.nom : '') + ' / ' + (r ? r.full : '') + '</div>' +
+      '<div class="modal-title">Modifier – ' + esc(w ? w.nom : '') + ' / ' + (r ? r.full : '') + '</div>' +
       '<button class="btn btn-sm" onclick="safeCloseModal()">&times;</button>' +
     '</div>' +
     '<div class="modal-body">' +
@@ -455,15 +506,15 @@ async function saveItem(itemId, wineId) {
     toast('Modifications enregistrées');
     setTimeout(() => openWineDetail(wineId), 200);
   } catch (e) {
-    alert('Erreur : ' + e.message);
+    toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = 'Enregistrer';
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SHIPMENT MODAL (NOUVEL ENVOI)
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 let selectedWines = new Set();
 let selectedRevues = new Set();
@@ -573,10 +624,10 @@ function updateShipmentCounts() {
 }
 
 async function saveShipment() {
-  if (!selectedWines.size) { alert('Sélectionnez au moins un vin.'); return; }
-  if (!selectedRevues.size) { alert('Sélectionnez au moins une revue.'); return; }
+  if (!selectedWines.size) { toast('Sélectionnez au moins un vin.', 'warn'); return; }
+  if (!selectedRevues.size) { toast('Sélectionnez au moins une revue.', 'warn'); return; }
   const date = document.getElementById('sh_date').value;
-  if (!date) { alert("La date d'envoi est obligatoire."); return; }
+  if (!date) { toast("La date d'envoi est obligatoire.", 'warn'); return; }
 
   const btn = document.getElementById('btnSaveShipment');
   btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
@@ -614,15 +665,68 @@ async function saveShipment() {
     closeModal();
     toast('✓ ' + (selectedWines.size * selectedRevues.size) + ' envoi(s) enregistré(s)');
   } catch (e) {
-    alert('Erreur : ' + e.message);
+    toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = "Enregistrer l'envoi";
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CATALOGUE
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+let catSelected = new Set();
+
+function updateCatSelectionUI() {
+  const btn = document.getElementById('btnDeleteSelected');
+  if (!btn) return;
+  if (catSelected.size > 0) {
+    btn.style.display = '';
+    btn.textContent = 'Supprimer (' + catSelected.size + ')';
+  } else {
+    btn.style.display = 'none';
+  }
+  const allCb = document.getElementById('catSelectAll');
+  if (allCb) {
+    const allRows = document.querySelectorAll('.cat-row-cb');
+    allCb.checked = allRows.length > 0 && [...allRows].every(cb => cb.checked);
+    allCb.indeterminate = catSelected.size > 0 && !allCb.checked;
+  }
+}
+
+function toggleCatSelect(id, checked, event) {
+  event.stopPropagation();
+  if (checked) catSelected.add(id); else catSelected.delete(id);
+  updateCatSelectionUI();
+}
+
+function toggleSelectAll() {
+  const master = document.getElementById('catSelectAll');
+  document.querySelectorAll('.cat-row-cb').forEach(cb => {
+    cb.checked = master.checked;
+    if (master.checked) catSelected.add(cb.dataset.id); else catSelected.delete(cb.dataset.id);
+  });
+  updateCatSelectionUI();
+}
+
+function deleteSelectedWines() {
+  const ids = [...catSelected];
+  const canDelete = ids.filter(id => !shipmentItems.some(i => i.wineId === id));
+  const blocked = ids.length - canDelete.length;
+  if (canDelete.length === 0) { toast('Les vins sélectionnés ont des envois et ne peuvent pas être supprimés.', 'error'); return; }
+  let msg = 'Supprimer définitivement ' + canDelete.length + ' vin(s) ?';
+  if (blocked > 0) msg += ' (' + blocked + ' vin(s) avec envois ignoré(s).)';
+  confirmModal(msg, async () => {
+    try {
+      const batch = db.batch();
+      canDelete.forEach(id => batch.delete(db.collection('wines').doc(id)));
+      await batch.commit();
+      catSelected.clear();
+      updateCatSelectionUI();
+      toast(canDelete.length + ' vin(s) supprimé(s)');
+    } catch (e) { toast('Erreur : ' + e.message, 'error'); }
+  }, 'Supprimer', 'btn-danger');
+}
 
 function renderCatalogue() {
   const search = (document.getElementById('catSearch').value || '').toLowerCase();
@@ -648,15 +752,15 @@ function renderCatalogue() {
   tbody.innerHTML = filtered.map(w => {
     const sent = Object.values(wrs[w.id] || {}).filter(x => x.statut !== 'pending').length;
     const sentBadge = sent === 0
-      ? '<span style="color:var(--text-faint);font-size:11px">—</span>'
+      ? '<span style="color:var(--text-faint);font-size:11px">–</span>'
       : '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 7px;border-radius:10px;font-weight:500">' + sent + '/' + REVUES.length + '</span>';
     return '<tr onclick="openEditWineModal(\'' + w.id + '\')">' +
+      '<td onclick="event.stopPropagation()"><input type="checkbox" class="cat-row-cb" data-id="' + w.id + '" ' + (catSelected.has(w.id) ? 'checked' : '') + ' onchange="toggleCatSelect(\'' + w.id + '\',this.checked,event)"></td>' +
       '<td>' + esc(w.pays) + '</td>' +
-      '<td><strong>' + esc(w.nom) + '</strong>' +
-        (w.domaine ? '<br><span style="font-size:11px;color:var(--text-muted)">' + esc(w.domaine) + '</span>' : '') +
+      '<td><strong>' + esc(w.appellation) + '</strong>' +
         (w.lienExterne ? ' <a href="' + esc(w.lienExterne) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Lien externe" style="margin-left:4px;text-decoration:none;font-size:12px">🔗</a>' : '') +
       '</td>' +
-      '<td style="font-size:12px">' + esc(w.appellation) + '</td>' +
+      '<td style="font-size:12px">' + esc(w.nom) + '</td>' +
       '<td>' + couleurBadge(w.couleur) + '</td>' +
       '<td>' + (w.millesime || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + esc(w.cepage || '') + '</td>' +
@@ -665,9 +769,10 @@ function renderCatalogue() {
       '<td onclick="event.stopPropagation()"><button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + w.id + '\')">Supprimer</button></td>' +
     '</tr>';
   }).join('');
+  updateCatSelectionUI();
 }
 
-// ── ADD WINE ──────────────────────────────────────────────
+// â”€â”€ ADD WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function openAddWineModal() {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
@@ -677,10 +782,9 @@ function openAddWineModal() {
       '<div class="grid-2">' +
         '<div class="field"><label>Pays *</label><input id="aw_pays" placeholder="ex: France"></div>' +
         '<div class="field"><label>Couleur *</label><select id="aw_couleur"><option>Rouge</option><option>Blanc</option><option>Rosé</option><option>Orange</option></select></div>' +
-        '<div class="field"><label>Nom du vin *</label><input id="aw_nom" placeholder="ex: Château Margaux"></div>' +
+        '<div class="field"><label>Dénomination *</label><input id="aw_nom" placeholder="ex: Alta Colección Cabernet Sauvignon"></div>' +
         '<div class="field"><label>Millésime *</label><input id="aw_mil" placeholder="ex: 2022" type="number" min="1900" max="2030"></div>' +
-        '<div class="field"><label>Appellation *</label><input id="aw_app" placeholder="ex: AOP Bordeaux"></div>' +
-        '<div class="field"><label>Domaine / Marque</label><input id="aw_dom" placeholder="Optionnel"></div>' +
+        '<div class="field"><label>Domaine ou Marque *</label><input id="aw_app" placeholder="ex: Bodega Piedra Negra"></div>' +
         '<div class="field"><label>Cépage</label><input id="aw_cep" placeholder="ex: Cabernet Sauvignon"></div>' +
         '<div class="field"><label>Degré d\'alcool</label><input id="aw_deg" placeholder="ex: 14" type="number" step="0.1" min="0" max="25"></div>' +
       '</div>' +
@@ -700,7 +804,7 @@ async function saveWine() {
   const nom = document.getElementById('aw_nom').value.trim();
   const millesime = document.getElementById('aw_mil').value.trim();
   const appellation = document.getElementById('aw_app').value.trim();
-  if (!pays || !nom || !millesime || !appellation) { alert('Remplissez tous les champs obligatoires.'); return; }
+  if (!pays || !nom || !millesime || !appellation) { toast('Remplissez tous les champs obligatoires.', 'warn'); return; }
 
   const btn = document.getElementById('btnSaveWine');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -713,7 +817,7 @@ async function saveWine() {
       millesime,
       appellation,
       couleur: document.getElementById('aw_couleur').value,
-      domaine: document.getElementById('aw_dom').value.trim() || null,
+      domaine: null,
       cepage: document.getElementById('aw_cep').value.trim() || null,
       degre: document.getElementById('aw_deg').value.trim() || null,
       lienExterne: document.getElementById('aw_link').value.trim() || null,
@@ -723,13 +827,13 @@ async function saveWine() {
     closeModal();
     toast('Vin ajouté au catalogue');
   } catch (e) {
-    alert('Erreur : ' + e.message);
+    toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = 'Ajouter';
   }
 }
 
-// ── EDIT WINE ─────────────────────────────────────────────
+// â”€â”€ EDIT WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function openEditWineModal(wineId) {
   const w = wines.find(x => x.id === wineId);
@@ -738,17 +842,16 @@ function openEditWineModal(wineId) {
 
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
-    '<div class="modal-header"><div class="modal-title">Modifier — ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
+    '<div class="modal-header"><div class="modal-title">Modifier – ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
         '<div class="field"><label>Pays *</label><input id="ew_pays" value="' + esc(w.pays || '') + '"></div>' +
         '<div class="field"><label>Couleur *</label><select id="ew_couleur">' +
           ['Rouge','Blanc','Rosé','Orange'].map(c => '<option' + (w.couleur === c ? ' selected' : '') + '>' + c + '</option>').join('') +
         '</select></div>' +
-        '<div class="field"><label>Nom du vin *</label><input id="ew_nom" value="' + esc(w.nom || '') + '"></div>' +
+        '<div class="field"><label>Dénomination *</label><input id="ew_nom" value="' + esc(w.nom || '') + '"></div>' +
         '<div class="field"><label>Millésime *</label><input id="ew_mil" value="' + esc(w.millesime || '') + '" type="number" min="1900" max="2030"></div>' +
-        '<div class="field"><label>Appellation *</label><input id="ew_app" value="' + esc(w.appellation || '') + '"></div>' +
-        '<div class="field"><label>Domaine / Marque</label><input id="ew_dom" value="' + esc(w.domaine || '') + '"></div>' +
+        '<div class="field"><label>Domaine ou Marque *</label><input id="ew_app" value="' + esc(w.appellation || '') + '"></div>' +
         '<div class="field"><label>Cépage</label><input id="ew_cep" value="' + esc(w.cepage || '') + '"></div>' +
         '<div class="field"><label>Degré d\'alcool</label><input id="ew_deg" value="' + esc(w.degre || '') + '" type="number" step="0.1" min="0" max="25"></div>' +
       '</div>' +
@@ -770,7 +873,7 @@ async function updateWine(wineId) {
   const nom = document.getElementById('ew_nom').value.trim();
   const millesime = document.getElementById('ew_mil').value.trim();
   const appellation = document.getElementById('ew_app').value.trim();
-  if (!pays || !nom || !millesime || !appellation) { alert('Remplissez tous les champs obligatoires.'); return; }
+  if (!pays || !nom || !millesime || !appellation) { toast('Remplissez tous les champs obligatoires.', 'warn'); return; }
 
   const btn = document.getElementById('btnUpdateWine');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -783,7 +886,7 @@ async function updateWine(wineId) {
       millesime,
       appellation,
       couleur: document.getElementById('ew_couleur').value,
-      domaine: document.getElementById('ew_dom').value.trim() || null,
+      domaine: null,
       cepage: document.getElementById('ew_cep').value.trim() || null,
       degre: document.getElementById('ew_deg').value.trim() || null,
       lienExterne: document.getElementById('ew_link').value.trim() || null,
@@ -793,28 +896,59 @@ async function updateWine(wineId) {
     toast('Vin modifié');
     setTimeout(() => openWineDetail(wineId), 200);
   } catch (e) {
-    alert('Erreur : ' + e.message);
+    toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = 'Enregistrer';
   }
 }
 
-async function deleteWine(id) {
-  const hasItems = shipmentItems.some(i => i.wineId === id);
-  if (hasItems) { alert('Ce vin a des envois enregistrés et ne peut pas être supprimé.'); return; }
-  if (!confirm('Supprimer ce vin du catalogue ?')) return;
-  try {
-    await db.collection('wines').doc(id).delete();
-    closeModal();
-    toast('Vin supprimé');
-  } catch (e) {
-    alert('Erreur : ' + e.message);
-  }
+function deleteItem(itemId, wineId) {
+  confirmModal('Supprimer cet enregistrement ?', async () => {
+    try {
+      await db.collection('shipmentItems').doc(itemId).delete();
+      closeModal();
+      setTimeout(() => openWineDetail(wineId), 150);
+      toast('Enregistrement supprimé');
+    } catch (e) {
+      toast('Erreur : ' + e.message, 'error');
+    }
+  }, 'Supprimer', 'btn-danger');
 }
 
-// ═══════════════════════════════════════════════════════════
+function deleteShipment(shipmentId, wineId) {
+  confirmModal('Supprimer cet envoi et tous ses enregistrements ?', async () => {
+    try {
+      const batch = db.batch();
+      shipmentItems.filter(i => i.shipmentId === shipmentId)
+        .forEach(i => batch.delete(db.collection('shipmentItems').doc(i.id)));
+      batch.delete(db.collection('shipments').doc(shipmentId));
+      await batch.commit();
+      closeModal();
+      setTimeout(() => openWineDetail(wineId), 150);
+      toast('Envoi supprimé');
+    } catch (e) {
+      toast('Erreur : ' + e.message, 'error');
+    }
+  }, 'Supprimer', 'btn-danger');
+}
+
+function deleteWine(id) {
+  const hasItems = shipmentItems.some(i => i.wineId === id);
+  if (hasItems) { toast('Ce vin a des envois enregistrés et ne peut pas être supprimé.', 'error'); return; }
+  confirmModal('Supprimer définitivement ce vin du catalogue ?', async () => {
+    try {
+      await db.collection('wines').doc(id).delete();
+      closeModal();
+      toast('Vin supprimé');
+    } catch (e) {
+      toast('Erreur : ' + e.message, 'error');
+    }
+  });
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PASTE IMPORT
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 let parsedPaste = [];
 
@@ -825,8 +959,8 @@ function openPasteModal() {
     '<div class="modal-header"><div class="modal-title">Import en bloc</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Collez un tableau (Excel ou texte) avec les colonnes :<br>' +
-        '<strong>Pays · Appellation · Nom · Couleur · Millésime · Cépage · Degré</strong><br>' +
-        'Séparateur : tabulation ou point-virgule. Une ligne par vin.</p>' +
+        '<strong>Pays · Domaine ou Marque · Dénomination · Couleur · Millésime · Cépage · Degré · Lien externe · Commentaire</strong><br>' +
+        'Séparateur : tabulation ou point-virgule. Une ligne par vin. Les 4 dernières colonnes sont facultatives.</p>' +
       '<div class="field"><textarea class="paste-area" id="pasteInput" rows="7" oninput="parsePaste()" placeholder="France	AOP Bordeaux	Mon Château	Rouge	2022	Merlot	14"></textarea></div>' +
       '<div id="pastePreview"></div>' +
     '</div>' +
@@ -847,17 +981,17 @@ function parsePaste() {
     const sep = line.includes('\t') ? '\t' : ';';
     const cols = line.split(sep).map(c => c.trim());
     if (cols.length < 5) { errors.push('Ligne ' + (i + 1) + ' : moins de 5 colonnes'); return; }
-    parsedPaste.push({ pays: cols[0], appellation: cols[1], nom: cols[2], couleur: cols[3], millesime: cols[4], cepage: cols[5] || '', degre: cols[6] || '' });
+    parsedPaste.push({ pays: cols[0], appellation: cols[1], nom: cols[2], couleur: cols[3], millesime: cols[4], cepage: cols[5] || '', degre: cols[6] || '', lienExterne: cols[7] || '', commentaire: cols[8] || '' });
   });
   renderPastePreview(errors);
 }
 
 function renderPastePreview(errors) {
   const html = '<div class="paste-preview">' +
-    '<div class="paste-row paste-row-header"><span>Pays</span><span>Appellation</span><span>Nom</span><span>Couleur</span><span>Mill.</span><span>Cépage</span><span>Degré</span><span></span></div>' +
+    '<div class="paste-row paste-row-header"><span>Pays</span><span>Domaine / Marque</span><span>Dénomination</span><span>Couleur</span><span>Mill.</span><span>Cépage</span><span>Degré</span><span>Lien</span><span>Commentaire</span><span></span></div>' +
     parsedPaste.map((r, i) =>
       '<div class="paste-row">' +
-        '<span>' + esc(r.pays) + '</span><span>' + esc(r.appellation) + '</span><span>' + esc(r.nom) + '</span><span>' + couleurBadge(r.couleur) + '</span><span>' + esc(r.millesime) + '</span><span>' + esc(r.cepage) + '</span><span>' + esc(r.degre) + '</span>' +
+        '<span>' + esc(r.pays) + '</span><span>' + esc(r.appellation) + '</span><span>' + esc(r.nom) + '</span><span>' + couleurBadge(r.couleur) + '</span><span>' + esc(r.millesime) + '</span><span>' + esc(r.cepage) + '</span><span>' + esc(r.degre) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(r.lienExterne) + '">' + esc(r.lienExterne) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(r.commentaire) + '">' + esc(r.commentaire) + '</span>' +
         '<button onclick="parsedPaste.splice(' + i + ',1);renderPastePreview([])" style="background:none;border:none;cursor:pointer;color:var(--text-faint)">&times;</button>' +
       '</div>'
     ).join('') +
@@ -881,7 +1015,7 @@ async function importPaste() {
         pays: r.pays, nom: r.nom, appellation: r.appellation,
         couleur: r.couleur, millesime: r.millesime,
         cepage: r.cepage || null, degre: r.degre || null,
-        domaine: null, lienExterne: null, commentaire: null,
+        domaine: null, lienExterne: r.lienExterne || null, commentaire: r.commentaire || null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
@@ -889,15 +1023,15 @@ async function importPaste() {
     closeModal();
     toast('✓ ' + parsedPaste.length + ' vins importés');
   } catch (e) {
-    alert('Erreur : ' + e.message);
+    toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = 'Importer';
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ALERTS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function renderAlerts() {
   const days = (document.getElementById('alertFilter') || {}).value || '30';
@@ -939,31 +1073,31 @@ function renderAlerts() {
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EXPORT CSV
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function exportCSV() {
   const wrs = getWineRevueStatus();
-  const header = ['Pays','Domaine','Nom','Appellation','Millésime','Couleur','Cépage','Degré','Lien externe','Commentaire'].concat(
+  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Cépage','Degré','Lien externe','Commentaire'].concat(
     REVUES.flatMap(r => [r.full + ' statut', r.full + ' note', r.full + ' deadline'])
   );
   const rows = wines.map(w => [
-    w.pays, w.domaine || '', w.nom, w.appellation, w.millesime || '', w.couleur,
+    w.pays, w.nom, w.appellation, w.millesime || '', w.couleur,
     w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
   ].concat(
     REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '', i ? i.deadline : '']; })
   ));
   const csv = [header, ...rows].map(r => r.map(c => '"' + String(c || '').replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
+  a.href = 'data:text/csv;charset=utf-8,ï»¿' + encodeURIComponent(csv);
   a.download = 'press_tracker_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EVENT BINDINGS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 document.getElementById('btnLogin').addEventListener('click', doLogin);
 document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
