@@ -1220,7 +1220,7 @@ function openHelpModal() {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
     '<div class="modal modal-lg">' +
       '<div class="modal-header">' +
-        '<div class="modal-title">Guide d\'utilisation — Press Tracker</div>' +
+        '<div class="modal-title">Guide d\'utilisation - Press Tracker</div>' +
         '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
       '</div>' +
       '<div class="modal-body">' + body + '</div>' +
