@@ -49,8 +49,10 @@
     <div class="topbar-left">
       <span class="topbar-logo">🍷</span>
       <span class="topbar-title">Press Tracker</span>
+      <span style="font-size:10px;color:#ffffff55;font-weight:400;letter-spacing:.03em">v1.0</span>
     </div>
     <div class="topbar-right">
+      <button class="btn btn-sm" style="color:#fff;border-color:#ffffff44;padding:4px 10px;font-size:13px" onclick="openHelpModal()" title="Aide">?</button>
       <button class="btn btn-sm" style="color:#fff;border-color:#ffffff44" id="btnLogout">Déconnexion</button>
     </div>
   </div>
@@ -95,6 +97,13 @@
           <option value="envoyé">Envoyé</option>
           <option value="pending">En attente</option>
         </select>
+        <select class="filter-select" id="filterTrimestre">
+          <option value="">Tous trimestres</option>
+          <option value="Q1">Q1</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+        </select>
         <div class="view-toggle">
           <button class="vbtn active" id="vbtnTable">▤</button>
           <button class="vbtn" id="vbtnCard">⊞</button>
@@ -109,6 +118,7 @@
         <div class="page-title">Catalogue des vins</div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-danger" id="btnDeleteSelected" style="display:none" onclick="deleteSelectedWines()">Supprimer (0)</button>
+          <button class="btn" id="btnTagSelected" style="display:none" onclick="openTagModal()">Taguer (0)</button>
           <button class="btn" id="btnPaste">📋 Import bloc</button>
           <button class="btn btn-primary" id="btnAddWine">+ Ajouter un vin</button>
         </div>
@@ -126,11 +136,18 @@
             <option value="none">Non soumis</option>
             <option value="any">Soumis</option>
           </select>
+          <select class="filter-select" id="catFilterTrimestre">
+            <option value="">Tous trimestres</option>
+            <option value="Q1">Q1 (Jan–Mars)</option>
+            <option value="Q2">Q2 (Avr–Juin)</option>
+            <option value="Q3">Q3 (Juil–Sept)</option>
+            <option value="Q4">Q4 (Oct–Déc)</option>
+          </select>
         </div>
         <div class="tbl-wrap">
           <table class="cat-table">
             <thead>
-              <tr><th style="width:32px"><input type="checkbox" id="catSelectAll" onclick="toggleSelectAll()"></th><th>Pays</th><th>Domaine / Marque</th><th>Dénomination</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Envois</th><th>Ajouté</th><th></th></tr>
+              <tr><th style="width:32px"><input type="checkbox" id="catSelectAll" onclick="toggleSelectAll()"></th><th>Pays</th><th>Domaine / Marque</th><th>Dénomination</th><th>Couleur</th><th>Millésime</th><th>Cépage</th><th>Trim.</th><th>Envois</th><th>Ajouté</th><th></th></tr>
             </thead>
             <tbody id="catTableBody"></tbody>
           </table>
@@ -142,13 +159,7 @@
     <!-- ALERTS PAGE -->
     <div class="page" id="page-alerts">
       <div class="page-header">
-        <div class="page-title">Alertes deadlines</div>
-        <select class="filter-select" id="alertFilter">
-          <option value="30">30 prochains jours</option>
-          <option value="14">14 prochains jours</option>
-          <option value="7">7 prochains jours</option>
-          <option value="all">Toutes</option>
-        </select>
+        <div class="page-title">Vins à envoyer</div>
       </div>
       <div class="card" style="padding:0">
         <div id="alertsList"></div>
