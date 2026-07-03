@@ -151,7 +151,8 @@ tr[onclick] { cursor: pointer; }
 .search-wines:focus { outline: none; }
 
 /* CATALOGUE */
-.cat-table td, .cat-table th { padding: 8px 10px; }
+.cat-table { table-layout: fixed; width: 100%; }
+.cat-table td, .cat-table th { padding: 8px 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cat-table tbody tr { cursor: pointer; }
 .paste-area { font-family: monospace; font-size: 12px; background: var(--bg); }
 .paste-preview { margin-top: 12px; }

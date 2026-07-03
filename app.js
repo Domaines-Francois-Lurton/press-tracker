@@ -822,6 +822,7 @@ function renderCatalogue() {
       '<td>' + couleurBadge(w.couleur) + '</td>' +
       '<td>' + (w.millesime || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + esc(w.cepage || '') + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted)">' + (w.mad ? fmtDate(w.mad) : '<span style="color:var(--text-faint)">–</span>') + '</td>' +
       '<td>' + (trimBadge(w.trimestre || '') || '<span style="color:var(--text-faint);font-size:11px">–</span>') + '</td>' +
       '<td>' + sentBadge + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + fmtDate(w.createdAt) + '</td>' +
@@ -846,6 +847,7 @@ function openAddWineModal() {
         '<div class="field"><label>Domaine ou Marque *</label><input id="aw_app" placeholder="ex: Bodega Piedra Negra"></div>' +
         '<div class="field"><label>Cépage</label><input id="aw_cep" placeholder="ex: Cabernet Sauvignon"></div>' +
         '<div class="field"><label>Degré d\'alcool</label><input id="aw_deg" placeholder="ex: 14" type="number" step="0.1" min="0" max="25"></div>' +
+        '<div class="field"><label>MAD (mise à disposition)</label><input id="aw_mad" type="date"></div>' +
       '</div>' +
       '<div class="field"><label>Lien externe</label><input id="aw_link" placeholder="https://... (fiche technique, Dropbox...)"></div>' +
       '<div class="field"><label>Commentaire</label><textarea id="aw_comment" placeholder="Notes internes, observations..."></textarea></div>' +
@@ -880,6 +882,7 @@ async function saveWine() {
       degre: document.getElementById('aw_deg').value.trim() || null,
       lienExterne: document.getElementById('aw_link').value.trim() || null,
       commentaire: document.getElementById('aw_comment').value.trim() || null,
+      mad: document.getElementById('aw_mad').value || null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal();
@@ -912,6 +915,7 @@ function openEditWineModal(wineId) {
         '<div class="field"><label>Domaine ou Marque *</label><input id="ew_app" value="' + esc(w.appellation || '') + '"></div>' +
         '<div class="field"><label>Cépage</label><input id="ew_cep" value="' + esc(w.cepage || '') + '"></div>' +
         '<div class="field"><label>Degré d\'alcool</label><input id="ew_deg" value="' + esc(w.degre || '') + '" type="number" step="0.1" min="0" max="25"></div>' +
+        '<div class="field"><label>MAD (mise à disposition)</label><input id="ew_mad" type="date" value="' + (w.mad || '') + '"></div>' +
       '</div>' +
       '<div class="field"><label>Lien externe</label><input id="ew_link" value="' + esc(w.lienExterne || '') + '" placeholder="https://..."></div>' +
       '<div class="field"><label>Commentaire</label><textarea id="ew_comment">' + esc(w.commentaire || '') + '</textarea></div>' +
@@ -948,6 +952,7 @@ async function updateWine(wineId) {
       degre: document.getElementById('ew_deg').value.trim() || null,
       lienExterne: document.getElementById('ew_link').value.trim() || null,
       commentaire: document.getElementById('ew_comment').value.trim() || null,
+      mad: document.getElementById('ew_mad').value || null,
     });
     closeModal();
     toast('Vin modifié');
@@ -1220,7 +1225,7 @@ function openHelpModal() {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">' +
     '<div class="modal modal-lg">' +
       '<div class="modal-header">' +
-        '<div class="modal-title">Guide d\'utilisation - Press Tracker</div>' +
+        '<div class="modal-title">Guide d\'utilisation — Press Tracker</div>' +
         '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
       '</div>' +
       '<div class="modal-body">' + body + '</div>' +
