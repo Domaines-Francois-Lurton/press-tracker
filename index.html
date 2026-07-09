@@ -81,6 +81,7 @@
         <div class="page-title">Envois presse</div>
         <div style="display:flex;gap:8px">
           <button class="btn" id="btnExport">⬇ Export CSV</button>
+          <button class="btn" id="btnExportXlsx">⬇ Export Excel</button>
           <button class="btn btn-primary" id="btnNewShipment">+ Nouvel envoi</button>
         </div>
       </div>
@@ -108,6 +109,7 @@
           <option value="Q3">Q3</option>
           <option value="Q4">Q4</option>
         </select>
+        <button class="btn" id="btnResetTracker">↺ Réinitialiser</button>
         <div class="view-toggle">
           <button class="vbtn active" id="vbtnTable">▤</button>
           <button class="vbtn" id="vbtnCard">⊞</button>
@@ -147,6 +149,7 @@
             <option value="Q3">Q3 (Juil–Sept)</option>
             <option value="Q4">Q4 (Oct–Déc)</option>
           </select>
+          <button class="btn" id="btnResetCatalogue">↺ Réinitialiser</button>
         </div>
         <div class="tbl-wrap">
           <table class="cat-table">
@@ -179,6 +182,8 @@
 <!-- FIREBASE SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- XLSX EXPORT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="app.js"></script>
 
 </body>

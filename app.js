@@ -73,6 +73,9 @@ fr: {
   section_details:"3 · Détails de l'envoi",
   import_btn:'Importer',
   guide_title:"Guide d'utilisation — Press Tracker",
+  btn_reset_filters:'↺ Réinitialiser', btn_export_xlsx:'⬇ Export Excel',
+  modal_edit_shipment:"Modifier l'envoi", toast_shipment_updated:'Envoi modifié',
+  lbl_tracking_prefix:'Tracking',
 },
 es: {
   login_sub:'Seguimiento de envíos de prensa', login_label:'Contraseña', login_btn:'Entrar',
@@ -120,6 +123,9 @@ es: {
   section_details:'3 · Detalles del envío',
   import_btn:'Importar',
   guide_title:'Guía de uso — Press Tracker',
+  btn_reset_filters:'↺ Restablecer', btn_export_xlsx:'⬇ Exportar Excel',
+  modal_edit_shipment:'Modificar el envío', toast_shipment_updated:'Envío modificado',
+  lbl_tracking_prefix:'Seguimiento',
 },
 };
 
@@ -175,9 +181,12 @@ function applyStaticI18n() {
   document.querySelectorAll('.stat-label').forEach((el,i) => { if (statKeys[i]) el.innerHTML = T(statKeys[i]); });
   // Buttons
   setText($('btnExport'), T('btn_export'));
+  setText($('btnExportXlsx'), T('btn_export_xlsx'));
   setText($('btnNewShipment'), T('btn_new_shipment'));
   setText($('btnAddWine'), T('btn_add_wine'));
   setText($('btnPaste'), T('btn_import'));
+  setText($('btnResetTracker'), T('btn_reset_filters'));
+  setText($('btnResetCatalogue'), T('btn_reset_filters'));
   // Search placeholders
   const ts = $('trackerSearch'); if (ts) ts.placeholder = T('filter_search');
   const cs = $('catSearch'); if (cs) cs.placeholder = T('filter_search_cat');
@@ -526,6 +535,24 @@ function buildFilters() {
   revSel.innerHTML = '<option value="">' + T('filter_all_revues') + '</option>' + REVUES.map(r => '<option value="' + r.id + '"' + (r.id === curRev ? ' selected' : '') + '>' + r.full + '</option>').join('');
 }
 
+function resetTrackerFilters() {
+  document.getElementById('trackerSearch').value = '';
+  document.getElementById('filterPays').value = '';
+  document.getElementById('filterRevue').value = '';
+  document.getElementById('filterStatut').value = '';
+  const ft = document.getElementById('filterTrimestre'); if (ft) ft.value = '';
+  renderTracker();
+}
+
+function resetCatalogueFilters() {
+  document.getElementById('catSearch').value = '';
+  document.getElementById('catFilterPays').value = '';
+  document.getElementById('catFilterCouleur').value = '';
+  const fs = document.getElementById('catFilterSent'); if (fs) fs.value = '';
+  const ft = document.getElementById('catFilterTrimestre'); if (ft) ft.value = '';
+  renderCatalogue();
+}
+
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TRACKER
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -659,7 +686,7 @@ function openWineDetail(wineId) {
         (w.degre ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.degre) + '°</span>' : '') +
       '</div>' +
       (w.lienExterne ? '<div style="margin-bottom:10px"><a href="' + esc(w.lienExterne) + '" target="_blank" rel="noopener" class="link-ext">🔗 ' + esc(w.lienExterne) + '</a></div>' : '') +
-      (w.commentaire ? '<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:14px">' + esc(w.commentaire) + '</div>' : '') +
+      (w.commentaire ? '<div style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;background:var(--bg);border-radius:var(--radius);padding:8px 10px;margin-bottom:14px">' + esc(w.commentaire) + '</div>' : '') +
       '<div class="section-title">' + T('detail_statut_revue') + '</div>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:16px">' +
         REVUES.map(r => {
@@ -675,7 +702,7 @@ function openWineDetail(wineId) {
               (info.note ? ' <span class="note-pill" style="margin-left:4px">' + esc(info.note) + '</span>' : '') +
               (info.deadline ? '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + T('detail_deadline') + ' : ' + fmtDate(info.deadline) + (d !== null ? ' <span class="deadline-tag ' + (d <= 7 ? 'deadline-urgent' : 'deadline-soon') + '">J-' + d + '</span>' : '') + '</div>' : '') +
               (info.dateReception ? '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + T('detail_recu_le') + ' : ' + fmtDate(info.dateReception) + '</div>' : '') +
-              (info.commentaire ? '<div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-style:italic">' + esc(info.commentaire) + '</div>' : '')
+              (info.commentaire ? '<div style="font-size:12px;color:var(--text);line-height:1.5;white-space:pre-wrap;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">' + esc(info.commentaire) + '</div>' : '')
             : '<span style="color:var(--text-faint);font-size:12px">' + T('detail_non_soumis') + '</span>') +
           '</div>';
         }).join('') +
@@ -687,7 +714,8 @@ function openWineDetail(wineId) {
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px">' +
             '<span style="font-size:12px;font-weight:500">' + T('detail_envoi_du') + ' ' + fmtDate(s.dateEnvoi) + '</span>' +
             '<span style="display:flex;align-items:center;gap:6px">' +
-              '<span style="font-size:11px;color:var(--text-muted)">' + esc(s.tracking || '') + (s.intermediaire ? ' · ' + esc(s.intermediaire) : '') + '</span>' +
+              (s.intermediaire ? '<span style="font-size:11px;color:var(--text-muted)">' + esc(s.intermediaire) + '</span>' : '') +
+              '<button class="btn btn-sm" style="padding:1px 6px;font-size:11px" onclick="openEditShipmentModal(\'' + s.id + '\',\'' + wineId + '\')" title="' + T('btn_modify') + '">✎</button>' +
               '<button class="btn btn-sm btn-danger" style="padding:1px 6px;font-size:11px" onclick="deleteShipment(\'' + s.id + '\',\'' + wineId + '\')">&times;</button>' +
             '</span>' +
           '</div>' +
@@ -696,6 +724,7 @@ function openWineDetail(wineId) {
             return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-top:4px;flex-wrap:wrap">' +
               '<span style="color:var(--text-muted);min-width:100px">' + (rev ? rev.full : i.revueId) + '</span>' +
               statutBadge(i.statut) +
+              (i.tracking ? '<span style="font-size:11px;color:var(--text-faint)">📦 ' + esc(i.tracking) + '</span>' : '') +
               (i.note ? '<span class="note-pill">' + esc(i.note) + '</span>' : '') +
               '<button class="btn btn-sm" onclick="openEditItem(\'' + i.id + '\',\'' + wineId + '\')">' + T('btn_modify') + '</button>' +
               '<button class="btn btn-sm btn-danger" onclick="deleteItem(\'' + i.id + '\',\'' + wineId + '\')">' + T('btn_delete') + '</button>' +
@@ -779,11 +808,23 @@ async function saveItem(itemId, wineId) {
 
 let selectedWines = new Set();
 let selectedRevues = new Set();
+let trackingValues = {};
 
 function openShipmentModal(preselect) {
   selectedWines = new Set(preselect ? [preselect] : []);
   selectedRevues = new Set();
+  trackingValues = {};
   renderShipmentModal();
+}
+
+function renderTrackingFields() {
+  if (!selectedRevues.size) return '';
+  return '<div class="grid-3" style="margin-top:8px">' +
+    REVUES.filter(r => selectedRevues.has(r.id)).map(r =>
+      '<div class="field"><label>' + T('lbl_tracking_prefix') + ' — ' + r.full + '</label>' +
+      '<input value="' + esc(trackingValues[r.id] || '') + '" oninput="trackingValues[\'' + r.id + '\']=this.value" placeholder="ex: FEDEX 1234567890"></div>'
+    ).join('') +
+  '</div>';
 }
 
 function renderShipmentModal() {
@@ -805,11 +846,11 @@ function renderShipmentModal() {
         '<div class="revue-check' + (selectedRevues.has(r.id) ? ' active' : '') + '" onclick="toggleRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
       ).join('') + '</div>' +
       '<div class="section-title" style="margin-top:16px">' + T('section_details') + '</div>' +
-      '<div class="grid-3">' +
+      '<div class="grid-2">' +
         '<div class="field"><label>'+T('lbl_date_envoi')+'</label><input type="date" id="sh_date" value="' + today + '"></div>' +
-        '<div class="field"><label>'+T('lbl_tracking')+'</label><input id="sh_tracking" placeholder="ex: FEDEX 1234567890"></div>' +
         '<div class="field"><label>'+T('lbl_inter')+'</label><input id="sh_inter" placeholder="ex: Winesellers"></div>' +
       '</div>' +
+      '<div id="trackingFieldsWrap">' + renderTrackingFields() + '</div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><input id="sh_comment" placeholder="Optionnel"></div>' +
     '</div>' +
     '<div class="modal-footer">' +
@@ -852,6 +893,8 @@ function toggleRevue(id, el) {
   if (selectedRevues.has(id)) selectedRevues.delete(id);
   else selectedRevues.add(id);
   el.classList.toggle('active', selectedRevues.has(id));
+  const tfw = document.getElementById('trackingFieldsWrap');
+  if (tfw) tfw.innerHTML = renderTrackingFields();
   updateShipmentCounts();
 }
 
@@ -875,9 +918,12 @@ async function saveShipment() {
   btn.disabled = true;
 
   try {
+    const trackingByRevue = {};
+    selectedRevues.forEach(rid => { if (trackingValues[rid]) trackingByRevue[rid] = trackingValues[rid]; });
+
     const shipRef = await db.collection('shipments').add({
       dateEnvoi: date,
-      tracking: document.getElementById('sh_tracking').value || null,
+      trackingByRevue,
       intermediaire: document.getElementById('sh_inter').value || null,
       commentaireGlobal: document.getElementById('sh_comment').value || null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -895,6 +941,7 @@ async function saveShipment() {
           note: null,
           deadline: null,
           dateReception: null,
+          tracking: trackingValues[rid] || null,
           commentaire: document.getElementById('sh_comment').value || null,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -1058,23 +1105,35 @@ function renderCatalogue() {
 
 // â”€â”€ ADD WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+function uniqueVals(field) {
+  return [...new Set(wines.map(w => w[field]).filter(Boolean))].sort();
+}
+
+function datalistsHTML(suffix) {
+  const opts = arr => arr.map(v => '<option value="' + esc(v) + '">').join('');
+  return '<datalist id="dl_pays_' + suffix + '">' + opts(uniqueVals('pays')) + '</datalist>' +
+    '<datalist id="dl_domaine_' + suffix + '">' + opts(uniqueVals('appellation')) + '</datalist>' +
+    '<datalist id="dl_cepage_' + suffix + '">' + opts(uniqueVals('cepage')) + '</datalist>';
+}
+
 function openAddWineModal() {
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
     '<div class="modal-header"><div class="modal-title">' + T('modal_add_wine') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
-        '<div class="field"><label>'+T('lbl_pays')+'</label><input id="aw_pays" placeholder="ex: France"></div>' +
+        '<div class="field"><label>'+T('lbl_pays')+'</label><input id="aw_pays" list="dl_pays_aw" placeholder="ex: France"></div>' +
         '<div class="field"><label>'+T('lbl_couleur')+'</label><select id="aw_couleur"><option>Rouge</option><option>Blanc</option><option>Rosé</option><option>Orange</option></select></div>' +
         '<div class="field"><label>'+T('lbl_denom')+'</label><input id="aw_nom" placeholder="ex: Alta Colección Cabernet Sauvignon"></div>' +
         '<div class="field"><label>'+T('lbl_millesime')+'</label><input id="aw_mil" placeholder="ex: 2022" type="number" min="1900" max="2030"></div>' +
-        '<div class="field"><label>'+T('lbl_marque')+'</label><input id="aw_app" placeholder="ex: Bodega Piedra Negra"></div>' +
-        '<div class="field"><label>'+T('lbl_cepage')+'</label><input id="aw_cep" placeholder="ex: Cabernet Sauvignon"></div>' +
+        '<div class="field"><label>'+T('lbl_marque')+'</label><input id="aw_app" list="dl_domaine_aw" placeholder="ex: Bodega Piedra Negra"></div>' +
+        '<div class="field"><label>'+T('lbl_cepage')+'</label><input id="aw_cep" list="dl_cepage_aw" placeholder="ex: Cabernet Sauvignon"></div>' +
         '<div class="field"><label>'+T('lbl_degre')+'</label><input id="aw_deg" placeholder="ex: 14" type="number" step="0.1" min="0" max="25"></div>' +
         '<div class="field"><label>'+T('lbl_mad')+'</label><input id="aw_mad" type="date"></div>' +
       '</div>' +
       '<div class="field"><label>'+T('lbl_lien')+'</label><input id="aw_link" placeholder="https://... (fiche technique, Dropbox...)"></div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><textarea id="aw_comment" placeholder=""></textarea></div>' +
+      datalistsHTML('aw') +
     '</div>' +
     '<div class="modal-footer">' +
       '<button class="btn btn-sm" onclick="safeCloseModal()">' + T('btn_cancel') + '</button>' +
@@ -1130,19 +1189,20 @@ function openEditWineModal(wineId) {
     '<div class="modal-header"><div class="modal-title">' + T('btn_modify') + ' – ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
       '<div class="grid-2">' +
-        '<div class="field"><label>'+T('lbl_pays')+'</label><input id="ew_pays" value="' + esc(w.pays || '') + '"></div>' +
+        '<div class="field"><label>'+T('lbl_pays')+'</label><input id="ew_pays" list="dl_pays_ew" value="' + esc(w.pays || '') + '"></div>' +
         '<div class="field"><label>'+T('lbl_couleur')+'</label><select id="ew_couleur">' +
           ['Rouge','Blanc','Rosé','Orange'].map(c => '<option' + (w.couleur === c ? ' selected' : '') + '>' + c + '</option>').join('') +
         '</select></div>' +
         '<div class="field"><label>'+T('lbl_denom')+'</label><input id="ew_nom" value="' + esc(w.nom || '') + '"></div>' +
         '<div class="field"><label>'+T('lbl_millesime')+'</label><input id="ew_mil" value="' + esc(w.millesime || '') + '" type="number" min="1900" max="2030"></div>' +
-        '<div class="field"><label>'+T('lbl_marque')+'</label><input id="ew_app" value="' + esc(w.appellation || '') + '"></div>' +
-        '<div class="field"><label>'+T('lbl_cepage')+'</label><input id="ew_cep" value="' + esc(w.cepage || '') + '"></div>' +
+        '<div class="field"><label>'+T('lbl_marque')+'</label><input id="ew_app" list="dl_domaine_ew" value="' + esc(w.appellation || '') + '"></div>' +
+        '<div class="field"><label>'+T('lbl_cepage')+'</label><input id="ew_cep" list="dl_cepage_ew" value="' + esc(w.cepage || '') + '"></div>' +
         '<div class="field"><label>'+T('lbl_degre')+'</label><input id="ew_deg" value="' + esc(w.degre || '') + '" type="number" step="0.1" min="0" max="25"></div>' +
         '<div class="field"><label>'+T('lbl_mad')+'</label><input id="ew_mad" type="date" value="' + (w.mad || '') + '"></div>' +
       '</div>' +
       '<div class="field"><label>'+T('lbl_lien')+'</label><input id="ew_link" value="' + esc(w.lienExterne || '') + '" placeholder="https://..."></div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><textarea id="ew_comment">' + esc(w.commentaire || '') + '</textarea></div>' +
+      datalistsHTML('ew') +
     '</div>' +
     '<div class="modal-footer">' +
       '<button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + wineId + '\')">' + T('btn_delete') + '</button>' +
@@ -1216,6 +1276,42 @@ function deleteShipment(shipmentId, wineId) {
       toast('Erreur : ' + e.message, 'error');
     }
   }, 'Supprimer', 'btn-danger');
+}
+
+function openEditShipmentModal(shipmentId, wineId) {
+  const s = shipments.find(x => x.id === shipmentId);
+  if (!s) return;
+  closeModal();
+  const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
+  '<div class="modal" style="max-width:360px">' +
+    '<div class="modal-header"><div class="modal-title">' + T('modal_edit_shipment') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="field"><label>'+T('lbl_date_envoi')+'</label><input type="date" id="esh_date" value="' + (s.dateEnvoi || '') + '"></div>' +
+    '</div>' +
+    '<div class="modal-footer">' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">' + T('btn_cancel') + '</button>' +
+      '<button class="btn btn-sm btn-primary" id="btnSaveShipmentDate" onclick="updateShipmentDate(\'' + shipmentId + '\',\'' + wineId + '\')">' + T('btn_save') + '</button>' +
+    '</div>' +
+  '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function updateShipmentDate(shipmentId, wineId) {
+  const date = document.getElementById('esh_date').value;
+  if (!date) { toast(T('toast_fill_required'), 'warn'); return; }
+  const btn = document.getElementById('btnSaveShipmentDate');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  try {
+    await db.collection('shipments').doc(shipmentId).update({ dateEnvoi: date });
+    closeModal();
+    toast(T('toast_shipment_updated'));
+    setTimeout(() => openWineDetail(wineId), 200);
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = T('btn_save');
+  }
 }
 
 function deleteWine(id) {
@@ -1400,7 +1496,7 @@ fr: [
       'Dans le Tracker, cliquez <strong>+ Nouvel envoi</strong>.',
       '<strong>Étape 1</strong> — Sélectionnez un ou plusieurs vins (recherche disponible).',
       '<strong>Étape 2</strong> — Cochez les revues ciblées : WS, WE, Vinous, JS, WA, W&S, Decanter.',
-      '<strong>Étape 3</strong> — Renseignez la date d\'envoi (obligatoire), tracking et intermédiaire (optionnels).',
+      '<strong>Étape 3</strong> — Renseignez la date d\'envoi (obligatoire) et l\'intermédiaire (optionnel). Un champ tracking distinct apparaît pour chaque revue cochée.',
     ]},
     { num:'6', title:'Statuts de suivi', steps:[
       'Cliquez sur une ligne du Tracker pour ouvrir la fiche vin, puis sur le crayon d\'un enregistrement.',
@@ -1410,7 +1506,7 @@ fr: [
         ).join('') +
       '</span>',
       'Pour <strong>Noté</strong> : saisissez la note reçue (ex: 92). Un vin est "envoyé" dès qu\'un enregistrement a le statut Envoyé, Reçu ou Noté.',
-      'Suppression possible : enregistrement individuel (icône poubelle) ou envoi entier depuis la fiche vin.',
+      'Suppression possible : enregistrement individuel (icône poubelle) ou envoi entier depuis la fiche vin. Le crayon à côté de la date d\'un envoi permet de la modifier après coup.',
     ]},
     { num:'7', title:'Alertes — code couleur', steps:[
       'L\'onglet Alertes affiche les vins tagués organisés par trimestre.',
@@ -1427,9 +1523,13 @@ fr: [
       '<strong>Tri</strong> — cliquez sur un en-tête de colonne (Pays, Domaine, Dénomination, Mill., Couleur, Note). Un 2ème clic inverse l\'ordre.',
       '<strong>Filtres</strong> — Recherche texte · Pays · Revue · Statut · Trimestre, tous combinables.',
       '<strong>Vue tableau / cartes</strong> — boutons ▤ / ⊞ en haut à droite de la barre de filtres.',
+      '<strong>↺ Réinitialiser</strong> — efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
     ]},
-    { num:'9', title:'Export CSV', steps:[
-      'Cliquez <strong>⬇ Export CSV</strong> dans le Tracker pour télécharger l\'ensemble des données (catalogue + statuts + notes par revue). Compatible Excel et Google Sheets.',
+    { num:'9', title:'Export des données', steps:[
+      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger l\'ensemble des données (catalogue + statuts + notes par revue).',
+    ]},
+    { num:'10', title:'Saisie assistée', steps:[
+      'Dans <strong>Ajouter un vin</strong>, les champs Pays, Domaine/Marque et Cépage proposent une saisie prédictive basée sur les valeurs déjà présentes dans le catalogue.',
     ]},
   ],
 es: [
@@ -1461,7 +1561,7 @@ es: [
       'En el Tracker, haga clic en <strong>+ Nuevo envío</strong>.',
       '<strong>Paso 1</strong> — Seleccione uno o varios vinos (búsqueda disponible).',
       '<strong>Paso 2</strong> — Marque las revistas objetivo: WS, WE, Vinous, JS, WA, W&S, Decanter.',
-      '<strong>Paso 3</strong> — Indique la fecha de envío (obligatorio), seguimiento e intermediario (opcionales).',
+      '<strong>Paso 3</strong> — Indique la fecha de envío (obligatorio) y el intermediario (opcional). Aparece un campo de seguimiento independiente para cada revista marcada.',
     ]},
     { num:'6', title:'Estados de seguimiento', steps:[
       'Haga clic en una línea del Tracker para abrir la ficha del vino, luego en el lápiz de un registro.',
@@ -1471,7 +1571,7 @@ es: [
         ).join('') +
       '</span>',
       'Para <strong>Evaluado</strong>: introduzca la nota recibida (ej: 92). Un vino está "enviado" en cuanto un registro tiene estado Enviado, Recibido o Evaluado.',
-      'Eliminación posible: registro individual (icono papelera) o envío completo desde la ficha del vino.',
+      'Eliminación posible: registro individual (icono papelera) o envío completo desde la ficha del vino. El lápiz junto a la fecha de un envío permite modificarla después.',
     ]},
     { num:'7', title:'Alertas — código de color', steps:[
       'La pestaña Alertas muestra los vinos etiquetados organizados por trimestre.',
@@ -1488,9 +1588,13 @@ es: [
       '<strong>Orden</strong> — haga clic en un encabezado de columna (País, Dominio, Denominación, Añada, Color). Un 2º clic invierte el orden.',
       '<strong>Filtros</strong> — Búsqueda texto · País · Revista · Estado · Trimestre, todos combinables.',
       '<strong>Vista tabla / tarjetas</strong> — botones ▤ / ⊞ arriba a la derecha de la barra de filtros.',
+      '<strong>↺ Restablecer</strong> — borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},
-    { num:'9', title:'Exportar CSV', steps:[
-      'Haga clic en <strong>⬇ Exportar CSV</strong> en el Tracker para descargar todos los datos (catálogo + estados + notas por revista). Compatible con Excel y Google Sheets.',
+    { num:'9', title:'Exportar datos', steps:[
+      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar todos los datos (catálogo + estados + notas por revista).',
+    ]},
+    { num:'10', title:'Entrada asistida', steps:[
+      'En <strong>Añadir un vino</strong>, los campos País, Dominio/Marca y Variedad ofrecen autocompletado basado en los valores ya presentes en el catálogo.',
     ]},
   ],
 };
@@ -1543,6 +1647,23 @@ function exportCSV() {
   a.click();
 }
 
+function exportXLSX() {
+  const wrs = getWineRevueStatus();
+  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Cépage','Degré','Lien externe','Commentaire'].concat(
+    REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
+  );
+  const rows = wines.map(w => [
+    w.pays, w.nom, w.appellation, w.millesime || '', w.couleur,
+    w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
+  ].concat(
+    REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
+  ));
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Press Tracker');
+  XLSX.writeFile(wb, 'press_tracker_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+}
+
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EVENT BINDINGS
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -1551,6 +1672,9 @@ document.getElementById('btnLogin').addEventListener('click', doLogin);
 document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 document.getElementById('btnExport').addEventListener('click', exportCSV);
+document.getElementById('btnExportXlsx').addEventListener('click', exportXLSX);
+document.getElementById('btnResetTracker').addEventListener('click', resetTrackerFilters);
+document.getElementById('btnResetCatalogue').addEventListener('click', resetCatalogueFilters);
 document.getElementById('btnNewShipment').addEventListener('click', () => openShipmentModal());
 document.getElementById('btnAddWine').addEventListener('click', openAddWineModal);
 document.getElementById('btnPaste').addEventListener('click', openPasteModal);
