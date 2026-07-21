@@ -40,13 +40,16 @@ fr: {
   filter_all_trim:'Tous trimestres', filter_all_couleurs:'Toutes couleurs', filter_all:'Tous',
   filter_non_soumis:'Non soumis', filter_soumis:'Soumis',
   filter_search:'Rechercher un vin...', filter_search_cat:'Rechercher...', filter_wines:'Filtrer les vins...',
-  statut_note:'Noté', statut_recu:'Reçu', statut_envoye:'Envoyé', statut_pending:'En attente',
+  statut_note:'Noté', statut_recu:'Reçu', statut_envoye:'Envoyé', statut_pending:'En attente', statut_soumis:'Soumis',
   color_rouge:'Rouge', color_blanc:'Blanc', color_rose:'Rosé', color_orange:'Orange',
   lbl_pays:'Pays *', lbl_couleur:'Couleur *', lbl_denom:'Dénomination *', lbl_millesime:'Millésime *',
   lbl_marque:'Domaine ou Marque *', lbl_cepage:'Cépage', lbl_degre:"Degré d'alcool",
   lbl_mad:'MAD (mise à disposition)', lbl_lien:'Lien externe', lbl_comment:'Commentaire',
   lbl_statut:'Statut', lbl_note:'Note reçue', lbl_date_recep:'Date réception',
   lbl_date_envoi:"Date d'envoi *", lbl_tracking:'Numéro de tracking', lbl_inter:'Intermédiaire',
+  lbl_date_envoi_opt:"Date d'envoi", lbl_date_soumission:'Date de soumission',
+  hint_one_date:"Renseignez soit la date d'envoi, soit la date de soumission (une seule des deux, obligatoire).",
+  detail_soumis_le:'Soumis le',
   modal_add_wine:'Ajouter un vin', modal_import:'Import en bloc', modal_shipment:'Nouvel envoi groupé',
   col_pays:'Pays', col_marque:'Domaine / Marque', col_denom:'Dénomination',
   col_mil:'Mill.', col_couleur:'Couleur', col_millesime:'Millésime', col_cepage:'Cépage',
@@ -90,13 +93,16 @@ es: {
   filter_all_trim:'Todos los trimestres', filter_all_couleurs:'Todos los colores', filter_all:'Todos',
   filter_non_soumis:'No enviado', filter_soumis:'Enviado',
   filter_search:'Buscar un vino...', filter_search_cat:'Buscar...', filter_wines:'Filtrar los vinos...',
-  statut_note:'Evaluado', statut_recu:'Recibido', statut_envoye:'Enviado', statut_pending:'Pendiente',
+  statut_note:'Evaluado', statut_recu:'Recibido', statut_envoye:'Enviado', statut_pending:'Pendiente', statut_soumis:'Presentado',
   color_rouge:'Tinto', color_blanc:'Blanco', color_rose:'Rosado', color_orange:'Naranja',
   lbl_pays:'País *', lbl_couleur:'Color *', lbl_denom:'Denominación *', lbl_millesime:'Añada *',
   lbl_marque:'Dominio o Marca *', lbl_cepage:'Variedad', lbl_degre:'Grado de alcohol',
   lbl_mad:'MAD (puesta a disposición)', lbl_lien:'Enlace externo', lbl_comment:'Comentario',
   lbl_statut:'Estado', lbl_note:'Nota recibida', lbl_date_recep:'Fecha de recepción',
   lbl_date_envoi:'Fecha de envío *', lbl_tracking:'Número de seguimiento', lbl_inter:'Intermediario',
+  lbl_date_envoi_opt:'Fecha de envío', lbl_date_soumission:'Fecha de presentación',
+  hint_one_date:'Indique la fecha de envío o la fecha de presentación (solo una de las dos, obligatoria).',
+  detail_soumis_le:'Presentado el',
   modal_add_wine:'Añadir un vino', modal_import:'Importar en bloque', modal_shipment:'Nuevo envío agrupado',
   col_pays:'País', col_marque:'Dominio / Marca', col_denom:'Denominación',
   col_mil:'Añada', col_couleur:'Color', col_millesime:'Añada', col_cepage:'Variedad',
@@ -201,12 +207,13 @@ function applyStaticI18n() {
   }
   // Statut filter
   const sSel = $('filterStatut');
-  if (sSel && sSel.options.length >= 5) {
+  if (sSel && sSel.options.length >= 6) {
     sSel.options[0].text = T('filter_all_statuts');
     sSel.options[1].text = T('statut_note');
     sSel.options[2].text = T('statut_recu');
     sSel.options[3].text = T('statut_envoye');
-    sSel.options[4].text = T('statut_pending');
+    sSel.options[4].text = T('statut_soumis');
+    sSel.options[5].text = T('statut_pending');
   }
   // Sent filter
   const sentSel = $('catFilterSent');
@@ -275,8 +282,10 @@ function trimBadge(qid) {
     'background:' + c + '22;color:' + c + ';border:1px solid ' + c + '44">' + qid + '</span>';
 }
 
+const SENT_STATUTS = ['envoyé','reçu','noté'];
+
 function isWineSent(wineId) {
-  return shipmentItems.some(i => i.wineId === wineId && ['envoyé','reçu','noté'].includes(i.statut));
+  return shipmentItems.some(i => i.wineId === wineId && SENT_STATUTS.includes(i.statut));
 }
 
 function getTrimestreAlerts() {
@@ -379,7 +388,7 @@ function initApp() {
 
   unsubShipments = db.collection('shipments').onSnapshot(snap => {
     shipments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    shipments.sort((a, b) => (b.dateEnvoi || '').localeCompare(a.dateEnvoi || ''));
+    shipments.sort((a, b) => (b.dateEnvoi || b.dateSoumission || '').localeCompare(a.dateEnvoi || a.dateSoumission || ''));
     loaded.shipments = true;
     checkReady();
   }, err => { console.error('shipments:', err); loaded.shipments = true; checkReady(); });
@@ -472,8 +481,8 @@ function couleurBadge(c) {
 }
 
 function statutBadge(st) {
-  const map = { 'noté': 'badge-noté', 'envoyé': 'badge-envoyé', 'reçu': 'badge-reçu', 'pending': 'badge-pending' };
-  const labels = { 'noté': T('statut_note'), 'envoyé': T('statut_envoye'), 'reçu': T('statut_recu'), 'pending': T('statut_pending') };
+  const map = { 'noté': 'badge-noté', 'envoyé': 'badge-envoyé', 'reçu': 'badge-reçu', 'soumis': 'badge-soumis', 'pending': 'badge-pending' };
+  const labels = { 'noté': T('statut_note'), 'envoyé': T('statut_envoye'), 'reçu': T('statut_recu'), 'soumis': T('statut_soumis'), 'pending': T('statut_pending') };
   return '<span class="badge ' + (map[st] || 'badge-pending') + '">' + (labels[st] || st) + '</span>';
 }
 
@@ -496,7 +505,7 @@ function getWineRevueStatus() {
       result[w.id][r.id] = { statut: 'pending', note: '', deadline: '', commentaire: '', dateReception: '', shipmentId: null, itemId: null };
     });
   });
-  const order = ['pending', 'envoyé', 'reçu', 'noté'];
+  const order = ['pending', 'soumis', 'envoyé', 'reçu', 'noté'];
   shipmentItems.forEach(item => {
     const wid = item.wineId;
     const rid = item.revueId;
@@ -712,7 +721,7 @@ function openWineDetail(wineId) {
         const items = shipmentItems.filter(i => i.wineId === wineId && i.shipmentId === s.id);
         return '<div style="background:var(--bg);border-radius:var(--radius);padding:10px;margin-bottom:8px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px">' +
-            '<span style="font-size:12px;font-weight:500">' + T('detail_envoi_du') + ' ' + fmtDate(s.dateEnvoi) + '</span>' +
+            '<span style="font-size:12px;font-weight:500">' + (s.dateEnvoi ? T('detail_envoi_du') + ' ' + fmtDate(s.dateEnvoi) : T('detail_soumis_le') + ' ' + fmtDate(s.dateSoumission)) + '</span>' +
             '<span style="display:flex;align-items:center;gap:6px">' +
               (s.intermediaire ? '<span style="font-size:11px;color:var(--text-muted)">' + esc(s.intermediaire) + '</span>' : '') +
               '<button class="btn btn-sm" style="padding:1px 6px;font-size:11px" onclick="openEditShipmentModal(\'' + s.id + '\',\'' + wineId + '\')" title="' + T('btn_modify') + '">✎</button>' +
@@ -764,6 +773,7 @@ function openEditItem(itemId, wineId) {
     '<div class="modal-body">' +
       '<div class="grid-2">' +
         '<div class="field"><label>'+T('lbl_statut')+'</label><select id="ei_statut">' +
+          '<option value="soumis"' + (item.statut === 'soumis' ? ' selected' : '') + '>'+T('statut_soumis')+'</option>' +
           '<option value="envoyé"' + (item.statut === 'envoyé' ? ' selected' : '') + '>'+T('statut_envoye')+'</option>' +
           '<option value="reçu"' + (item.statut === 'reçu' ? ' selected' : '') + '>'+T('statut_recu')+'</option>' +
           '<option value="noté"' + (item.statut === 'noté' ? ' selected' : '') + '>'+T('statut_note')+'</option>' +
@@ -828,7 +838,6 @@ function renderTrackingFields() {
 }
 
 function renderShipmentModal() {
-  const today = new Date().toISOString().split('T')[0];
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal modal-lg">' +
     '<div class="modal-header">' +
@@ -846,10 +855,12 @@ function renderShipmentModal() {
         '<div class="revue-check' + (selectedRevues.has(r.id) ? ' active' : '') + '" onclick="toggleRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
       ).join('') + '</div>' +
       '<div class="section-title" style="margin-top:16px">' + T('section_details') + '</div>' +
-      '<div class="grid-2">' +
-        '<div class="field"><label>'+T('lbl_date_envoi')+'</label><input type="date" id="sh_date" value="' + today + '"></div>' +
+      '<div class="grid-3">' +
+        '<div class="field"><label>'+T('lbl_date_envoi_opt')+'</label><input type="date" id="sh_date" oninput="if(this.value)document.getElementById(\'sh_date_soumission\').value=\'\'"></div>' +
+        '<div class="field"><label>'+T('lbl_date_soumission')+'</label><input type="date" id="sh_date_soumission" oninput="if(this.value)document.getElementById(\'sh_date\').value=\'\'"></div>' +
         '<div class="field"><label>'+T('lbl_inter')+'</label><input id="sh_inter" placeholder="ex: Winesellers"></div>' +
       '</div>' +
+      '<div style="font-size:11px;color:var(--text-faint);margin:-4px 0 8px">' + T('hint_one_date') + '</div>' +
       '<div id="trackingFieldsWrap">' + renderTrackingFields() + '</div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><input id="sh_comment" placeholder="Optionnel"></div>' +
     '</div>' +
@@ -910,8 +921,11 @@ function updateShipmentCounts() {
 async function saveShipment() {
   if (!selectedWines.size) { toast('Sélectionnez au moins un vin.', 'warn'); return; }
   if (!selectedRevues.size) { toast('Sélectionnez au moins une revue.', 'warn'); return; }
-  const date = document.getElementById('sh_date').value;
-  if (!date) { toast("La date d'envoi est obligatoire.", 'warn'); return; }
+  const dateEnvoi = document.getElementById('sh_date').value;
+  const dateSoumission = document.getElementById('sh_date_soumission').value;
+  if (dateEnvoi && dateSoumission) { toast(T('hint_one_date'), 'warn'); return; }
+  if (!dateEnvoi && !dateSoumission) { toast(T('hint_one_date'), 'warn'); return; }
+  const statutInit = dateSoumission ? 'soumis' : 'envoyé';
 
   const btn = document.getElementById('btnSaveShipment');
   btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
@@ -922,7 +936,8 @@ async function saveShipment() {
     selectedRevues.forEach(rid => { if (trackingValues[rid]) trackingByRevue[rid] = trackingValues[rid]; });
 
     const shipRef = await db.collection('shipments').add({
-      dateEnvoi: date,
+      dateEnvoi: dateEnvoi || null,
+      dateSoumission: dateSoumission || null,
       trackingByRevue,
       intermediaire: document.getElementById('sh_inter').value || null,
       commentaireGlobal: document.getElementById('sh_comment').value || null,
@@ -937,7 +952,7 @@ async function saveShipment() {
           shipmentId: shipRef.id,
           wineId: wid,
           revueId: rid,
-          statut: 'envoyé',
+          statut: statutInit,
           note: null,
           deadline: null,
           dateReception: null,
@@ -1069,7 +1084,7 @@ function renderCatalogue() {
     if (fCouleur && w.couleur !== fCouleur) return false;
     if (fCatTrimestre && w.trimestre !== fCatTrimestre) return false;
     if (fSent) {
-      const allPending = Object.values(wrs[w.id] || {}).every(x => x.statut === 'pending');
+      const allPending = Object.values(wrs[w.id] || {}).every(x => !SENT_STATUTS.includes(x.statut));
       if (fSent === 'none' && !allPending) return false;
       if (fSent === 'any' && allPending) return false;
     }
@@ -1079,7 +1094,7 @@ function renderCatalogue() {
   const tbody = document.getElementById('catTableBody');
   document.getElementById('catEmpty').style.display = filtered.length ? 'none' : 'block';
   tbody.innerHTML = filtered.map(w => {
-    const sent = Object.values(wrs[w.id] || {}).filter(x => x.statut !== 'pending').length;
+    const sent = Object.values(wrs[w.id] || {}).filter(x => SENT_STATUTS.includes(x.statut)).length;
     const sentBadge = sent === 0
       ? '<span style="color:var(--text-faint);font-size:11px">–</span>'
       : '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 7px;border-radius:10px;font-weight:500">' + sent + '/' + REVUES.length + '</span>';
@@ -1286,7 +1301,7 @@ function openEditShipmentModal(shipmentId, wineId) {
   '<div class="modal" style="max-width:360px">' +
     '<div class="modal-header"><div class="modal-title">' + T('modal_edit_shipment') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
-      '<div class="field"><label>'+T('lbl_date_envoi')+'</label><input type="date" id="esh_date" value="' + (s.dateEnvoi || '') + '"></div>' +
+      '<div class="field"><label>' + (s.dateSoumission ? T('lbl_date_soumission') : T('lbl_date_envoi')) + '</label><input type="date" id="esh_date" value="' + (s.dateEnvoi || s.dateSoumission || '') + '"></div>' +
     '</div>' +
     '<div class="modal-footer">' +
       '<button class="btn btn-sm" onclick="safeCloseModal()">' + T('btn_cancel') + '</button>' +
@@ -1299,11 +1314,13 @@ function openEditShipmentModal(shipmentId, wineId) {
 async function updateShipmentDate(shipmentId, wineId) {
   const date = document.getElementById('esh_date').value;
   if (!date) { toast(T('toast_fill_required'), 'warn'); return; }
+  const s = shipments.find(x => x.id === shipmentId);
+  const field = s && s.dateSoumission ? 'dateSoumission' : 'dateEnvoi';
   const btn = document.getElementById('btnSaveShipmentDate');
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
   try {
-    await db.collection('shipments').doc(shipmentId).update({ dateEnvoi: date });
+    await db.collection('shipments').doc(shipmentId).update({ [field]: date });
     closeModal();
     toast(T('toast_shipment_updated'));
     setTimeout(() => openWineDetail(wineId), 200);
@@ -1496,15 +1513,16 @@ fr: [
       'Dans le Tracker, cliquez <strong>+ Nouvel envoi</strong>.',
       '<strong>Étape 1</strong> — Sélectionnez un ou plusieurs vins (recherche disponible).',
       '<strong>Étape 2</strong> — Cochez les revues ciblées : WS, WE, Vinous, JS, WA, W&S, Decanter.',
-      '<strong>Étape 3</strong> — Renseignez la date d\'envoi (obligatoire) et l\'intermédiaire (optionnel). Un champ tracking distinct apparaît pour chaque revue cochée.',
+      '<strong>Étape 3</strong> — Renseignez soit la date d\'envoi, soit la date de soumission (une seule des deux, obligatoire), et l\'intermédiaire (optionnel). Un champ tracking distinct apparaît pour chaque revue cochée.',
     ]},
     { num:'6', title:'Statuts de suivi', steps:[
       'Cliquez sur une ligne du Tracker pour ouvrir la fiche vin, puis sur le crayon d\'un enregistrement.',
       '<span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:2px">' +
-        [['envoyé','#eaf3de','#3b6d11'],['reçu','#e6f1fb','#185fa5'],['noté','#eeedfe','#534ab7']].map(([s,bg,c]) =>
+        [['soumis','#faeeda','#633806'],['envoyé','#eaf3de','#3b6d11'],['reçu','#e6f1fb','#185fa5'],['noté','#eeedfe','#534ab7']].map(([s,bg,c]) =>
           '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:'+bg+';color:'+c+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span>'
         ).join('') +
       '</span>',
+      '<strong>Soumis</strong> : le vin a été soumis (ex : à un intermédiaire) mais pas encore réellement expédié au critique — il reste considéré comme non envoyé pour les alertes de trimestre et le filtre Catalogue.',
       'Pour <strong>Noté</strong> : saisissez la note reçue (ex: 92). Un vin est "envoyé" dès qu\'un enregistrement a le statut Envoyé, Reçu ou Noté.',
       'Suppression possible : enregistrement individuel (icône poubelle) ou envoi entier depuis la fiche vin. Le crayon à côté de la date d\'un envoi permet de la modifier après coup.',
     ]},
@@ -1561,15 +1579,16 @@ es: [
       'En el Tracker, haga clic en <strong>+ Nuevo envío</strong>.',
       '<strong>Paso 1</strong> — Seleccione uno o varios vinos (búsqueda disponible).',
       '<strong>Paso 2</strong> — Marque las revistas objetivo: WS, WE, Vinous, JS, WA, W&S, Decanter.',
-      '<strong>Paso 3</strong> — Indique la fecha de envío (obligatorio) y el intermediario (opcional). Aparece un campo de seguimiento independiente para cada revista marcada.',
+      '<strong>Paso 3</strong> — Indique la fecha de envío o la fecha de presentación (solo una de las dos, obligatoria), y el intermediario (opcional). Aparece un campo de seguimiento independiente para cada revista marcada.',
     ]},
     { num:'6', title:'Estados de seguimiento', steps:[
       'Haga clic en una línea del Tracker para abrir la ficha del vino, luego en el lápiz de un registro.',
       '<span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:2px">' +
-        [['Enviado','#eaf3de','#3b6d11'],['Recibido','#e6f1fb','#185fa5'],['Evaluado','#eeedfe','#534ab7']].map(([s,bg,c]) =>
+        [['Presentado','#faeeda','#633806'],['Enviado','#eaf3de','#3b6d11'],['Recibido','#e6f1fb','#185fa5'],['Evaluado','#eeedfe','#534ab7']].map(([s,bg,c]) =>
           '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:'+bg+';color:'+c+'">'+s+'</span>'
         ).join('') +
       '</span>',
+      '<strong>Presentado</strong>: el vino ha sido presentado (ej: a un intermediario) pero aún no enviado realmente al crítico — sigue considerado como no enviado para las alertas de trimestre y el filtro del Catálogo.',
       'Para <strong>Evaluado</strong>: introduzca la nota recibida (ej: 92). Un vino está "enviado" en cuanto un registro tiene estado Enviado, Recibido o Evaluado.',
       'Eliminación posible: registro individual (icono papelera) o envío completo desde la ficha del vino. El lápiz junto a la fecha de un envío permite modificarla después.',
     ]},
