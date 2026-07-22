@@ -12,6 +12,16 @@ const REVUES = [
   { id: 'd',   label: 'Dec.',   full: 'Decanter' },
 ];
 
+const REVUE_COLORS = {
+  ws:  { bg: '#f1e8fd', text: '#7c3aed' },
+  we:  { bg: '#fce7f3', text: '#be185d' },
+  v:   { bg: '#ccfbf1', text: '#0f766e' },
+  js:  { bg: '#e0e7ff', text: '#4338ca' },
+  wa:  { bg: '#cffafe', text: '#0e7490' },
+  ws2: { bg: '#ffe4e6', text: '#9f1239' },
+  d:   { bg: '#ecfccb', text: '#4d7c0f' },
+};
+
 
 const TRIMESTRES = [
   { id: 'Q1', label: '1er trimestre',  months: 'Jan – Mars',  endMonth: 2,  endDay: 31 },
@@ -300,6 +310,19 @@ function isWineSent(wineId) {
 
 function isWineSoumis(wineId) {
   return shipmentItems.some(i => i.wineId === wineId && i.statut === 'soumis');
+}
+
+function wineRevueIdsByStatuts(wineId, statuts) {
+  return [...new Set(shipmentItems.filter(i => i.wineId === wineId && statuts.includes(i.statut)).map(i => i.revueId))];
+}
+
+function revuePillsHTML(rids) {
+  return rids.map(rid => {
+    const r = REVUES.find(x => x.id === rid);
+    const lbl = r ? r.label : rid;
+    const c = REVUE_COLORS[rid] || { bg: '#f1e8fd', text: '#7c3aed' };
+    return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:' + c.bg + ';color:' + c.text + '">' + esc(lbl) + '</span>';
+  }).join('');
 }
 
 function getTrimestreAlerts() {
@@ -1576,11 +1599,32 @@ function renderAlerts() {
       if (state === 'overdue')  { rowBg = '#fee2e214'; dotColor = '#ef4444'; }
       else if (state === 'warning') { rowBg = '#fef3cd14'; dotColor = '#f59e0b'; }
       else if (state === 'sent') { dotColor = 'var(--green-text,#10b981)'; }
-      let tag = '';
-      if (state === 'overdue') tag = '<span class="deadline-tag deadline-urgent">' + T('alert_expire') + '</span>';
-      else if (state === 'warning') tag = '<span class="deadline-tag deadline-soon">J-' + daysLeft + '</span>';
-      else if (state === 'sent') tag = '<span class="deadline-tag" style="background:var(--green-bg);color:var(--green-text)">' + T('alert_envoye') + '</span>';
-      else if (isWineSoumis(w.id)) tag = '<span class="deadline-tag" style="background:#faeeda;color:#633806">' + T('statut_soumis') + '</span>';
+      let tagBlocks = [];
+      if (state === 'overdue') {
+        tagBlocks.push({ tag: '<span class="deadline-tag deadline-urgent">' + T('alert_expire') + '</span>', pills: '' });
+      } else if (state === 'warning') {
+        tagBlocks.push({ tag: '<span class="deadline-tag deadline-soon">J-' + daysLeft + '</span>', pills: '' });
+      } else {
+        const sentRids = wineRevueIdsByStatuts(w.id, SENT_STATUTS);
+        if (sentRids.length) {
+          tagBlocks.push({
+            tag: '<span class="deadline-tag" style="background:var(--green-bg);color:var(--green-text)">' + T('alert_envoye') + '</span>',
+            pills: revuePillsHTML(sentRids)
+          });
+        }
+        const soumisRids = wineRevueIdsByStatuts(w.id, ['soumis']);
+        if (soumisRids.length) {
+          tagBlocks.push({
+            tag: '<span class="deadline-tag" style="background:#faeeda;color:#633806">' + T('statut_soumis') + '</span>',
+            pills: revuePillsHTML(soumisRids)
+          });
+        }
+      }
+      const tagsHTML = tagBlocks.map(b =>
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' + b.tag +
+        (b.pills ? '<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">' + b.pills + '</div>' : '') +
+        '</div>'
+      ).join('');
       html += '<div class="alert-item"' + (rowBg ? ' style="background:' + rowBg + '"' : '') +
         ' onclick="openWineDetail(\'' + w.id + '\')">' +
         '<div style="display:flex;align-items:center;gap:10px">' +
@@ -1590,11 +1634,11 @@ function renderAlerts() {
             '<div style="font-size:11px;color:var(--text-muted)">' + esc(w.pays) + (w.nom ? ' · ' + esc(w.nom) : '') + '</div>' +
             (w.cibleRevues && w.cibleRevues.length ? '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:5px">' +
               '<span style="font-size:10px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.04em">' + T('alert_target') + '</span>' +
-              w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); const lbl = r ? r.label : rid; return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:#f1e8fd;color:#7c3aed">' + esc(lbl) + '</span>'; }).join('') +
+              w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); const lbl = r ? r.label : rid; const c = REVUE_COLORS[rid] || { bg: '#f1e8fd', text: '#7c3aed' }; return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:' + c.bg + ';color:' + c.text + '">' + esc(lbl) + '</span>'; }).join('') +
             '</div>' : '') +
           '</div>' +
         '</div>' +
-        '<div>' + tag + '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">' + tagsHTML + '</div>' +
       '</div>';
     });
   });
