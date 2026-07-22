@@ -325,6 +325,14 @@ function revuePillsHTML(rids) {
   }).join('');
 }
 
+function revuePillsGrayHTML(rids) {
+  return rids.map(rid => {
+    const r = REVUES.find(x => x.id === rid);
+    const lbl = r ? r.label : rid;
+    return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:var(--gray-bg);color:var(--gray-text)">' + esc(lbl) + '</span>';
+  }).join('');
+}
+
 function getTrimestreAlerts() {
   return wines.filter(w => {
     if (!w.trimestre) return false;
@@ -1107,18 +1115,20 @@ function toggleTagRevue(id, el) {
 
 function openTagModal() {
   if (!catSelected.size) return;
-  tagSelectedRevues = new Set();
+  const single = catSelected.size === 1 ? wines.find(w => w.id === [...catSelected][0]) : null;
+  tagSelectedRevues = new Set(single && single.cibleRevues ? single.cibleRevues : []);
+  const currentTrimestre = single ? single.trimestre : null;
   const html = '<div class="modal-overlay confirm-overlay" onclick="if(event.target===this)this.remove()">' +
     '<div class="modal" style="max-width:380px;width:90%">' +
       '<div class="modal-body" style="padding:20px 20px 12px">' +
         '<p style="font-size:14px;font-weight:500;margin-bottom:12px">' + (LANG==='es'?'Etiquetar':'Taguer') + ' ' + catSelected.size + ' ' + (LANG==='es'?'vino(s)':'vin(s)') + ' · ' + (LANG==='es'?"trimestre de envío":"trimestre d\'envoi") + '</p>' +
         '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">' + T('tag_revues_label') + '</div>' +
         '<div class="revue-checkboxes" style="margin-bottom:14px">' + REVUES.map(r =>
-          '<div class="revue-check" onclick="toggleTagRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
+          '<div class="revue-check' + (tagSelectedRevues.has(r.id) ? ' active' : '') + '" onclick="toggleTagRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
         ).join('') + '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
           TRIMESTRES.map(td =>
-            '<button class="btn btn-sm" style="justify-content:center;flex-direction:column;gap:4px;padding:10px 8px" onclick="applyTrimTag(\'' + td.id + '\')">' +
+            '<button class="btn btn-sm" style="justify-content:center;flex-direction:column;gap:4px;padding:10px 8px' + (currentTrimestre === td.id ? ';border-color:var(--accent);border-width:2px' : '') + '" onclick="applyTrimTag(\'' + td.id + '\')">' +
               trimBadge(td.id) +
               '<span style="font-size:10px;color:var(--text-muted)">' + T(td.id.toLowerCase()+'_months') + '</span>' +
             '</button>'
@@ -1136,10 +1146,19 @@ function openTagModal() {
 async function applyTrimTag(qid) {
   document.querySelector('.confirm-overlay')?.remove();
   const ids = [...catSelected];
-  const cibleRevues = qid && tagSelectedRevues.size ? [...tagSelectedRevues] : null;
   try {
     const batch = db.batch();
-    ids.forEach(id => batch.update(db.collection('wines').doc(id), { trimestre: qid || null, cibleRevues }));
+    if (qid && ids.length > 1) {
+      // Sélection multiple : le trimestre remplace, les critiques s'ajoutent à ceux déjà présents sur chaque vin.
+      ids.forEach(id => {
+        const w = wines.find(x => x.id === id);
+        const merged = [...new Set([...(w && w.cibleRevues || []), ...tagSelectedRevues])];
+        batch.update(db.collection('wines').doc(id), { trimestre: qid, cibleRevues: merged.length ? merged : null });
+      });
+    } else {
+      const cibleRevues = qid && tagSelectedRevues.size ? [...tagSelectedRevues] : null;
+      ids.forEach(id => batch.update(db.collection('wines').doc(id), { trimestre: qid || null, cibleRevues }));
+    }
     await batch.commit();
     catSelected.clear();
     tagSelectedRevues.clear();
@@ -1609,14 +1628,14 @@ function renderAlerts() {
         if (sentRids.length) {
           tagBlocks.push({
             tag: '<span class="deadline-tag" style="background:var(--green-bg);color:var(--green-text)">' + T('alert_envoye') + '</span>',
-            pills: revuePillsHTML(sentRids)
+            pills: revuePillsGrayHTML(sentRids)
           });
         }
         const soumisRids = wineRevueIdsByStatuts(w.id, ['soumis']);
         if (soumisRids.length) {
           tagBlocks.push({
             tag: '<span class="deadline-tag" style="background:#faeeda;color:#633806">' + T('statut_soumis') + '</span>',
-            pills: revuePillsHTML(soumisRids)
+            pills: revuePillsGrayHTML(soumisRids)
           });
         }
       }
