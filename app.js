@@ -59,6 +59,10 @@ fr: {
   alert_empty:"Aucun vin tagé avec un trimestre d'envoi.",
   alert_empty_hint:"Taguez vos vins depuis l'onglet Catalogue.",
   alert_expire:'Expiré', alert_envoye:'Envoyé', tag_remove:'Retirer le tag',
+  legend_title:'Légende', legend_ok:'À venir (+ de 30 jours)', legend_warning:'≤ 30 jours',
+  legend_overdue:'Trimestre terminé, non envoyé', legend_sent:'Envoyé / Reçu / Noté',
+  tag_revues_label:'Critiques ciblés (optionnel)', alert_target:'Cible :',
+  edit_sent_summary_title:'Envoyé à',
   tracker_empty:'Aucun vin trouvé.',
   q1_label:'1er trimestre', q2_label:'2ème trimestre', q3_label:'3ème trimestre', q4_label:'4ème trimestre',
   q1_months:'Jan – Mars', q2_months:'Avr – Juin', q3_months:'Juil – Sept', q4_months:'Oct – Déc',
@@ -112,6 +116,10 @@ es: {
   alert_empty:'Ningún vino etiquetado con un trimestre de envío.',
   alert_empty_hint:'Etiqueta tus vinos desde la pestaña Catálogo.',
   alert_expire:'Vencido', alert_envoye:'Enviado', tag_remove:'Quitar etiqueta',
+  legend_title:'Leyenda', legend_ok:'Próximo (+ de 30 días)', legend_warning:'≤ 30 días',
+  legend_overdue:'Trimestre terminado, no enviado', legend_sent:'Enviado / Recibido / Evaluado',
+  tag_revues_label:'Críticos objetivo (opcional)', alert_target:'Objetivo:',
+  edit_sent_summary_title:'Enviado a',
   tracker_empty:'Ningún vino encontrado.',
   q1_label:'1er trimestre', q2_label:'2º trimestre', q3_label:'3er trimestre', q4_label:'4º trimestre',
   q1_months:'Ene – Mar', q2_months:'Abr – Jun', q3_months:'Jul – Sep', q4_months:'Oct – Dic',
@@ -1034,12 +1042,25 @@ function deleteSelectedWines() {
 }
 
 
+let tagSelectedRevues = new Set();
+
+function toggleTagRevue(id, el) {
+  if (tagSelectedRevues.has(id)) tagSelectedRevues.delete(id);
+  else tagSelectedRevues.add(id);
+  el.classList.toggle('active', tagSelectedRevues.has(id));
+}
+
 function openTagModal() {
   if (!catSelected.size) return;
+  tagSelectedRevues = new Set();
   const html = '<div class="modal-overlay confirm-overlay" onclick="if(event.target===this)this.remove()">' +
-    '<div class="modal" style="max-width:340px;width:90%">' +
+    '<div class="modal" style="max-width:380px;width:90%">' +
       '<div class="modal-body" style="padding:20px 20px 12px">' +
         '<p style="font-size:14px;font-weight:500;margin-bottom:12px">' + (LANG==='es'?'Etiquetar':'Taguer') + ' ' + catSelected.size + ' ' + (LANG==='es'?'vino(s)':'vin(s)') + ' · ' + (LANG==='es'?"trimestre de envío":"trimestre d\'envoi") + '</p>' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">' + T('tag_revues_label') + '</div>' +
+        '<div class="revue-checkboxes" style="margin-bottom:14px">' + REVUES.map(r =>
+          '<div class="revue-check" onclick="toggleTagRevue(\'' + r.id + '\',this)">' + r.full + '</div>'
+        ).join('') + '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
           TRIMESTRES.map(td =>
             '<button class="btn btn-sm" style="justify-content:center;flex-direction:column;gap:4px;padding:10px 8px" onclick="applyTrimTag(\'' + td.id + '\')">' +
@@ -1060,11 +1081,13 @@ function openTagModal() {
 async function applyTrimTag(qid) {
   document.querySelector('.confirm-overlay')?.remove();
   const ids = [...catSelected];
+  const cibleRevues = qid && tagSelectedRevues.size ? [...tagSelectedRevues] : null;
   try {
     const batch = db.batch();
-    ids.forEach(id => batch.update(db.collection('wines').doc(id), { trimestre: qid || null }));
+    ids.forEach(id => batch.update(db.collection('wines').doc(id), { trimestre: qid || null, cibleRevues }));
     await batch.commit();
     catSelected.clear();
+    tagSelectedRevues.clear();
     updateCatSelectionUI();
     toast(ids.length + (LANG==='es'?' vino(s) ':(" vin(s) ")) + (qid ? (LANG==='es'?'etiquetado(s) ':'tagué(s) ') + qid : (LANG==='es'?'sin etiqueta':'détagué(s)')));
   } catch (e) { toast('Erreur : ' + e.message, 'error'); }
@@ -1199,10 +1222,29 @@ function openEditWineModal(wineId) {
   if (!w) return;
   closeModal();
 
+  const wrs = getWineRevueStatus();
+  const sentRows = REVUES.map(r => {
+    const info = wrs[wineId] && wrs[wineId][r.id];
+    if (!info || info.statut === 'pending') return null;
+    const ship = shipments.find(s => s.id === info.shipmentId);
+    const dateStr = ship ? fmtDate(ship.dateEnvoi || ship.dateSoumission) : '';
+    return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:4px">' +
+      '<span style="min-width:110px">' + r.full + '</span>' + statutBadge(info.statut) +
+      (dateStr ? '<span style="color:var(--text-muted)">' + dateStr + '</span>' : '') +
+    '</div>';
+  }).filter(Boolean).join('');
+  const sentSummaryHTML = sentRows ? (
+    '<div style="background:var(--bg);border-radius:var(--radius);padding:10px;margin-bottom:14px">' +
+      '<div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">' + T('edit_sent_summary_title') + '</div>' +
+      sentRows +
+    '</div>'
+  ) : '';
+
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
     '<div class="modal-header"><div class="modal-title">' + T('btn_modify') + ' – ' + esc(w.nom) + ' ' + (w.millesime || '') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
+      sentSummaryHTML +
       '<div class="grid-2">' +
         '<div class="field"><label>'+T('lbl_pays')+'</label><input id="ew_pays" list="dl_pays_ew" value="' + esc(w.pays || '') + '"></div>' +
         '<div class="field"><label>'+T('lbl_couleur')+'</label><select id="ew_couleur">' +
@@ -1432,8 +1474,24 @@ async function importPaste() {
 // ALERTS
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
+function renderAlertsLegend() {
+  const legend = document.getElementById('alertsLegend');
+  if (!legend) return;
+  const items = [
+    ['#b0b3b8', T('legend_ok')],
+    ['#f59e0b', T('legend_warning')],
+    ['#ef4444', T('legend_overdue')],
+    ['var(--green-text,#10b981)', T('legend_sent')],
+  ];
+  legend.innerHTML = '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:10px 14px;margin-bottom:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:12px">' +
+    '<span style="font-weight:600;color:var(--text-muted);text-transform:uppercase;font-size:11px;letter-spacing:.05em">' + T('legend_title') + '</span>' +
+    items.map(([c,l]) => '<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:' + c + ';flex-shrink:0"></span>' + l + '</span>').join('') +
+  '</div>';
+}
+
 function renderAlerts() {
   updateAlertBadge();
+  renderAlertsLegend();
 
   const list = document.getElementById('alertsList');
   if (!list) return;
@@ -1459,9 +1517,9 @@ function renderAlerts() {
       const state = getTrimestreState(td.id, sent);
       const end = getTrimestreEnd(td.id);
       const daysLeft = end ? Math.floor((end - new Date()) / 86400000) : null;
-      let rowBg = '', dotColor = 'var(--text-faint)';
-      if (state === 'overdue')  { rowBg = '#fee2e214'; dotColor = 'var(--red-text,#ef4444)'; }
-      else if (state === 'warning') { rowBg = '#fef3cd14'; dotColor = 'var(--amber-text,#f59e0b)'; }
+      let rowBg = '', dotColor = '#b0b3b8';
+      if (state === 'overdue')  { rowBg = '#fee2e214'; dotColor = '#ef4444'; }
+      else if (state === 'warning') { rowBg = '#fef3cd14'; dotColor = '#f59e0b'; }
       else if (state === 'sent') { dotColor = 'var(--green-text,#10b981)'; }
       let tag = '';
       if (state === 'overdue') tag = '<span class="deadline-tag deadline-urgent">' + T('alert_expire') + '</span>';
@@ -1474,6 +1532,7 @@ function renderAlerts() {
           '<div>' +
             '<div style="font-size:13px;font-weight:500">' + esc(w.appellation) + ' ' + (w.millesime || '') + '</div>' +
             '<div style="font-size:11px;color:var(--text-muted)">' + esc(w.pays) + (w.nom ? ' · ' + esc(w.nom) : '') + '</div>' +
+            (w.cibleRevues && w.cibleRevues.length ? '<div style="font-size:11px;color:var(--text-faint);margin-top:2px">' + T('alert_target') + ' ' + w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); return r ? r.label : rid; }).join(', ') + '</div>' : '') +
           '</div>' +
         '</div>' +
         '<div>' + tag + '</div>' +
