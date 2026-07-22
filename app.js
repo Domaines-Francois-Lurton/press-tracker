@@ -340,25 +340,42 @@ let unsubWines, unsubShipments, unsubItems;
 // AUTH
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-function doLogin() {
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+
+async function doLogin() {
   const pwd = document.getElementById('pwdInput').value;
-  if (pwd !== APP_PASSWORD) {
+  const btn = document.getElementById('btnLogin');
+  document.getElementById('loginError').style.display = 'none';
+  btn.disabled = true;
+  try {
+    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    await auth.signInWithEmailAndPassword(AUTH_EMAIL, pwd);
+  } catch (e) {
     document.getElementById('loginError').style.display = 'block';
-    return;
+    btn.disabled = false;
   }
-  sessionStorage.setItem('pt_auth', '1');
-  document.getElementById('loginWrap').style.display = 'none';
-  document.getElementById('theApp').style.display = 'flex';
-  initApp();
 }
 
 function doLogout() {
-  sessionStorage.removeItem('pt_auth');
   if (unsubWines) unsubWines();
   if (unsubShipments) unsubShipments();
   if (unsubItems) unsubItems();
-  location.reload();
+  auth.signOut();
 }
+
+auth.onAuthStateChanged(user => {
+  const btn = document.getElementById('btnLogin');
+  if (btn) btn.disabled = false;
+  if (user) {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('theApp').style.display = 'flex';
+    initApp();
+  } else {
+    document.getElementById('loginWrap').style.display = 'flex';
+    document.getElementById('theApp').style.display = 'none';
+  }
+});
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FIREBASE INIT & REALTIME
@@ -366,7 +383,6 @@ function doLogout() {
 
 function initApp() {
   document.getElementById('loadingOverlay').style.display = 'flex';
-  firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.firestore();
 
   const loaded = { wines: false, shipments: false, items: false };
@@ -1775,14 +1791,3 @@ document.addEventListener('change', e => { if (e.target.closest && e.target.clos
 window.addEventListener('resize', () => {
   if (window.innerWidth <= 768 && trackerView === 'table') setTrackerView('card');
 });
-
-// Auto-login
-if (sessionStorage.getItem('pt_auth') === '1') {
-  document.getElementById('loginWrap').style.display = 'none';
-  document.getElementById('theApp').style.display = 'flex';
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-  } else {
-    initApp();
-  }
-}

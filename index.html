@@ -19,7 +19,9 @@
     appId: "1:938062044902:web:f35c3d8948ea982d48e527",
     measurementId: "G-WSXHYTKGQY"
   };
-  const APP_PASSWORD = "flurton";
+  // Identifiant fixe du compte partagé Firebase Auth (pas un secret — le mot de passe
+  // réel est saisi par l'utilisateur et vérifié côté serveur Firebase, jamais stocké ici).
+  const AUTH_EMAIL = "equipe@press-tracker.internal";
 </script>
 
 <!-- LOGIN -->
@@ -184,6 +186,7 @@
 <!-- FIREBASE SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="app.js"></script>
