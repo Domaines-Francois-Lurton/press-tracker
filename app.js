@@ -1548,7 +1548,10 @@ function renderAlerts() {
           '<div>' +
             '<div style="font-size:13px;font-weight:500">' + esc(w.appellation) + ' ' + (w.millesime || '') + '</div>' +
             '<div style="font-size:11px;color:var(--text-muted)">' + esc(w.pays) + (w.nom ? ' · ' + esc(w.nom) : '') + '</div>' +
-            (w.cibleRevues && w.cibleRevues.length ? '<div style="font-size:11px;color:var(--text-faint);margin-top:2px">' + T('alert_target') + ' ' + w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); return r ? r.label : rid; }).join(', ') + '</div>' : '') +
+            (w.cibleRevues && w.cibleRevues.length ? '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:5px">' +
+              '<span style="font-size:10px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.04em">' + T('alert_target') + '</span>' +
+              w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); const lbl = r ? r.label : rid; return '<span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:#f1e8fd;color:#7c3aed">' + esc(lbl) + '</span>'; }).join('') +
+            '</div>' : '') +
           '</div>' +
         '</div>' +
         '<div>' + tag + '</div>' +
