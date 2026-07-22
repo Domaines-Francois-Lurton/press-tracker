@@ -204,6 +204,7 @@ function applyStaticI18n() {
   // Search placeholders
   const ts = $('trackerSearch'); if (ts) ts.placeholder = T('filter_search');
   const cs = $('catSearch'); if (cs) cs.placeholder = T('filter_search_cat');
+  const as = $('alertSearch'); if (as) as.placeholder = T('filter_search');
   // Color filter
   const cSel = $('catFilterCouleur');
   if (cSel && cSel.options.length >= 5) {
@@ -251,17 +252,18 @@ function applyStaticI18n() {
   const trimMonths = LANG==='es'
     ? ['Ene–Mar','Abr–Jun','Jul–Sep','Oct–Dic']
     : ['Jan–Mars','Avr–Juin','Juil–Sept','Oct–Déc'];
-  [$('filterTrimestre'), $('catFilterTrimestre')].forEach(sel => {
+  [$('filterTrimestre'), $('catFilterTrimestre'), $('alertFilterTrimestre')].forEach(sel => {
     if (!sel || sel.options.length < 5) return;
     sel.options[0].text = T('filter_all_trim');
     ['Q1','Q2','Q3','Q4'].forEach((q,i) => {
       sel.options[i+1].text = q + (sel.id==='catFilterTrimestre' ? ' ('+trimMonths[i]+')' : '');
     });
   });
+  const btnResetAlerts = $('btnResetAlerts'); if (btnResetAlerts) btnResetAlerts.textContent = T('btn_reset_filters');
   // Lang toggle active state
   const btnFr = $('btnLangFr'), btnEs = $('btnLangEs');
-  if (btnFr) { btnFr.style.opacity = LANG==='fr'?'1':'0.45'; btnFr.style.fontWeight = LANG==='fr'?'700':'400'; }
-  if (btnEs) { btnEs.style.opacity = LANG==='es'?'1':'0.45'; btnEs.style.fontWeight = LANG==='es'?'700':'400'; }
+  if (btnFr) { btnFr.classList.toggle('active', LANG==='fr'); btnFr.style.opacity=''; btnFr.style.fontWeight=''; }
+  if (btnEs) { btnEs.classList.toggle('active', LANG==='es'); btnEs.style.opacity=''; btnEs.style.fontWeight=''; }
 }
 
 
@@ -294,6 +296,10 @@ const SENT_STATUTS = ['envoyé','reçu','noté'];
 
 function isWineSent(wineId) {
   return shipmentItems.some(i => i.wineId === wineId && SENT_STATUTS.includes(i.statut));
+}
+
+function isWineSoumis(wineId) {
+  return shipmentItems.some(i => i.wineId === wineId && i.statut === 'soumis');
 }
 
 function getTrimestreAlerts() {
@@ -558,14 +564,16 @@ function getWineRevueStatus() {
 
 function buildFilters() {
   const pays = [...new Set(wines.map(w => w.pays).filter(Boolean))].sort();
-  ['filterPays', 'catFilterPays'].forEach(id => {
+  ['filterPays', 'catFilterPays', 'alertFilterPays'].forEach(id => {
     const sel = document.getElementById(id);
     const cur = sel.value;
     sel.innerHTML = '<option value="">' + T('filter_all_pays') + '</option>' + pays.map(p => '<option' + (p === cur ? ' selected' : '') + '>' + esc(p) + '</option>').join('');
   });
-  const revSel = document.getElementById('filterRevue');
-  const curRev = revSel.value;
-  revSel.innerHTML = '<option value="">' + T('filter_all_revues') + '</option>' + REVUES.map(r => '<option value="' + r.id + '"' + (r.id === curRev ? ' selected' : '') + '>' + r.full + '</option>').join('');
+  ['filterRevue', 'alertFilterCritique'].forEach(id => {
+    const revSel = document.getElementById(id);
+    const curRev = revSel.value;
+    revSel.innerHTML = '<option value="">' + T('filter_all_revues') + '</option>' + REVUES.map(r => '<option value="' + r.id + '"' + (r.id === curRev ? ' selected' : '') + '>' + r.full + '</option>').join('');
+  });
 }
 
 function resetTrackerFilters() {
@@ -584,6 +592,14 @@ function resetCatalogueFilters() {
   const fs = document.getElementById('catFilterSent'); if (fs) fs.value = '';
   const ft = document.getElementById('catFilterTrimestre'); if (ft) ft.value = '';
   renderCatalogue();
+}
+
+function resetAlertsFilters() {
+  document.getElementById('alertSearch').value = '';
+  document.getElementById('alertFilterPays').value = '';
+  document.getElementById('alertFilterTrimestre').value = '';
+  document.getElementById('alertFilterCritique').value = '';
+  renderAlerts();
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -651,7 +667,7 @@ function renderTracker() {
       const arrow = active ? (trackerSort.dir === 1 ? ' ↑' : ' ↓') : '';
       return '<th style="cursor:pointer;user-select:none' + (active ? ';color:var(--accent)' : '') + '" onclick="setTrackerSort(\'' + col + '\')">' + label + arrow + '</th>';
     };
-    c.innerHTML = '<div class="tbl-wrap"><table>' +
+    c.innerHTML = '<div class="tbl-wrap tbl-card"><table>' +
       '<thead><tr>' + si('pays',T('col_pays')) + si('marque',T('col_marque')) + si('denom',T('col_denom')) + si('mil',T('col_mil')) + si('couleur',T('col_couleur')) +
       REVUES.map(r => '<th>' + r.label + '</th>').join('') + '</tr></thead><tbody>' +
       sorted.map(w => {
@@ -1512,6 +1528,15 @@ function renderAlerts() {
   const list = document.getElementById('alertsList');
   if (!list) return;
 
+  const searchEl = document.getElementById('alertSearch');
+  const fPaysEl = document.getElementById('alertFilterPays');
+  const fTrimEl = document.getElementById('alertFilterTrimestre');
+  const fCritEl = document.getElementById('alertFilterCritique');
+  const search = searchEl ? (searchEl.value || '').toLowerCase() : '';
+  const fPays = fPaysEl ? fPaysEl.value : '';
+  const fTrim = fTrimEl ? fTrimEl.value : '';
+  const fCrit = fCritEl ? fCritEl.value : '';
+
   const tagged = wines.filter(w => w.trimestre);
   if (!tagged.length) {
     list.innerHTML = '<div class="empty" style="padding:24px">' + T('alert_empty') + '<br>' +
@@ -1519,10 +1544,26 @@ function renderAlerts() {
     return;
   }
 
+  let anyGroupRendered = false;
   let html = '';
   TRIMESTRES.forEach(td => {
-    const group = wines.filter(w => w.trimestre === td.id);
+    if (fTrim && fTrim !== td.id) return;
+    let group = wines.filter(w => {
+      if (w.trimestre !== td.id) return false;
+      if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.pays || '').toLowerCase().includes(search)) return false;
+      if (fPays && w.pays !== fPays) return false;
+      if (fCrit && !(w.cibleRevues || []).includes(fCrit)) return false;
+      return true;
+    });
     if (!group.length) return;
+    const end = getTrimestreEnd(td.id);
+    const daysLeft = end ? Math.floor((end - new Date()) / 86400000) : null;
+    group = group.map(w => ({ w, sent: isWineSent(w.id) })).sort((a, b) => {
+      const pa = a.sent ? Infinity : daysLeft;
+      const pb = b.sent ? Infinity : daysLeft;
+      return pa - pb;
+    }).map(x => x.w);
+    anyGroupRendered = true;
     html += '<div style="padding:10px 16px 4px;font-weight:600;font-size:11px;color:var(--text-muted);' +
       'text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);' +
       'display:flex;align-items:center;gap:8px">' +
@@ -1531,8 +1572,6 @@ function renderAlerts() {
     group.forEach(w => {
       const sent = isWineSent(w.id);
       const state = getTrimestreState(td.id, sent);
-      const end = getTrimestreEnd(td.id);
-      const daysLeft = end ? Math.floor((end - new Date()) / 86400000) : null;
       let rowBg = '', dotColor = '#b0b3b8';
       if (state === 'overdue')  { rowBg = '#fee2e214'; dotColor = '#ef4444'; }
       else if (state === 'warning') { rowBg = '#fef3cd14'; dotColor = '#f59e0b'; }
@@ -1541,6 +1580,7 @@ function renderAlerts() {
       if (state === 'overdue') tag = '<span class="deadline-tag deadline-urgent">' + T('alert_expire') + '</span>';
       else if (state === 'warning') tag = '<span class="deadline-tag deadline-soon">J-' + daysLeft + '</span>';
       else if (state === 'sent') tag = '<span class="deadline-tag" style="background:var(--green-bg);color:var(--green-text)">' + T('alert_envoye') + '</span>';
+      else if (isWineSoumis(w.id)) tag = '<span class="deadline-tag" style="background:#faeeda;color:#633806">' + T('statut_soumis') + '</span>';
       html += '<div class="alert-item"' + (rowBg ? ' style="background:' + rowBg + '"' : '') +
         ' onclick="openWineDetail(\'' + w.id + '\')">' +
         '<div style="display:flex;align-items:center;gap:10px">' +
@@ -1558,7 +1598,7 @@ function renderAlerts() {
       '</div>';
     });
   });
-  list.innerHTML = html;
+  list.innerHTML = anyGroupRendered ? html : '<div class="empty" style="padding:24px">' + T('tracker_empty') + '</div>';
 }
 function openHelpModal() {
   const sectionsAll = {
@@ -1787,6 +1827,11 @@ document.getElementById('catFilterCouleur').addEventListener('change', renderCat
 document.getElementById('catFilterSent').addEventListener('change', renderCatalogue);
 document.getElementById('catFilterTrimestre').addEventListener('change', renderCatalogue);
 document.getElementById('filterTrimestre').addEventListener('change', renderTracker);
+document.getElementById('alertSearch').addEventListener('input', renderAlerts);
+document.getElementById('alertFilterPays').addEventListener('change', renderAlerts);
+document.getElementById('alertFilterTrimestre').addEventListener('change', renderAlerts);
+document.getElementById('alertFilterCritique').addEventListener('change', renderAlerts);
+document.getElementById('btnResetAlerts').addEventListener('click', resetAlertsFilters);
 
 document.addEventListener('input', e => { if (e.target.closest && e.target.closest('.modal')) modalDirty = true; });
 document.addEventListener('change', e => { if (e.target.closest && e.target.closest('.modal')) modalDirty = true; });

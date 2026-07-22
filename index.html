@@ -51,22 +51,25 @@
     <div class="topbar-left">
       <span class="topbar-logo">🍷</span>
       <span class="topbar-title">Press Tracker</span>
-      <span style="font-size:10px;color:#ffffff55;font-weight:400;letter-spacing:.03em">v1.0</span>
+      <span class="topbar-version">v1.0</span>
     </div>
     <div class="topbar-right">
-      <span style="display:flex;align-items:center;gap:2px;margin-right:4px">
-        <button id="btnLangFr" class="btn btn-sm" style="color:#fff;border-color:#ffffff44;padding:3px 7px;font-size:12px;font-weight:700;opacity:1" onclick="setLang('fr')">FR</button>
-        <button id="btnLangEs" class="btn btn-sm" style="color:#fff;border-color:#ffffff44;padding:3px 7px;font-size:12px;font-weight:400;opacity:0.45" onclick="setLang('es')">ES</button>
-      </span>
-      <button class="btn btn-sm" style="color:#fff;border-color:#ffffff44;padding:4px 10px;font-size:13px" onclick="openHelpModal()" title="Aide">?</button>
-      <button class="btn btn-sm" style="color:#fff;border-color:#ffffff44" id="btnLogout">Déconnexion</button>
+      <div class="lang-switch">
+        <button id="btnLangFr" class="lang-btn active" onclick="setLang('fr')">FR</button>
+        <button id="btnLangEs" class="lang-btn" onclick="setLang('es')">ES</button>
+      </div>
+      <button class="icon-btn" onclick="openHelpModal()" title="Aide">?</button>
+      <button class="btn-logout" id="btnLogout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span class="btn-logout-label">Déconnexion</span>
+      </button>
     </div>
   </div>
 
   <div class="nav" id="desktopNav">
-    <div class="nav-tab active" data-page="tracker">📋 Tracker</div>
-    <div class="nav-tab" data-page="catalogue">🍷 Catalogue</div>
-    <div class="nav-tab" data-page="alerts">⚠️ Alertes <span id="alert-badge" style="background:var(--amber-bg);color:var(--amber-text);border-radius:20px;padding:1px 6px;font-size:11px;margin-left:4px;display:none"></span></div>
+    <div class="nav-tab active" data-page="tracker"><span class="nav-tab-icon">📋</span>Tracker</div>
+    <div class="nav-tab" data-page="catalogue"><span class="nav-tab-icon">🍷</span>Catalogue</div>
+    <div class="nav-tab" data-page="alerts"><span class="nav-tab-icon">⚠️</span>Alertes <span id="alert-badge" style="background:var(--amber-bg);color:var(--amber-text);border-radius:20px;padding:1px 6px;font-size:11px;margin-left:4px;display:none"></span></div>
   </div>
 
   <div class="mobile-nav" id="mobileNav">
@@ -172,6 +175,19 @@
         <div class="page-title">Vins à envoyer</div>
       </div>
       <div id="alertsLegend"></div>
+      <div class="tracker-toolbar">
+        <input class="search-input" type="text" placeholder="Rechercher un vin..." id="alertSearch">
+        <select class="filter-select" id="alertFilterPays"><option value="">Tous les pays</option></select>
+        <select class="filter-select" id="alertFilterTrimestre">
+          <option value="">Tous trimestres</option>
+          <option value="Q1">Q1</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+        </select>
+        <select class="filter-select" id="alertFilterCritique"><option value="">Toutes les revues</option></select>
+        <button class="btn" id="btnResetAlerts">↺ Réinitialiser</button>
+      </div>
       <div class="card" style="padding:0">
         <div id="alertsList"></div>
       </div>
