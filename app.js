@@ -42,10 +42,10 @@ fr: {
   login_error:'Mot de passe incorrect.', loading:'Chargement des données...', logout:'Déconnexion',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'⚠️ Alertes',
   page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Vins à envoyer',
-  stat_vins:'Vins suivis', stat_envois:'Envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Deadlines proches',
+  stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Deadlines proches',
   btn_export:'⬇ Export CSV', btn_new_shipment:'+ Nouvel envoi', btn_add_wine:'+ Ajouter un vin',
   btn_import:'📋 Import bloc', btn_cancel:'Annuler', btn_save:'Enregistrer', btn_add:'Ajouter',
-  btn_close:'Fermer', btn_delete:'Supprimer', btn_edit_wine:'Modifier le vin', btn_modify:'Modifier',
+  btn_close:'Fermer', btn_delete:'Supprimer', btn_duplicate:'Dupliquer', btn_edit_wine:'Modifier le vin', btn_modify:'Modifier',
   filter_all_pays:'Tous les pays', filter_all_revues:'Toutes les revues', filter_all_statuts:'Tous statuts',
   filter_all_trim:'Tous trimestres', filter_all_couleurs:'Toutes couleurs', filter_all:'Tous',
   filter_non_soumis:'Non soumis', filter_soumis:'Soumis',
@@ -77,7 +77,7 @@ fr: {
   q1_label:'1er trimestre', q2_label:'2ème trimestre', q3_label:'3ème trimestre', q4_label:'4ème trimestre',
   q1_months:'Jan – Mars', q2_months:'Avr – Juin', q3_months:'Juil – Sept', q4_months:'Oct – Déc',
   toast_saved:'Modifications enregistrées', toast_wine_added:'Vin ajouté au catalogue',
-  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé',
+  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé', toast_wine_duplicated:'Vin dupliqué',
   toast_item_deleted:'Enregistrement supprimé', toast_shipment_deleted:'Envoi supprimé',
   toast_fill_required:'Remplissez tous les champs obligatoires.',
   toast_wine_has_items:'Ce vin a des envois enregistrés et ne peut pas être supprimé.',
@@ -99,10 +99,10 @@ es: {
   login_error:'Contraseña incorrecta.', loading:'Cargando datos...', logout:'Cerrar sesión',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'⚠️ Alertas',
   page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Vinos por enviar',
-  stat_vins:'Vinos seguidos', stat_envois:'Envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
+  stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
   btn_export:'⬇ Exportar CSV', btn_new_shipment:'+ Nuevo envío', btn_add_wine:'+ Añadir un vino',
   btn_import:'📋 Importar bloque', btn_cancel:'Cancelar', btn_save:'Guardar', btn_add:'Añadir',
-  btn_close:'Cerrar', btn_delete:'Eliminar', btn_edit_wine:'Modificar el vino', btn_modify:'Modificar',
+  btn_close:'Cerrar', btn_delete:'Eliminar', btn_duplicate:'Duplicar', btn_edit_wine:'Modificar el vino', btn_modify:'Modificar',
   filter_all_pays:'Todos los países', filter_all_revues:'Todas las revistas', filter_all_statuts:'Todos los estados',
   filter_all_trim:'Todos los trimestres', filter_all_couleurs:'Todos los colores', filter_all:'Todos',
   filter_non_soumis:'No enviado', filter_soumis:'Enviado',
@@ -134,7 +134,7 @@ es: {
   q1_label:'1er trimestre', q2_label:'2º trimestre', q3_label:'3er trimestre', q4_label:'4º trimestre',
   q1_months:'Ene – Mar', q2_months:'Abr – Jun', q3_months:'Jul – Sep', q4_months:'Oct – Dic',
   toast_saved:'Cambios guardados', toast_wine_added:'Vino añadido al catálogo',
-  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado',
+  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado', toast_wine_duplicated:'Vino duplicado',
   toast_item_deleted:'Registro eliminado', toast_shipment_deleted:'Envío eliminado',
   toast_fill_required:'Complete todos los campos obligatorios.',
   toast_wine_has_items:'Este vino tiene envíos registrados y no se puede eliminar.',
@@ -201,7 +201,7 @@ function applyStaticI18n() {
   setText(document.querySelector('#page-catalogue .page-title'), T('page_catalogue'));
   setText(document.querySelector('#page-alerts .page-title'), T('page_alertes'));
   // Stats labels
-  const statKeys = ['stat_vins','stat_envois','stat_notes','stat_deadlines'];
+  const statKeys = ['stat_vins','stat_vins_envoyes','stat_envois','stat_notes','stat_deadlines'];
   document.querySelectorAll('.stat-label').forEach((el,i) => { if (statKeys[i]) el.innerHTML = T(statKeys[i]); });
   // Buttons
   setText($('btnExport'), T('btn_export'));
@@ -679,6 +679,7 @@ function renderTracker() {
   });
 
   document.getElementById('statVins').textContent = wines.length;
+  document.getElementById('statVinsEnvoyes').textContent = wines.filter(w => isWineSent(w.id)).length;
   document.getElementById('statEnvois').textContent = shipmentItems.length;
   document.getElementById('statNotes').textContent = shipmentItems.filter(i => i.note).length;
   document.getElementById('statAlerts').textContent = updateAlertBadge();
@@ -1209,7 +1210,7 @@ function renderCatalogue() {
       '<td>' + (trimBadge(w.trimestre || '') || '<span style="color:var(--text-faint);font-size:11px">–</span>') + '</td>' +
       '<td>' + sentBadge + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + fmtDate(w.createdAt) + '</td>' +
-      '<td onclick="event.stopPropagation()"><button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + w.id + '\')">' + T('btn_delete') + '</button></td>' +
+      '<td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-sm" title="' + T('btn_duplicate') + '" onclick="duplicateWine(\'' + w.id + '\')">⧉</button><button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + w.id + '\')">' + T('btn_delete') + '</button></td>' +
     '</tr>';
   }).join('');
   updateCatSelectionUI();
@@ -1444,6 +1445,32 @@ async function updateShipmentDate(shipmentId, wineId) {
     toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = T('btn_save');
+  }
+}
+
+async function duplicateWine(id) {
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  try {
+    const ref = await db.collection('wines').add({
+      pays: w.pays || null,
+      nom: w.nom || null,
+      millesime: w.millesime || null,
+      appellation: w.appellation || null,
+      couleur: w.couleur || null,
+      cepage: w.cepage || null,
+      degre: w.degre || null,
+      lienExterne: w.lienExterne || null,
+      commentaire: w.commentaire || null,
+      mad: w.mad || null,
+      trimestre: w.trimestre || null,
+      cibleRevues: w.cibleRevues || null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    toast(T('toast_wine_duplicated'));
+    setTimeout(() => openEditWineModal(ref.id), 200);
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'error');
   }
 }
 
