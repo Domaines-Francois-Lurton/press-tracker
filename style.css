@@ -82,6 +82,7 @@ textarea { resize: vertical; min-height: 80px; }
 .badge-reçu { background: var(--blue-bg); color: var(--blue-text); }
 .badge-noté { background: var(--purple-bg); color: var(--purple-text); }
 .badge-pending { background: var(--gray-bg); color: var(--gray-text); }
+.badge-refusé { background: var(--red-bg); color: var(--red-text); }
 .cl-rouge { background: #faece7; color: #5a1a1a; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
 .cl-blanc { background: #fdf6e3; color: #5a4a00; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
 .cl-rosé, .cl-rose { background: #fbeaf0; color: #4b1528; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
@@ -148,6 +149,7 @@ tr[onclick] { cursor: pointer; }
 .revue-pill.rated { background: var(--purple-bg); border-color: #afa9ec; color: var(--purple-text); }
 .revue-pill.alert { background: var(--amber-bg); border-color: #fac775; color: var(--amber-text); }
 .revue-pill.none { background: var(--gray-bg); color: var(--text-faint); }
+.revue-pill.refused { background: var(--red-bg); border-color: #e59a9a; color: var(--red-text); }
 
 /* SHIPMENT FORM */
 .wine-selector { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; max-height: 260px; overflow-y: auto; }

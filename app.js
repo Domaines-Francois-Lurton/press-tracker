@@ -50,7 +50,7 @@ fr: {
   filter_all_trim:'Tous trimestres', filter_all_couleurs:'Toutes couleurs', filter_all:'Tous',
   filter_non_soumis:'Non soumis', filter_soumis:'Soumis',
   filter_search:'Rechercher un vin...', filter_search_cat:'Rechercher...', filter_wines:'Filtrer les vins...',
-  statut_note:'Noté', statut_recu:'Reçu', statut_envoye:'Envoyé', statut_pending:'En attente', statut_soumis:'Soumis',
+  statut_note:'Noté', statut_recu:'Reçu', statut_envoye:'Envoyé', statut_pending:'En attente', statut_soumis:'Soumis', statut_refuse:'Refusé',
   color_rouge:'Rouge', color_blanc:'Blanc', color_rose:'Rosé', color_orange:'Orange',
   lbl_pays:'Pays *', lbl_couleur:'Couleur *', lbl_denom:'Dénomination *', lbl_millesime:'Millésime *',
   lbl_marque:'Domaine ou Marque *', lbl_cepage:'Cépage', lbl_degre:"Degré d'alcool",
@@ -107,7 +107,7 @@ es: {
   filter_all_trim:'Todos los trimestres', filter_all_couleurs:'Todos los colores', filter_all:'Todos',
   filter_non_soumis:'No enviado', filter_soumis:'Enviado',
   filter_search:'Buscar un vino...', filter_search_cat:'Buscar...', filter_wines:'Filtrar los vinos...',
-  statut_note:'Evaluado', statut_recu:'Recibido', statut_envoye:'Enviado', statut_pending:'Pendiente', statut_soumis:'Presentado',
+  statut_note:'Evaluado', statut_recu:'Recibido', statut_envoye:'Enviado', statut_pending:'Pendiente', statut_soumis:'Presentado', statut_refuse:'Rechazado',
   color_rouge:'Tinto', color_blanc:'Blanco', color_rose:'Rosado', color_orange:'Naranja',
   lbl_pays:'País *', lbl_couleur:'Color *', lbl_denom:'Denominación *', lbl_millesime:'Añada *',
   lbl_marque:'Dominio o Marca *', lbl_cepage:'Variedad', lbl_degre:'Grado de alcohol',
@@ -226,13 +226,14 @@ function applyStaticI18n() {
   }
   // Statut filter
   const sSel = $('filterStatut');
-  if (sSel && sSel.options.length >= 6) {
+  if (sSel && sSel.options.length >= 7) {
     sSel.options[0].text = T('filter_all_statuts');
     sSel.options[1].text = T('statut_note');
     sSel.options[2].text = T('statut_recu');
     sSel.options[3].text = T('statut_envoye');
     sSel.options[4].text = T('statut_soumis');
-    sSel.options[5].text = T('statut_pending');
+    sSel.options[5].text = T('statut_refuse');
+    sSel.options[6].text = T('statut_pending');
   }
   // Sent filter
   const sentSel = $('catFilterSent');
@@ -302,7 +303,7 @@ function trimBadge(qid) {
     'background:' + c + '22;color:' + c + ';border:1px solid ' + c + '44">' + qid + '</span>';
 }
 
-const SENT_STATUTS = ['envoyé','reçu','noté'];
+const SENT_STATUTS = ['envoyé','reçu','noté','refusé'];
 
 function isWineSent(wineId) {
   return shipmentItems.some(i => i.wineId === wineId && SENT_STATUTS.includes(i.statut));
@@ -542,8 +543,8 @@ function couleurBadge(c) {
 }
 
 function statutBadge(st) {
-  const map = { 'noté': 'badge-noté', 'envoyé': 'badge-envoyé', 'reçu': 'badge-reçu', 'soumis': 'badge-soumis', 'pending': 'badge-pending' };
-  const labels = { 'noté': T('statut_note'), 'envoyé': T('statut_envoye'), 'reçu': T('statut_recu'), 'soumis': T('statut_soumis'), 'pending': T('statut_pending') };
+  const map = { 'noté': 'badge-noté', 'envoyé': 'badge-envoyé', 'reçu': 'badge-reçu', 'soumis': 'badge-soumis', 'pending': 'badge-pending', 'refusé': 'badge-refusé' };
+  const labels = { 'noté': T('statut_note'), 'envoyé': T('statut_envoye'), 'reçu': T('statut_recu'), 'soumis': T('statut_soumis'), 'pending': T('statut_pending'), 'refusé': T('statut_refuse') };
   return '<span class="badge ' + (map[st] || 'badge-pending') + '">' + (labels[st] || st) + '</span>';
 }
 
@@ -566,7 +567,7 @@ function getWineRevueStatus() {
       result[w.id][r.id] = { statut: 'pending', note: '', deadline: '', commentaire: '', dateReception: '', shipmentId: null, itemId: null };
     });
   });
-  const order = ['pending', 'soumis', 'envoyé', 'reçu', 'noté'];
+  const order = ['pending', 'soumis', 'envoyé', 'reçu', 'noté', 'refusé'];
   shipmentItems.forEach(item => {
     const wid = item.wineId;
     const rid = item.revueId;
@@ -733,6 +734,7 @@ function renderTracker() {
           const isAlert = d !== null && d <= 30 && info && info.statut !== 'noté';
           let cls = 'none';
           if (info && info.note) cls = 'rated';
+          else if (info && info.statut === 'refusé') cls = 'refused';
           else if (info && info.statut === 'reçu') cls = 'recvd';
           else if (info && info.statut === 'envoyé') cls = isAlert ? 'alert' : 'sent';
           return '<span class="revue-pill ' + cls + '">' + r.label + (info && info.note ? ' · ' + esc(info.note) : '') + (isAlert && !(info && info.note) ? ' J-' + d : '') + '</span>';
@@ -849,6 +851,7 @@ function openEditItem(itemId, wineId) {
           '<option value="envoyé"' + (item.statut === 'envoyé' ? ' selected' : '') + '>'+T('statut_envoye')+'</option>' +
           '<option value="reçu"' + (item.statut === 'reçu' ? ' selected' : '') + '>'+T('statut_recu')+'</option>' +
           '<option value="noté"' + (item.statut === 'noté' ? ' selected' : '') + '>'+T('statut_note')+'</option>' +
+          '<option value="refusé"' + (item.statut === 'refusé' ? ' selected' : '') + '>'+T('statut_refuse')+'</option>' +
         '</select></div>' +
         '<div class="field"><label>'+T('lbl_note')+'</label><input id="ei_note" value="' + esc(item.note || '') + '" placeholder="ex: 92"></div>' +
         '<div class="field"><label>'+T('lbl_date_recep')+'</label><input type="date" id="ei_recep" value="' + (item.dateReception || '') + '"></div>' +
@@ -1726,12 +1729,13 @@ fr: [
     { num:'6', title:'Statuts de suivi', steps:[
       'Cliquez sur une ligne du Tracker pour ouvrir la fiche vin, puis sur le crayon d\'un enregistrement.',
       '<span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:2px">' +
-        [['soumis','#faeeda','#633806'],['envoyé','#eaf3de','#3b6d11'],['reçu','#e6f1fb','#185fa5'],['noté','#eeedfe','#534ab7']].map(([s,bg,c]) =>
+        [['soumis','#faeeda','#633806'],['envoyé','#eaf3de','#3b6d11'],['reçu','#e6f1fb','#185fa5'],['noté','#eeedfe','#534ab7'],['refusé','#fcebeb','#a32d2d']].map(([s,bg,c]) =>
           '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:'+bg+';color:'+c+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span>'
         ).join('') +
       '</span>',
       '<strong>Soumis</strong> : le vin a été soumis (ex : à un intermédiaire) mais pas encore réellement expédié au critique — il reste considéré comme non envoyé pour les alertes de trimestre et le filtre Catalogue.',
-      'Pour <strong>Noté</strong> : saisissez la note reçue (ex: 92). Un vin est "envoyé" dès qu\'un enregistrement a le statut Envoyé, Reçu ou Noté.',
+      'Pour <strong>Noté</strong> : saisissez la note reçue (ex: 92). Un vin est "envoyé" dès qu\'un enregistrement a le statut Envoyé, Reçu, Noté ou Refusé.',
+      '<strong>Refusé</strong> : le critique a décliné la dégustation/publication de ce vin.',
       'Suppression possible : enregistrement individuel (icône poubelle) ou envoi entier depuis la fiche vin. Le crayon à côté de la date d\'un envoi permet de la modifier après coup.',
     ]},
     { num:'7', title:'Alertes — code couleur', steps:[
@@ -1792,12 +1796,13 @@ es: [
     { num:'6', title:'Estados de seguimiento', steps:[
       'Haga clic en una línea del Tracker para abrir la ficha del vino, luego en el lápiz de un registro.',
       '<span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:2px">' +
-        [['Presentado','#faeeda','#633806'],['Enviado','#eaf3de','#3b6d11'],['Recibido','#e6f1fb','#185fa5'],['Evaluado','#eeedfe','#534ab7']].map(([s,bg,c]) =>
+        [['Presentado','#faeeda','#633806'],['Enviado','#eaf3de','#3b6d11'],['Recibido','#e6f1fb','#185fa5'],['Evaluado','#eeedfe','#534ab7'],['Rechazado','#fcebeb','#a32d2d']].map(([s,bg,c]) =>
           '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:'+bg+';color:'+c+'">'+s+'</span>'
         ).join('') +
       '</span>',
       '<strong>Presentado</strong>: el vino ha sido presentado (ej: a un intermediario) pero aún no enviado realmente al crítico — sigue considerado como no enviado para las alertas de trimestre y el filtro del Catálogo.',
-      'Para <strong>Evaluado</strong>: introduzca la nota recibida (ej: 92). Un vino está "enviado" en cuanto un registro tiene estado Enviado, Recibido o Evaluado.',
+      'Para <strong>Evaluado</strong>: introduzca la nota recibida (ej: 92). Un vino está "enviado" en cuanto un registro tiene estado Enviado, Recibido, Evaluado o Rechazado.',
+      '<strong>Rechazado</strong>: el crítico ha declinado la cata/publicación de este vino.',
       'Eliminación posible: registro individual (icono papelera) o envío completo desde la ficha del vino. El lápiz junto a la fecha de un envío permite modificarla después.',
     ]},
     { num:'7', title:'Alertas — código de color', steps:[
