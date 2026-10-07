@@ -340,7 +340,7 @@ function applyTrackerSort(arr, wrs) {
     else if (col === 'denom') { va = (a.nom || '').toLowerCase();         vb = (b.nom || '').toLowerCase(); }
     else if (col === 'mil')   { va = parseFloat(a.millesime) || 0;        vb = parseFloat(b.millesime) || 0; }
     else if (col === 'couleur'){ va = (a.couleur || '').toLowerCase();    vb = (b.couleur || '').toLowerCase(); }
-    else if (col === 'mad')   { va = a.mad || '9999';                     vb = b.mad || '9999'; }
+    else if (col === 'trimestre') { va = a.trimestre || 'Z';              vb = b.trimestre || 'Z'; }
     else if (col === 'importateur'){ va = (a.importateurUS || '').toLowerCase(); vb = (b.importateurUS || '').toLowerCase(); }
     else if (col === 'note') {
       const bestNote = w => Math.max(-1, ...Object.values(wrs[w.id] || {}).map(x => parseFloat(x.note) || -1));
@@ -824,7 +824,7 @@ function renderTracker() {
       return '<th style="cursor:pointer;user-select:none' + (active ? ';color:var(--accent)' : '') + '" onclick="setTrackerSort(\'' + col + '\')">' + label + arrow + '</th>';
     };
     c.innerHTML = '<div class="tbl-wrap tbl-card"><table>' +
-      '<thead><tr>' + si('pays',T('col_pays')) + si('marque',T('col_marque')) + si('denom',T('col_denom')) + si('mil',T('col_mil')) + si('couleur',T('col_couleur')) + si('mad','MAD') + si('importateur',T('lbl_importateur_us')) +
+      '<thead><tr>' + si('pays',T('col_pays')) + si('marque',T('col_marque')) + si('denom',T('col_denom')) + si('mil',T('col_mil')) + si('couleur',T('col_couleur')) + si('trimestre','Q') + si('importateur',T('lbl_importateur_us')) +
       REVUES.map(r => '<th>' + r.label + '</th>').join('') + '</tr></thead><tbody>' +
       sorted.map(w => {
         const hasAlert = wineHasAlert(w);
@@ -834,7 +834,7 @@ function renderTracker() {
           '<td style="font-size:11px">' + esc(w.nom) + '</td>' +
           '<td>' + (w.millesime || '') + '</td>' +
           '<td>' + couleurBadge(w.couleur) + '</td>' +
-          '<td style="font-size:11px;white-space:nowrap">' + (w.mad ? fmtDate(w.mad) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
+          '<td>' + (trimBadge(w.trimestre || '') || '<span style="color:var(--text-faint)">-</span>') + '</td>' +
           '<td style="font-size:11px">' + (w.importateurUS ? esc(w.importateurUS) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
           REVUES.map(r => '<td>' + statutBubble(wrs[w.id] && wrs[w.id][r.id], r.full) + '</td>').join('') + '</tr>';
       }).join('') + '</tbody></table></div>';
@@ -1986,7 +1986,7 @@ fr: [
       '</span>',
     ]},
     { num:'8', title:'Tracker - tri et filtres', steps:[
-      '<strong>Tri</strong> - cliquez sur un en-tête de colonne (Pays, Domaine, Dénomination, Mill., Couleur, Note). Un 2ème clic inverse l\'ordre.',
+      '<strong>Tri</strong> - cliquez sur un en-tête de colonne (Pays, Domaine, Dénomination, Mill., Couleur, Q, Note). Un 2ème clic inverse l\'ordre.',
       '<strong>Filtres</strong> - Recherche texte · Pays · Revue · Statut · Trimestre, tous combinables. Quand une revue est choisie, le statut s\'applique à cette revue : par exemple WS + Non envoyé = ce qu\'il reste à envoyer à WS.',
       '<strong>Vue tableau / cartes</strong> - boutons ▤ / ⊞ en haut à droite de la barre de filtres.',
       '<strong>↺ Réinitialiser</strong> - efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
@@ -2057,7 +2057,7 @@ es: [
       '</span>',
     ]},
     { num:'8', title:'Tracker - orden y filtros', steps:[
-      '<strong>Orden</strong> - haga clic en un encabezado de columna (País, Dominio, Denominación, Añada, Color). Un 2º clic invierte el orden.',
+      '<strong>Orden</strong> - haga clic en un encabezado de columna (País, Dominio, Denominación, Añada, Color, Q). Un 2º clic invierte el orden.',
       '<strong>Filtros</strong> - Búsqueda texto · País · Revista · Estado · Trimestre, todos combinables. Si se elige una revista, el estado se aplica a esa revista: por ejemplo WS + No enviado = lo que falta por enviar a WS.',
       '<strong>Vista tabla / tarjetas</strong> - botones ▤ / ⊞ arriba a la derecha de la barra de filtros.',
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
