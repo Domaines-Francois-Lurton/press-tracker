@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Press Tracker - Suivi des envois presse</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260922n">
-<link rel="stylesheet" href="style.css?v=20260922n">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261008g">
+<link rel="stylesheet" href="style.css?v=20261008g">
 </head>
 <body>
 
@@ -52,9 +52,10 @@
     <div class="topbar-left">
       <span class="topbar-logo app-logo">PT</span>
       <span class="topbar-title">Press Tracker</span>
-      <span class="topbar-version">v2.0</span>
+      <span class="topbar-version" title="Version 3.0 - mise à jour du 08/10/2026">v3.0</span>
     </div>
     <div class="topbar-right">
+      <div class="lang-switch" id="campagneSwitch"></div>
       <div class="lang-switch">
         <button id="btnLangFr" class="lang-btn active" onclick="setLang('fr')">FR</button>
         <button id="btnLangEs" class="lang-btn" onclick="setLang('es')">ES</button>
@@ -70,13 +71,13 @@
   <div class="nav" id="desktopNav">
     <div class="nav-tab active" data-page="tracker"><span class="nav-tab-icon">📋</span>Tracker</div>
     <div class="nav-tab" data-page="catalogue"><span class="nav-tab-icon">🍷</span>Catalogue</div>
-    <div class="nav-tab" data-page="alerts"><span class="nav-tab-icon">⚠️</span>Alertes <span id="alert-badge" style="background:var(--amber-bg);color:var(--amber-text);border-radius:20px;padding:1px 6px;font-size:11px;margin-left:4px;display:none"></span></div>
+    <div class="nav-tab" data-page="alerts"><span class="nav-tab-icon">📅</span>Planning <span id="alert-badge" style="background:var(--amber-bg);color:var(--amber-text);border-radius:20px;padding:1px 6px;font-size:11px;margin-left:4px;display:none"></span></div>
   </div>
 
   <div class="mobile-nav" id="mobileNav">
     <div class="nav-tab active" data-page="tracker"><span class="nav-icon">📋</span>Tracker</div>
     <div class="nav-tab" data-page="catalogue"><span class="nav-icon">🍷</span>Catalogue</div>
-    <div class="nav-tab" data-page="alerts"><span class="nav-icon nav-alert-icon">⚠️<span id="alert-badge-m" class="nav-badge-m"></span></span>Alertes</div>
+    <div class="nav-tab" data-page="alerts"><span class="nav-icon nav-alert-icon">📅<span id="alert-badge-m" class="nav-badge-m"></span></span>Planning</div>
   </div>
 
   <div class="main">
@@ -96,7 +97,7 @@
         <div class="stat-card"><div class="stat-label">Vins envoyés</div><div class="stat-val" id="statVinsEnvoyes">-</div><div class="stat-sub" id="statVinsEnvoyesSub"></div></div>
         <div class="stat-card"><div class="stat-label">Tous les envois</div><div class="stat-val" id="statEnvois">-</div><div class="stat-sub" id="statEnvoisSub"></div></div>
         <div class="stat-card"><div class="stat-label">Notes reçues</div><div class="stat-val" id="statNotes">-</div><div class="stat-sub" id="statNotesSub"></div></div>
-        <div class="stat-card stat-card-link" id="statAlertsCard" onclick="showPage('alerts')"><div class="stat-label">⚠ Deadlines proches</div><div class="stat-val" id="statAlerts">-</div><div class="stat-sub" id="statAlertsSub"></div></div>
+        <div class="stat-card stat-card-link" id="statAlertsCard" onclick="showPage('alerts')"><div class="stat-label">⚠ Échéances proches</div><div class="stat-val" id="statAlerts">-</div><div class="stat-sub" id="statAlertsSub"></div></div>
       </div>
       <div class="tracker-toolbar">
         <input class="search-input" type="text" placeholder="Rechercher un vin..." id="trackerSearch">
@@ -109,8 +110,7 @@
           <option value="envoyé">Envoyé</option>
           <option value="soumis">Soumis</option>
           <option value="refusé">Refusé</option>
-          <option value="pending">En attente</option>
-          <option value="never_sent">Jamais envoyé</option>
+          <option value="never_sent">Non envoyé</option>
         </select>
         <select class="filter-select" id="filterTrimestre">
           <option value="">Tous trimestres</option>
@@ -149,8 +149,8 @@
           </select>
           <select class="filter-select" id="catFilterSent">
             <option value="">Tous</option>
-            <option value="none">Non soumis</option>
-            <option value="any">Soumis</option>
+            <option value="none">Jamais envoyé</option>
+            <option value="any">Envoyé</option>
           </select>
           <select class="filter-select" id="catFilterTrimestre">
             <option value="">Tous trimestres</option>
@@ -176,7 +176,7 @@
     <!-- ALERTS PAGE -->
     <div class="page" id="page-alerts">
       <div class="page-header">
-        <div class="page-title">Vins à envoyer</div>
+        <div class="page-title">Planning d'envoi</div>
       </div>
       <div id="alertsLegend"></div>
       <div class="tracker-toolbar">
@@ -209,7 +209,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="app.js?v=20260922n"></script>
+<script src="campagne.js?v=20261008g"></script>
+<script src="app.js?v=20261008g"></script>
 
 </body>
 </html>

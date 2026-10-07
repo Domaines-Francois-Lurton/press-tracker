@@ -12,17 +12,6 @@ const REVUES = [
   { id: 'd',   label: 'Dec.',   full: 'Decanter' },
 ];
 
-const REVUE_COLORS = {
-  ws:  { bg: '#f1e8fd', text: '#7c3aed' },
-  we:  { bg: '#fce7f3', text: '#be185d' },
-  v:   { bg: '#ccfbf1', text: '#0f766e' },
-  js:  { bg: '#e0e7ff', text: '#4338ca' },
-  wa:  { bg: '#cffafe', text: '#0e7490' },
-  ws2: { bg: '#ffe4e6', text: '#9f1239' },
-  d:   { bg: '#ecfccb', text: '#4d7c0f' },
-};
-
-
 const TRIMESTRES = [
   { id: 'Q1', label: '1er trimestre',  months: 'Jan - Mars',  endMonth: 2,  endDay: 31 },
   { id: 'Q2', label: '2ème trimestre', months: 'Avr - Juin',  endMonth: 5,  endDay: 30 },
@@ -40,17 +29,17 @@ const TRANSLATIONS = {
 fr: {
   login_sub:'Suivi des envois presse', login_label:'Mot de passe', login_btn:'Connexion',
   login_error:'Mot de passe incorrect.', loading:'Chargement des données...', logout:'Déconnexion',
-  nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'⚠️ Alertes',
-  page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Vins à envoyer',
-  stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Deadlines proches',
-  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Jamais envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_of_envois:'des envois', stat_late:'en retard', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
-  stat_pl_envoye:'Envoyé(s)', stat_pl_recu:'Reçu(s)', stat_pl_soumis:'Soumis', stat_pl_note:'Noté(s)', stat_pl_refuse:'Refusé(s)', stat_goto_alerts:'Voir les alertes',
+  nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'📅 Planning',
+  page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Planning d\'envoi',
+  stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Échéances proches',
+  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_of_envois:'des envois', stat_late:'en retard', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
+  stat_pl_envoye:'Envoyé(s)', stat_pl_recu:'Reçu(s)', stat_pl_soumis:'Soumis', stat_pl_note:'Noté(s)', stat_pl_refuse:'Refusé(s)', stat_goto_alerts:'Voir le planning',
   btn_export:'⬇ Export CSV', btn_new_shipment:'+ Nouvel envoi', btn_add_wine:'+ Ajouter un vin',
   btn_import:'📋 Import groupé', btn_cancel:'Annuler', btn_save:'Enregistrer', btn_add:'Ajouter',
   btn_close:'Fermer', btn_delete:'Supprimer', btn_duplicate:'Dupliquer', btn_edit_wine:'Modifier le vin', btn_modify:'Modifier',
   filter_all_pays:'Tous les pays', filter_all_revues:'Toutes les revues', filter_all_statuts:'Tous statuts',
   filter_all_trim:'Tous trimestres', filter_all_couleurs:'Toutes couleurs', filter_all:'Tous',
-  filter_non_soumis:'Non soumis', filter_soumis:'Soumis',
+  filter_non_soumis:'Jamais envoyé', filter_soumis:'Envoyé',
   filter_search:'Rechercher un vin...', filter_search_cat:'Rechercher...', filter_wines:'Filtrer les vins...',
   statut_note:'Noté', statut_recu:'Reçu', statut_envoye:'Envoyé', statut_pending:'En attente', statut_soumis:'Soumis', statut_refuse:'Refusé',
   st_letter_envoye:'E', st_letter_recu:'R', st_letter_soumis:'S', st_letter_refuse:'X', st_letter_note:'N',
@@ -68,20 +57,20 @@ fr: {
   col_pays:'Pays', col_marque:'Domaine / Marque', col_denom:'Dénomination',
   col_mil:'Mill.', col_couleur:'Couleur', col_millesime:'Millésime', col_cepage:'Cépage',
   detail_statut_revue:'Statut par revue', detail_envois:'Envois',
-  detail_deadline:'Deadline', detail_recu_le:'Reçu le',
-  detail_non_soumis:'Non soumis', detail_no_envoi:'Aucun envoi enregistré.', detail_envoi_du:'Envoi du',
+  detail_recu_le:'Reçu le',
+  detail_non_soumis:'Pas encore envoyé', detail_no_envoi:'Aucun envoi enregistré.', detail_envoi_du:'Envoi du',
   alert_empty:"Aucun vin tagé avec un trimestre d'envoi.",
   alert_empty_hint:"Taguez vos vins depuis l'onglet Catalogue.",
-  alert_expire:'Expiré', alert_envoye:'Envoyé', tag_remove:'Retirer le tag',
+  tag_remove:'Retirer le tag',
   legend_title:'Légende', legend_ok:'À venir (+ de 30 jours)', legend_warning:'≤ 30 jours',
-  legend_overdue:'Trimestre terminé, non envoyé', legend_sent:'Envoyé / Reçu / Noté',
-  tag_revues_label:'Critiques ciblés (optionnel)', alert_target:'Cible :',
+  legend_overdue:'Trimestre terminé, non envoyé', legend_sent:'Envoyé / Reçu / Noté', legend_closed:'Année clôturée', alert_closed:'Clôturé', legend_todo:'À faire', plan_todo:'À faire', plan_now:'À envoyer maintenant', plan_upcoming:'À venir', plan_upcoming_short:'à venir', plan_done:'Terminés', plan_closed:'Non envoyés (année clôturée)', plan_closed_short:'non envoyé(s)', plan_late:'En retard', plan_send:'Envoyer', plan_until:'jusqu\'au', plan_to_send:'à envoyer', plan_n_done:'terminé(s)', plan_nothing:'Rien à envoyer pour le moment.', plan_no_target:'Aucun critique ciblé',
+  tag_revues_label:'Critiques ciblés (optionnel)', alert_target:'Cible :', alert_sent_count:'envoyés', alert_remaining:'reste', camp_title:'Campagne (année)', camp_alerts_hint:'alerte(s) sur l\'année en cours', import_into:'Import dans la campagne', add_into:'Ajout dans la campagne', importing:'Import...', toast_imported:'vins importés',
   edit_sent_summary_title:'Envoyé à',
   tracker_empty:'Aucun vin trouvé.',
   q1_label:'1er trimestre', q2_label:'2ème trimestre', q3_label:'3ème trimestre', q4_label:'4ème trimestre',
   q1_months:'Jan - Mars', q2_months:'Avr - Juin', q3_months:'Juil - Sept', q4_months:'Oct - Déc',
   toast_saved:'Modifications enregistrées', toast_wine_added:'Vin ajouté au catalogue',
-  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé', toast_wine_duplicated:'Vin dupliqué',
+  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé', toast_wine_duplicated:'Vin dupliqué', toast_select_wine:'Sélectionnez au moins un vin.', toast_select_revue:'Sélectionnez au moins une revue.', saving:'Enregistrement...',
   toast_item_deleted:'Enregistrement supprimé', toast_shipment_deleted:'Envoi supprimé',
   toast_fill_required:'Remplissez tous les champs obligatoires.',
   toast_wine_has_items:'Ce vin a des envois enregistrés et ne peut pas être supprimé.',
@@ -101,17 +90,17 @@ fr: {
 es: {
   login_sub:'Seguimiento de envíos de prensa', login_label:'Contraseña', login_btn:'Entrar',
   login_error:'Contraseña incorrecta.', loading:'Cargando datos...', logout:'Cerrar sesión',
-  nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'⚠️ Alertas',
-  page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Vinos por enviar',
+  nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'📅 Planificación',
+  page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Planificación de envíos',
   stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
-  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'Nunca enviado', stat_avg:'Media', stat_best:'Mejor', stat_of_envois:'de los envíos', stat_late:'atrasado(s)', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
-  stat_pl_envoye:'Enviado(s)', stat_pl_recu:'Recibido(s)', stat_pl_soumis:'Presentado(s)', stat_pl_note:'Evaluado(s)', stat_pl_refuse:'Rechazado(s)', stat_goto_alerts:'Ver las alertas',
+  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_of_envois:'de los envíos', stat_late:'atrasado(s)', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
+  stat_pl_envoye:'Enviado(s)', stat_pl_recu:'Recibido(s)', stat_pl_soumis:'Presentado(s)', stat_pl_note:'Evaluado(s)', stat_pl_refuse:'Rechazado(s)', stat_goto_alerts:'Ver la planificación',
   btn_export:'⬇ Exportar CSV', btn_new_shipment:'+ Nuevo envío', btn_add_wine:'+ Añadir un vino',
   btn_import:'📋 Importación agrupada', btn_cancel:'Cancelar', btn_save:'Guardar', btn_add:'Añadir',
   btn_close:'Cerrar', btn_delete:'Eliminar', btn_duplicate:'Duplicar', btn_edit_wine:'Modificar el vino', btn_modify:'Modificar',
   filter_all_pays:'Todos los países', filter_all_revues:'Todas las revistas', filter_all_statuts:'Todos los estados',
   filter_all_trim:'Todos los trimestres', filter_all_couleurs:'Todos los colores', filter_all:'Todos',
-  filter_non_soumis:'No enviado', filter_soumis:'Enviado',
+  filter_non_soumis:'Nunca enviado', filter_soumis:'Enviado',
   filter_search:'Buscar un vino...', filter_search_cat:'Buscar...', filter_wines:'Filtrar los vinos...',
   statut_note:'Evaluado', statut_recu:'Recibido', statut_envoye:'Enviado', statut_pending:'Pendiente', statut_soumis:'Presentado', statut_refuse:'Rechazado',
   st_letter_envoye:'E', st_letter_recu:'R', st_letter_soumis:'P', st_letter_refuse:'X', st_letter_note:'N',
@@ -129,20 +118,20 @@ es: {
   col_pays:'País', col_marque:'Dominio / Marca', col_denom:'Denominación',
   col_mil:'Añada', col_couleur:'Color', col_millesime:'Añada', col_cepage:'Variedad',
   detail_statut_revue:'Estado por revista', detail_envois:'Envíos',
-  detail_deadline:'Plazo', detail_recu_le:'Recibido el',
-  detail_non_soumis:'No enviado', detail_no_envoi:'Ningún envío registrado.', detail_envoi_du:'Envío del',
+  detail_recu_le:'Recibido el',
+  detail_non_soumis:'Aún no enviado', detail_no_envoi:'Ningún envío registrado.', detail_envoi_du:'Envío del',
   alert_empty:'Ningún vino etiquetado con un trimestre de envío.',
   alert_empty_hint:'Etiqueta tus vinos desde la pestaña Catálogo.',
-  alert_expire:'Vencido', alert_envoye:'Enviado', tag_remove:'Quitar etiqueta',
+  tag_remove:'Quitar etiqueta',
   legend_title:'Leyenda', legend_ok:'Próximo (+ de 30 días)', legend_warning:'≤ 30 días',
-  legend_overdue:'Trimestre terminado, no enviado', legend_sent:'Enviado / Recibido / Evaluado',
-  tag_revues_label:'Críticos objetivo (opcional)', alert_target:'Objetivo:',
+  legend_overdue:'Trimestre terminado, no enviado', legend_sent:'Enviado / Recibido / Evaluado', legend_closed:'Año cerrado', alert_closed:'Cerrado', legend_todo:'Por hacer', plan_todo:'Por hacer', plan_now:'Por enviar ahora', plan_upcoming:'Próximos', plan_upcoming_short:'próximos', plan_done:'Terminados', plan_closed:'No enviados (año cerrado)', plan_closed_short:'no enviado(s)', plan_late:'Atrasado', plan_send:'Enviar', plan_until:'hasta el', plan_to_send:'por enviar', plan_n_done:'terminado(s)', plan_nothing:'Nada que enviar por ahora.', plan_no_target:'Sin crítico objetivo',
+  tag_revues_label:'Críticos objetivo (opcional)', alert_target:'Objetivo:', alert_sent_count:'enviados', alert_remaining:'falta', camp_title:'Campaña (año)', camp_alerts_hint:'alerta(s) en el año en curso', import_into:'Importación en la campaña', add_into:'Alta en la campaña', importing:'Importando...', toast_imported:'vinos importados',
   edit_sent_summary_title:'Enviado a',
   tracker_empty:'Ningún vino encontrado.',
   q1_label:'1er trimestre', q2_label:'2º trimestre', q3_label:'3er trimestre', q4_label:'4º trimestre',
   q1_months:'Ene - Mar', q2_months:'Abr - Jun', q3_months:'Jul - Sep', q4_months:'Oct - Dic',
   toast_saved:'Cambios guardados', toast_wine_added:'Vino añadido al catálogo',
-  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado', toast_wine_duplicated:'Vino duplicado',
+  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado', toast_wine_duplicated:'Vino duplicado', toast_select_wine:'Seleccione al menos un vino.', toast_select_revue:'Seleccione al menos una revista.', saving:'Guardando...',
   toast_item_deleted:'Registro eliminado', toast_shipment_deleted:'Envío eliminado',
   toast_fill_required:'Complete todos los campos obligatorios.',
   toast_wine_has_items:'Este vino tiene envíos registrados y no se puede eliminar.',
@@ -201,7 +190,7 @@ function applyStaticI18n() {
     if (last && last.nodeType === 3) {
       if (p==='tracker') last.textContent = 'Tracker';
       else if (p==='catalogue') last.textContent = LANG==='es' ? 'Catálogo' : 'Catalogue';
-      else if (p==='alerts') last.textContent = LANG==='es' ? 'Alertas' : 'Alertes';
+      else if (p==='alerts') last.textContent = LANG==='es' ? 'Planificación' : 'Planning';
     }
   });
   // Page titles
@@ -241,8 +230,7 @@ function applyStaticI18n() {
     sSel.options[3].text = T('statut_envoye');
     sSel.options[4].text = T('statut_soumis');
     sSel.options[5].text = T('statut_refuse');
-    sSel.options[6].text = T('statut_pending');
-    if (sSel.options[7]) sSel.options[7].text = T('filter_never_sent');
+    sSel.options[6].text = T('filter_never_sent');
   }
   // Sent filter
   const sentSel = $('catFilterSent');
@@ -289,20 +277,16 @@ function applyStaticI18n() {
 
 
 
-function getTrimestreEnd(qid) {
+function getTrimestreEnd(qid, year) {
   const t = TRIMESTRES.find(x => x.id === qid);
   if (!t) return null;
-  return new Date(new Date().getFullYear(), t.endMonth, t.endDay, 23, 59, 59);
+  return trimestreEndDate(t, year || currentCampagne);
 }
 
-function getTrimestreState(qid, isSent) {
-  if (isSent) return 'sent';
-  const end = getTrimestreEnd(qid);
-  if (!end) return 'ok';
-  const daysLeft = Math.floor((end - new Date()) / 86400000);
-  if (daysLeft < 0)  return 'overdue';
-  if (daysLeft <= 30) return 'warning';
-  return 'ok';
+function getTrimestreState(qid, isSent, year) {
+  const t = TRIMESTRES.find(x => x.id === qid);
+  if (!t) return isSent ? 'sent' : 'ok';
+  return trimestreStateFor(t, isSent, year || currentCampagne, new Date());
 }
 
 function trimBadge(qid) {
@@ -323,39 +307,21 @@ function isWineSoumis(wineId) {
   return shipmentItems.some(i => i.wineId === wineId && i.statut === 'soumis');
 }
 
-function wineRevueIdsByStatuts(wineId, statuts) {
-  return [...new Set(shipmentItems.filter(i => i.wineId === wineId && statuts.includes(i.statut)).map(i => i.revueId))];
-}
-
-function revuePillsHTML(rids) {
-  return rids.map(rid => {
-    const r = REVUES.find(x => x.id === rid);
-    const lbl = r ? r.label : rid;
-    const c = REVUE_COLORS[rid] || { bg: '#f1e8fd', text: '#7c3aed' };
-    return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:' + c.bg + ';color:' + c.text + '">' + esc(lbl) + '</span>';
-  }).join('');
-}
-
-function revuePillsGrayHTML(rids) {
-  return rids.map(rid => {
-    const r = REVUES.find(x => x.id === rid);
-    const lbl = r ? r.label : rid;
-    return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:var(--gray-bg);color:var(--gray-text)">' + esc(lbl) + '</span>';
-  }).join('');
-}
-
 function getTrimestreAlerts() {
-  return wines.filter(w => {
-    if (!w.trimestre) return false;
-    const st = getTrimestreState(w.trimestre, isWineSent(w.id));
-    return st === 'overdue' || st === 'warning';
-  }).length;
+  return trimestreCounts(wines, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS).total;
 }
 
 let db;
+// Données brutes de Firestore, toutes années confondues.
+let allWines = [];
+let allShipments = [];
+let allItems = [];
+// Vues de la campagne affichée : tout le reste de l'app lit ces trois variables.
 let wines = [];
 let shipments = [];
 let shipmentItems = [];
+let currentCampagne = new Date().getFullYear();
+let campagneChosen = false;
 let trackerView = 'table';
 let trackerSort = { col: 'pays', dir: 1 };
 
@@ -384,6 +350,54 @@ function applyTrackerSort(arr, wrs) {
     return va < vb ? -dir : va > vb ? dir : 0;
   });
 }
+const CAMPAGNE_STORAGE_KEY = 'pt_campagne';
+
+function storedCampagne() {
+  try { return localStorage.getItem(CAMPAGNE_STORAGE_KEY); } catch (e) { return null; }
+}
+
+// Recalcule les vues de la campagne affichée à partir des données brutes (sans rendu).
+function recomputeCampagneData() {
+  const f = filterByCampagne(allWines, allShipments, allItems, currentCampagne);
+  wines = f.wines;
+  shipments = f.shipments;
+  shipmentItems = f.shipmentItems.map(withEffectiveStatut);
+}
+
+// Change l'année affichée : mémorise le choix, vide les sélections et ferme les fenêtres
+// pour qu'une action de masse ne vise jamais l'autre année.
+function setCampagne(year) {
+  if (year === currentCampagne) return;
+  currentCampagne = year;
+  try { localStorage.setItem(CAMPAGNE_STORAGE_KEY, String(year)); } catch (e) {}
+  catSelected.clear();
+  selectedWines.clear();
+  document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+  modalDirty = false;
+  recomputeCampagneData();
+  buildFilters();
+  renderAll();
+}
+
+// Boutons d'année ; pastille ambre sur l'année en cours si elle a des alertes pendant qu'on regarde une autre année.
+function renderCampagneSwitch() {
+  const el = document.getElementById('campagneSwitch');
+  if (!el) return;
+  const nowYear = new Date().getFullYear();
+  const years = campagnesDisponibles(allWines, nowYear);
+  const alertsNow = currentCampagne !== nowYear
+    ? trimestreCounts(allWines.filter(w => wineCampagne(w) === nowYear), allItems, nowYear, new Date(), TRIMESTRES, SENT_STATUTS).total
+    : 0;
+  el.title = T('camp_title');
+  const select = '<select class="camp-select" aria-label="' + esc(T('camp_title')) + '" onchange="setCampagne(Number(this.value))">' +
+    years.map(y => '<option value="' + y + '"' + (y === currentCampagne ? ' selected' : '') + '>' + y + (y === nowYear && alertsNow ? ' ⚠' : '') + '</option>').join('') + '</select>';
+  el.innerHTML = years.map(y =>
+    '<button class="lang-btn camp-btn' + (y === currentCampagne ? ' active' : '') + '" onclick="setCampagne(' + y + ')">' + y +
+    (y === nowYear && alertsNow ? '<span class="camp-dot" title="' + alertsNow + ' ' + esc(T('camp_alerts_hint')) + '"></span>' : '') +
+    '</button>'
+  ).join('') + select;
+}
+
 let unsubWines, unsubShipments, unsubItems;
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -436,6 +450,7 @@ function initApp() {
   db = firebase.firestore();
 
   const loaded = { wines: false, shipments: false, items: false };
+  campagneChosen = false;
 
   function checkReady() {
     if (loaded.wines && loaded.shipments && loaded.items) {
@@ -453,22 +468,30 @@ function initApp() {
   }, 8000);
 
   unsubWines = db.collection('wines').onSnapshot(snap => {
-    wines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    wines.sort((a, b) => (a.pays || '').localeCompare(b.pays || '') || (a.nom || '').localeCompare(b.nom || ''));
+    allWines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allWines.sort((a, b) => (a.pays || '').localeCompare(b.pays || '') || (a.nom || '').localeCompare(b.nom || ''));
+    if (!campagneChosen) {
+      const nowYear = new Date().getFullYear();
+      currentCampagne = chooseInitialCampagne(storedCampagne(), campagnesDisponibles(allWines, nowYear), nowYear);
+      campagneChosen = true;
+    }
+    recomputeCampagneData();
     loaded.wines = true;
     checkReady();
     if (loaded.wines && loaded.shipments && loaded.items) { buildFilters(); renderAll(); }
   }, err => { console.error('wines:', err); loaded.wines = true; checkReady(); });
 
   unsubShipments = db.collection('shipments').onSnapshot(snap => {
-    shipments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    shipments.sort((a, b) => (b.dateEnvoi || b.dateSoumission || '').localeCompare(a.dateEnvoi || a.dateSoumission || ''));
+    allShipments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allShipments.sort((a, b) => (b.dateEnvoi || b.dateSoumission || '').localeCompare(a.dateEnvoi || a.dateSoumission || ''));
+    recomputeCampagneData();
     loaded.shipments = true;
     checkReady();
   }, err => { console.error('shipments:', err); loaded.shipments = true; checkReady(); });
 
   unsubItems = db.collection('shipmentItems').onSnapshot(snap => {
-    shipmentItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    recomputeCampagneData();
     loaded.items = true;
     checkReady();
     if (loaded.wines) renderAll();
@@ -542,19 +565,13 @@ function fmtDate(d) {
   return dt.toLocaleDateString(LANG === 'es' ? 'es-ES' : 'fr-FR');
 }
 
-function daysUntil(d) {
-  if (!d) return null;
-  const dt = d.toDate ? d.toDate() : new Date(d);
-  return Math.round((dt - new Date()) / 86400000);
-}
-
 function couleurBadge(c) {
   const cl = (c || '').toLowerCase().replace('é', 'e');
   const cm = { 'Rouge': T('color_rouge'), 'Blanc': T('color_blanc'), 'Rosé': T('color_rose'), 'Orange': T('color_orange') };
   return '<span class="cl-' + cl + '">' + (cm[c] || c || '') + '</span>';
 }
 
-// Tableau Tracker : statut affiché en bulle (lettre ou note), deadline en point, détail au survol.
+// Tableau Tracker : statut affiché en bulle (lettre ou note), détail au survol.
 const ST_BUBBLE = {
   'envoyé': { key: 'statut_envoye', letter: 'st_letter_envoye' },
   'reçu':   { key: 'statut_recu',   letter: 'st_letter_recu' },
@@ -570,16 +587,8 @@ function statutBubble(info, revueName) {
   }
   const cfg = ST_BUBBLE[info.statut];
   if (!cfg) return statutBadge(info.statut);
-  let title = revueName + ' - ' + T(cfg.key);
-  let dot = '';
-  const d = info.deadline ? daysUntil(info.deadline) : null;
-  if (d !== null) {
-    title += ' · ' + T('detail_deadline') + ' : ' + fmtDate(info.deadline);
-    if (d < 0) { dot = 'urgent'; title += ' (' + T('alert_expire') + ')'; }
-    else if (d <= 30) { dot = d <= 7 ? 'urgent' : 'soon'; title += ' (J-' + d + ')'; }
-  }
-  return '<span class="st-bubble badge-' + info.statut + '" title="' + esc(title) + '">' + T(cfg.letter) +
-    (dot ? '<span class="st-dot st-dot-' + dot + '"></span>' : '') + '</span>';
+  const title = revueName + ' - ' + T(cfg.key);
+  return '<span class="st-bubble badge-' + info.statut + '" title="' + esc(title) + '">' + T(cfg.letter) + '</span>';
 }
 
 function trackerLegendHTML() {
@@ -598,6 +607,7 @@ function statutBadge(st) {
 }
 
 function renderAll() {
+  renderCampagneSwitch();
   renderTracker();
   renderCatalogue();
   renderAlerts();
@@ -613,7 +623,7 @@ function getWineRevueStatus() {
   wines.forEach(w => {
     result[w.id] = {};
     REVUES.forEach(r => {
-      result[w.id][r.id] = { statut: 'pending', note: '', deadline: '', commentaire: '', dateReception: '', shipmentId: null, itemId: null };
+      result[w.id][r.id] = { statut: 'pending', note: '', commentaire: '', dateReception: '', shipmentId: null, itemId: null };
     });
   });
   const order = ['pending', 'soumis', 'envoyé', 'reçu', 'noté', 'refusé'];
@@ -626,7 +636,6 @@ function getWineRevueStatus() {
       result[wid][rid] = {
         statut: item.statut,
         note: item.note || '',
-        deadline: item.deadline || '',
         dateReception: item.dateReception || '',
         commentaire: item.commentaire || '',
         shipmentId: item.shipmentId,
@@ -688,7 +697,7 @@ function resetAlertsFilters() {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function wineHasAlert(w) {
-  return !!(w.trimestre && ['overdue','warning'].includes(getTrimestreState(w.trimestre, isWineSent(w.id))));
+  return !!(w.trimestre && ['overdue','warning'].includes(getTrimestreState(w.trimestre, isWineDone(w, shipmentItems, SENT_STATUTS))));
 }
 
 function updateAlertBadge() {
@@ -760,12 +769,7 @@ function renderStats() {
     : '');
 
   // 5 · Alertes trimestre : en retard / ≤ 30 j
-  let late = 0, soon = 0;
-  wines.forEach(w => {
-    if (!w.trimestre) return;
-    const st = getTrimestreState(w.trimestre, isWineSent(w.id));
-    if (st === 'overdue') late++; else if (st === 'warning') soon++;
-  });
+  const { late, soon } = trimestreCounts(wines, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
   const total = updateAlertBadge();
   set('statAlerts', total);
   const card = document.getElementById('statAlertsCard');
@@ -796,15 +800,10 @@ function renderTracker() {
   const filtered = wines.filter(w => {
     if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.domaine || '').toLowerCase().includes(search) && !(w.importateurUS || '').toLowerCase().includes(search)) return false;
     if (fPays && w.pays !== fPays) return false;
-    if (fRevue) { const ri = wrs[w.id] && wrs[w.id][fRevue]; if (!ri || ri.statut === 'pending') return false; }
     if (fTrimestre && w.trimestre !== fTrimestre) return false;
-    if (fStatut) {
-      const statuts = Object.values(wrs[w.id] || {}).map(x => x.statut);
-      if (fStatut === 'never_sent') { if (isWineSent(w.id)) return false; }
-      else if (fStatut === 'pending') { if (!statuts.every(s => s === 'pending')) return false; }
-      else { if (!statuts.includes(fStatut)) return false; }
-    }
-    return true;
+    const statuts = {};
+    Object.entries(wrs[w.id] || {}).forEach(([rid, info]) => { statuts[rid] = info.statut; });
+    return matchesRevueStatut(statuts, fRevue, fStatut, SENT_STATUTS);
   });
 
   renderStats();
@@ -850,14 +849,12 @@ function renderTracker() {
         couleurBadge(w.couleur) + '</div>' +
         '<div class="card-pills">' + REVUES.map(r => {
           const info = wrs[w.id] && wrs[w.id][r.id];
-          const d = info && info.deadline ? daysUntil(info.deadline) : null;
-          const isAlert = d !== null && d <= 30 && info && info.statut !== 'noté';
           let cls = 'none';
           if (info && info.note) cls = 'rated';
           else if (info && info.statut === 'refusé') cls = 'refused';
           else if (info && info.statut === 'reçu') cls = 'recvd';
-          else if (info && info.statut === 'envoyé') cls = isAlert ? 'alert' : 'sent';
-          return '<span class="revue-pill ' + cls + '">' + r.label + (info && info.note ? ' · ' + esc(info.note) : '') + (isAlert && !(info && info.note) ? ' J-' + d : '') + '</span>';
+          else if (info && info.statut === 'envoyé') cls = 'sent';
+          return '<span class="revue-pill ' + cls + '">' + r.label + (info && info.note ? ' · ' + esc(info.note) : '') + '</span>';
         }).join('') + '</div></div>';
     }).join('') + '</div>';
   }
@@ -895,7 +892,6 @@ function openWineDetail(wineId) {
       '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:16px">' +
         REVUES.map(r => {
           const info = wrs[wineId] && wrs[wineId][r.id];
-          const d = info && info.deadline ? daysUntil(info.deadline) : null;
           return '<div style="background:var(--bg);border-radius:var(--radius);padding:10px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
               '<span style="font-size:11px;font-weight:600;color:var(--text-muted)">' + r.full + '</span>' +
@@ -904,7 +900,6 @@ function openWineDetail(wineId) {
             (info && info.statut && info.statut !== 'pending' ?
               statutBadge(info.statut) +
               (info.note ? ' <span class="note-pill" style="margin-left:4px">' + esc(info.note) + '</span>' : '') +
-              (info.deadline ? '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + T('detail_deadline') + ' : ' + fmtDate(info.deadline) + (d !== null ? ' <span class="deadline-tag ' + (d <= 7 ? 'deadline-urgent' : 'deadline-soon') + '">J-' + d + '</span>' : '') + '</div>' : '') +
               (info.dateReception ? '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + T('detail_recu_le') + ' : ' + fmtDate(info.dateReception) + '</div>' : '') +
               (info.commentaire ? '<div style="font-size:12px;color:var(--text);line-height:1.5;white-space:pre-wrap;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">' + esc(info.commentaire) + '</div>' : '')
             : '<span style="color:var(--text-faint);font-size:12px">' + T('detail_non_soumis') + '</span>') +
@@ -974,7 +969,7 @@ function openEditItem(itemId, wineId) {
           '<option value="noté"' + (item.statut === 'noté' ? ' selected' : '') + '>'+T('statut_note')+'</option>' +
           '<option value="refusé"' + (item.statut === 'refusé' ? ' selected' : '') + '>'+T('statut_refuse')+'</option>' +
         '</select></div>' +
-        '<div class="field"><label>'+T('lbl_note')+'</label><input id="ei_note" value="' + esc(item.note || '') + '" placeholder="ex: 92"></div>' +
+        '<div class="field"><label>'+T('lbl_note')+'</label><input id="ei_note" value="' + esc(item.note || '') + '" placeholder="ex: 92" oninput="noteToStatut()"></div>' +
         '<div class="field"><label>'+T('lbl_date_recep')+'</label><input type="date" id="ei_recep" value="' + (item.dateReception || '') + '"></div>' +
       '</div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><textarea id="ei_comment">' + esc(item.commentaire || '') + '</textarea></div>' +
@@ -987,13 +982,19 @@ function openEditItem(itemId, wineId) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
+// Saisir une note passe le statut à « Noté » (sauf « Refusé »).
+function noteToStatut() {
+  const st = document.getElementById('ei_statut');
+  st.value = effectiveStatut(st.value, document.getElementById('ei_note').value);
+}
+
 async function saveItem(itemId, wineId) {
   const btn = document.getElementById('btnSaveItem');
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
   try {
     await db.collection('shipmentItems').doc(itemId).update({
-      statut: document.getElementById('ei_statut').value,
+      statut: effectiveStatut(document.getElementById('ei_statut').value, document.getElementById('ei_note').value),
       note: document.getElementById('ei_note').value || null,
       dateReception: document.getElementById('ei_recep').value || null,
       commentaire: document.getElementById('ei_comment').value || null,
@@ -1016,9 +1017,9 @@ let selectedWines = new Set();
 let selectedRevues = new Set();
 let trackingValues = {};
 
-function openShipmentModal(preselect) {
+function openShipmentModal(preselect, revues) {
   selectedWines = new Set(preselect ? [preselect] : []);
-  selectedRevues = new Set();
+  selectedRevues = new Set(revues || []);
   trackingValues = {};
   renderShipmentModal();
 }
@@ -1052,7 +1053,7 @@ function renderShipmentModal() {
       ).join('') + '</div>' +
       '<div class="section-title" style="margin-top:16px">' + T('section_details') + '</div>' +
       '<div class="grid-3">' +
-        '<div class="field"><label>'+T('lbl_date_envoi_opt')+'</label><input type="date" id="sh_date" oninput="if(this.value)document.getElementById(\'sh_date_soumission\').value=\'\'"></div>' +
+        '<div class="field"><label>'+T('lbl_date_envoi_opt')+'</label><input type="date" id="sh_date" value="' + todayISO() + '" oninput="if(this.value)document.getElementById(\'sh_date_soumission\').value=\'\'"></div>' +
         '<div class="field"><label>'+T('lbl_date_soumission')+'</label><input type="date" id="sh_date_soumission" oninput="if(this.value)document.getElementById(\'sh_date\').value=\'\'"></div>' +
         '<div class="field"><label>'+T('lbl_inter')+'</label><input id="sh_inter" placeholder="ex: Winesellers"></div>' +
       '</div>' +
@@ -1115,8 +1116,8 @@ function updateShipmentCounts() {
 }
 
 async function saveShipment() {
-  if (!selectedWines.size) { toast('Sélectionnez au moins un vin.', 'warn'); return; }
-  if (!selectedRevues.size) { toast('Sélectionnez au moins une revue.', 'warn'); return; }
+  if (!selectedWines.size) { toast(T('toast_select_wine'), 'warn'); return; }
+  if (!selectedRevues.size) { toast(T('toast_select_revue'), 'warn'); return; }
   const dateEnvoi = document.getElementById('sh_date').value;
   const dateSoumission = document.getElementById('sh_date_soumission').value;
   if (dateEnvoi && dateSoumission) { toast(T('hint_one_date'), 'warn'); return; }
@@ -1124,7 +1125,7 @@ async function saveShipment() {
   const statutInit = dateSoumission ? 'soumis' : 'envoyé';
 
   const btn = document.getElementById('btnSaveShipment');
-  btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+  btn.innerHTML = '<span class="spinner"></span> ' + T('saving');
   btn.disabled = true;
 
   try {
@@ -1150,7 +1151,6 @@ async function saveShipment() {
           revueId: rid,
           statut: statutInit,
           note: null,
-          deadline: null,
           dateReception: null,
           tracking: trackingValues[rid] || null,
           commentaire: document.getElementById('sh_comment').value || null,
@@ -1316,10 +1316,18 @@ function renderCatalogue() {
   const tbody = document.getElementById('catTableBody');
   document.getElementById('catEmpty').style.display = filtered.length ? 'none' : 'block';
   tbody.innerHTML = filtered.map(w => {
-    const sent = Object.values(wrs[w.id] || {}).filter(x => SENT_STATUTS.includes(x.statut)).length;
-    const sentBadge = sent === 0
-      ? '<span style="color:var(--text-faint);font-size:11px">-</span>'
-      : '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 7px;border-radius:10px;font-weight:500">' + sent + '/' + REVUES.length + '</span>';
+    const cibles = w.cibleRevues || [];
+    const sentIds = Object.keys(wrs[w.id] || {}).filter(rid => SENT_STATUTS.includes(wrs[w.id][rid].statut));
+    const pillCss = 'font-size:11px;padding:2px 7px;border-radius:10px;font-weight:500;';
+    let sentBadge = '<span style="color:var(--text-faint);font-size:11px">-</span>';
+    if (cibles.length) {
+      const doneCibles = cibles.filter(rid => sentIds.includes(rid)).length;
+      const tone = doneCibles === cibles.length ? 'background:var(--green-bg);color:var(--green-text)'
+        : doneCibles ? 'background:var(--amber-bg);color:var(--amber-text)' : 'background:var(--gray-bg);color:var(--gray-text)';
+      sentBadge = '<span style="' + pillCss + tone + '">' + doneCibles + '/' + cibles.length + '</span>';
+    } else if (sentIds.length) {
+      sentBadge = '<span style="' + pillCss + 'background:var(--green-bg);color:var(--green-text)">' + sentIds.length + '</span>';
+    }
     return '<tr onclick="openEditWineModal(\'' + w.id + '\')">' +
       '<td onclick="event.stopPropagation()"><input type="checkbox" class="cat-row-cb" data-id="' + w.id + '" ' + (catSelected.has(w.id) ? 'checked' : '') + ' onchange="toggleCatSelect(\'' + w.id + '\',this.checked,event)"></td>' +
       '<td>' + esc(w.pays) + '</td>' +
@@ -1344,7 +1352,7 @@ function renderCatalogue() {
 // â”€â”€ ADD WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function uniqueVals(field) {
-  return [...new Set(wines.map(w => w[field]).filter(Boolean))].sort();
+  return [...new Set(allWines.map(w => w[field]).filter(Boolean))].sort();
 }
 
 function datalistsHTML(suffix) {
@@ -1360,6 +1368,7 @@ function openAddWineModal() {
   '<div class="modal">' +
     '<div class="modal-header"><div class="modal-title">' + T('modal_add_wine') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
+      '<div class="campagne-note">' + T('add_into') + ' ' + currentCampagne + '</div>' +
       '<div class="grid-2">' +
         '<div class="field"><label>'+T('lbl_pays')+'</label><input id="aw_pays" list="dl_pays_aw" placeholder="ex: France"></div>' +
         '<div class="field"><label>'+T('lbl_couleur')+'</label><select id="aw_couleur"><option>Rouge</option><option>Blanc</option><option>Rosé</option><option>Orange</option></select></div>' +
@@ -1388,7 +1397,7 @@ async function saveWine() {
   const nom = document.getElementById('aw_nom').value.trim();
   const millesime = document.getElementById('aw_mil').value.trim();
   const appellation = document.getElementById('aw_app').value.trim();
-  if (!pays || !nom || !millesime || !appellation) { toast('Remplissez tous les champs obligatoires.', 'warn'); return; }
+  if (!pays || !nom || !millesime || !appellation) { toast(T('toast_fill_required'), 'warn'); return; }
 
   const btn = document.getElementById('btnSaveWine');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -1407,6 +1416,7 @@ async function saveWine() {
       commentaire: document.getElementById('aw_comment').value.trim() || null,
       mad: document.getElementById('aw_mad').value || null,
       importateurUS: document.getElementById('aw_imp').value.trim() || null,
+      campagne: currentCampagne,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal();
@@ -1480,7 +1490,7 @@ async function updateWine(wineId) {
   const nom = document.getElementById('ew_nom').value.trim();
   const millesime = document.getElementById('ew_mil').value.trim();
   const appellation = document.getElementById('ew_app').value.trim();
-  if (!pays || !nom || !millesime || !appellation) { toast('Remplissez tous les champs obligatoires.', 'warn'); return; }
+  if (!pays || !nom || !millesime || !appellation) { toast(T('toast_fill_required'), 'warn'); return; }
 
   const btn = document.getElementById('btnUpdateWine');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -1594,6 +1604,7 @@ async function duplicateWine(id) {
       commentaire: w.commentaire || null,
       mad: w.mad || null,
       importateurUS: w.importateurUS || null,
+      campagne: wineCampagne(w),
       trimestre: w.trimestre || null,
       cibleRevues: w.cibleRevues || null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1631,6 +1642,7 @@ function openPasteModal() {
   '<div class="modal modal-lg">' +
     '<div class="modal-header"><div class="modal-title">' + T('modal_import') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
     '<div class="modal-body">' +
+      '<div class="campagne-note">' + T('import_into') + ' ' + currentCampagne + '</div>' +
       '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Collez un tableau (Excel ou texte) avec les colonnes :<br>' +
         '<strong>Pays · Domaine ou Marque · Dénomination · Couleur · Millésime · Cépage · Degré · Lien externe · Commentaire · Importateur US</strong><br>' +
         'Séparateur : tabulation ou point-virgule. Une ligne par vin. Les 5 dernières colonnes sont facultatives.</p>' +
@@ -1715,7 +1727,7 @@ function renderPastePreview(errors) {
 async function importPaste() {
   if (!parsedPaste.length) return;
   const btn = document.getElementById('btnImport');
-  btn.innerHTML = '<span class="spinner spinner-dark"></span> Import...';
+  btn.innerHTML = '<span class="spinner spinner-dark"></span> ' + T('importing');
   btn.disabled = true;
   try {
     const batch = db.batch();
@@ -1727,12 +1739,13 @@ async function importPaste() {
         cepage: r.cepage || null, degre: r.degre || null,
         domaine: null, lienExterne: r.lienExterne || null, commentaire: r.commentaire || null,
         importateurUS: r.importateurUS || null,
+        campagne: currentCampagne,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
     await batch.commit();
     closeModal();
-    toast('✓ ' + parsedPaste.length + ' vins importés');
+    toast('✓ ' + parsedPaste.length + ' ' + T('toast_imported'));
   } catch (e) {
     toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
@@ -1747,16 +1760,104 @@ async function importPaste() {
 function renderAlertsLegend() {
   const legend = document.getElementById('alertsLegend');
   if (!legend) return;
+  const bar = c => '<span style="width:3px;height:12px;border-radius:2px;background:' + c + ';flex-shrink:0"></span>';
+  const pill = (cls, mark) => '<span class="plan-pill ' + cls + '">' + mark + '</span>';
   const items = [
-    ['#b0b3b8', T('legend_ok')],
-    ['#f59e0b', T('legend_warning')],
-    ['#ef4444', T('legend_overdue')],
-    ['var(--green-text,#10b981)', T('legend_sent')],
+    [bar('#ef4444'), T('legend_overdue')],
+    [bar('#f59e0b'), T('legend_warning')],
+    [pill('p-sent', '✓'), T('legend_sent')],
+    [pill('p-todo', '○'), T('legend_todo')],
+    [pill('p-soumis', '↗'), T('statut_soumis')],
+    [pill('p-refuse', '✕'), T('statut_refuse')],
   ];
   legend.innerHTML = '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:10px 14px;margin-bottom:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:12px">' +
     '<span style="font-weight:600;color:var(--text-muted);text-transform:uppercase;font-size:11px;letter-spacing:.05em">' + T('legend_title') + '</span>' +
-    items.map(([c,l]) => '<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:' + c + ';flex-shrink:0"></span>' + l + '</span>').join('') +
+    items.map(([mark, label]) => '<span style="display:flex;align-items:center;gap:6px">' + mark + label + '</span>').join('') +
   '</div>';
+}
+
+// Sections repliables du Planning : l'état ouvert/fermé survit aux rafraîchissements en direct.
+const planOpen = { done: false, closed: true };
+
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+// Pastilles critiques d'un vin : une par critique ciblé (✓ servi, ○ à faire, ↗ soumis, ✕ refusé),
+// plus les critiques non ciblés qui ont reçu le vin (précédés de « + »).
+function planPillsHTML(w, wrs) {
+  const cibles = w.cibleRevues || [];
+  const statutOf = rid => ((wrs[w.id] && wrs[w.id][rid]) || { statut: 'pending' }).statut;
+  const labels = { 'noté': T('statut_note'), 'envoyé': T('statut_envoye'), 'reçu': T('statut_recu'), 'soumis': T('statut_soumis'), 'refusé': T('statut_refuse'), 'pending': T('plan_todo') };
+  const pill = (rid, plus) => {
+    const r = REVUES.find(x => x.id === rid);
+    const st = statutOf(rid);
+    let cls = 'p-todo', mark = '○';
+    if (st === 'refusé') { cls = 'p-refuse'; mark = '✕'; }
+    else if (st === 'soumis') { cls = 'p-soumis'; mark = '↗'; }
+    else if (SENT_STATUTS.includes(st)) { cls = 'p-sent'; mark = '✓'; }
+    return '<span class="plan-pill ' + cls + '" title="' + esc((r ? r.full : rid) + ' - ' + (labels[st] || st)) + '">' +
+      (plus ? '+' : '') + esc(r ? r.label : rid) + ' ' + mark + '</span>';
+  };
+  const extras = REVUES.filter(r => !cibles.includes(r.id) && statutOf(r.id) !== 'pending').map(r => r.id);
+  return cibles.map(rid => pill(rid, false)).join('') + extras.map(rid => pill(rid, cibles.length > 0)).join('');
+}
+
+function planTagHTML(e) {
+  if (e.state === 'overdue') return '<span class="deadline-tag deadline-urgent">' + T('plan_late') + ' · ' + e.t.id + '</span>';
+  if (e.state === 'warning') return '<span class="deadline-tag deadline-soon">J-' + e.daysLeft + ' · ' + e.t.id + '</span>';
+  if (e.state === 'sent') return '<span class="deadline-tag deadline-ok">' + e.t.id + ' ✓</span>';
+  if (e.state === 'closed') return '<span class="deadline-tag" style="background:var(--gray-bg);color:var(--gray-text)">' + T('alert_closed') + ' · ' + e.t.id + '</span>';
+  return '<span class="deadline-tag" style="background:var(--gray-bg);color:var(--gray-text)">' + e.t.id + ' · J-' + e.daysLeft + '</span>';
+}
+
+function planRowHTML(e, wrs, withTag) {
+  const w = e.w;
+  const cibles = w.cibleRevues || [];
+  const cls = e.state === 'overdue' ? ' is-overdue' : e.state === 'warning' ? ' is-warning' : e.state === 'sent' ? ' is-done' : '';
+  const pills = planPillsHTML(w, wrs);
+  const count = cibles.length > 1 ? '<span class="plan-count">' + (cibles.length - e.remaining.length) + '/' + cibles.length + '</span>' : '';
+  const pillsRow = pills
+    ? '<div class="plan-pills">' + pills + count + '</div>'
+    : '<div class="plan-pills"><span class="plan-count">' + esc(T('plan_no_target')) + '</span></div>';
+  const btn = e.state === 'sent' ? '' :
+    '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();sendFromPlanning(\'' + w.id + '\')">' + T('plan_send') + '</button>';
+  return '<div class="plan-row' + cls + '" onclick="openWineDetail(\'' + w.id + '\')">' +
+    '<div class="plan-main">' +
+      '<div class="plan-name">' + esc(w.appellation) + ' ' + (w.millesime || '') + '</div>' +
+      '<div class="plan-sub">' + esc(w.pays) + (w.nom ? ' · ' + esc(w.nom) : '') + '</div>' +
+      pillsRow +
+    '</div>' +
+    '<div class="plan-side">' + (withTag ? planTagHTML(e) : '') + btn + '</div>' +
+  '</div>';
+}
+
+function planFoldHTML(key, title, count, inner) {
+  return '<details class="plan-fold"' + (planOpen[key] ? ' open' : '') + ' ontoggle="planOpen.' + key + '=this.open">' +
+    '<summary>' + title + ' (' + count + ')</summary>' + inner + '</details>';
+}
+
+function planSummaryHTML(sec) {
+  const late = sec.now.filter(e => e.state === 'overdue').length;
+  const soon = sec.now.filter(e => e.state === 'warning').length;
+  const part = (n, label, cls) => '<span' + (cls ? ' class="' + cls + '"' : '') + '><b>' + n + '</b> ' + label + '</span>';
+  const parts = [];
+  if (sec.closed.length) {
+    parts.push(part(sec.closed.length, T('plan_closed_short')));
+  } else {
+    parts.push(part(sec.now.length, T('plan_to_send')));
+    if (late) parts.push(part(late, T('stat_late'), 'is-late'));
+    if (soon) parts.push(part(soon, T('stat_soon'), 'is-soon'));
+    if (sec.upcoming.length) parts.push(part(sec.upcoming.length, T('plan_upcoming_short')));
+  }
+  parts.push(part(sec.done.length, T('plan_n_done')));
+  return '<div class="plan-summary">' + parts.join('') + '</div>';
+}
+
+function sendFromPlanning(wineId) {
+  const w = wines.find(x => x.id === wineId);
+  openShipmentModal(wineId, w ? remainingRevues(w, shipmentItems, SENT_STATUTS) : []);
 }
 
 function renderAlerts() {
@@ -1782,82 +1883,47 @@ function renderAlerts() {
     return;
   }
 
-  let anyGroupRendered = false;
-  let html = '';
-  TRIMESTRES.forEach(td => {
-    if (fTrim && fTrim !== td.id) return;
-    let group = wines.filter(w => {
-      if (w.trimestre !== td.id) return false;
-      if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.pays || '').toLowerCase().includes(search)) return false;
-      if (fPays && w.pays !== fPays) return false;
-      if (fCrit && !(w.cibleRevues || []).includes(fCrit)) return false;
-      return true;
-    });
-    if (!group.length) return;
-    const end = getTrimestreEnd(td.id);
-    const daysLeft = end ? Math.floor((end - new Date()) / 86400000) : null;
-    group = group.map(w => ({ w, sent: isWineSent(w.id) })).sort((a, b) => {
-      const pa = a.sent ? Infinity : daysLeft;
-      const pb = b.sent ? Infinity : daysLeft;
-      return pa - pb;
-    }).map(x => x.w);
-    anyGroupRendered = true;
-    html += '<div style="padding:10px 16px 4px;font-weight:600;font-size:11px;color:var(--text-muted);' +
-      'text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);' +
-      'display:flex;align-items:center;gap:8px">' +
-      T(td.id.toLowerCase()+'_label') + ' <span style="font-weight:400;font-size:10px;text-transform:none">(' + T(td.id.toLowerCase()+'_months') + ')</span>' +
-      trimBadge(td.id) + '</div>';
-    group.forEach(w => {
-      const sent = isWineSent(w.id);
-      const state = getTrimestreState(td.id, sent);
-      let rowBg = '', dotColor = '#b0b3b8';
-      if (state === 'overdue')  { rowBg = '#fee2e214'; dotColor = '#ef4444'; }
-      else if (state === 'warning') { rowBg = '#fef3cd14'; dotColor = '#f59e0b'; }
-      else if (state === 'sent') { dotColor = 'var(--green-text,#10b981)'; }
-      let tagBlocks = [];
-      if (state === 'overdue') {
-        tagBlocks.push({ tag: '<span class="deadline-tag deadline-urgent">' + T('alert_expire') + '</span>', pills: '' });
-      } else if (state === 'warning') {
-        tagBlocks.push({ tag: '<span class="deadline-tag deadline-soon">J-' + daysLeft + '</span>', pills: '' });
-      } else {
-        const sentRids = wineRevueIdsByStatuts(w.id, SENT_STATUTS);
-        if (sentRids.length) {
-          tagBlocks.push({
-            tag: '<span class="deadline-tag" style="background:var(--green-bg);color:var(--green-text)">' + T('alert_envoye') + '</span>',
-            pills: revuePillsGrayHTML(sentRids)
-          });
-        }
-        const soumisRids = wineRevueIdsByStatuts(w.id, ['soumis']);
-        if (soumisRids.length) {
-          tagBlocks.push({
-            tag: '<span class="deadline-tag" style="background:#faeeda;color:#633806">' + T('statut_soumis') + '</span>',
-            pills: revuePillsGrayHTML(soumisRids)
-          });
-        }
-      }
-      const tagsHTML = tagBlocks.map(b =>
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' + b.tag +
-        (b.pills ? '<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">' + b.pills + '</div>' : '') +
-        '</div>'
-      ).join('');
-      html += '<div class="alert-item"' + (rowBg ? ' style="background:' + rowBg + '"' : '') +
-        ' onclick="openWineDetail(\'' + w.id + '\')">' +
-        '<div style="display:flex;align-items:center;gap:10px">' +
-          '<div style="width:8px;height:8px;border-radius:50%;background:' + dotColor + ';flex-shrink:0"></div>' +
-          '<div>' +
-            '<div style="font-size:13px;font-weight:500">' + esc(w.appellation) + ' ' + (w.millesime || '') + '</div>' +
-            '<div style="font-size:11px;color:var(--text-muted)">' + esc(w.pays) + (w.nom ? ' · ' + esc(w.nom) : '') + '</div>' +
-            (w.cibleRevues && w.cibleRevues.length ? '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:5px">' +
-              '<span style="font-size:10px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.04em">' + T('alert_target') + '</span>' +
-              w.cibleRevues.map(rid => { const r = REVUES.find(x => x.id === rid); const lbl = r ? r.label : rid; const c = REVUE_COLORS[rid] || { bg: '#f1e8fd', text: '#7c3aed' }; return '<span style="font-size:9px;font-weight:500;padding:1px 6px;border-radius:12px;background:' + c.bg + ';color:' + c.text + '">' + esc(lbl) + '</span>'; }).join('') +
-            '</div>' : '') +
-          '</div>' +
-        '</div>' +
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">' + tagsHTML + '</div>' +
-      '</div>';
-    });
+  const filtered = tagged.filter(w => {
+    if (fTrim && w.trimestre !== fTrim) return false;
+    if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.pays || '').toLowerCase().includes(search)) return false;
+    if (fPays && w.pays !== fPays) return false;
+    if (fCrit && !(w.cibleRevues || []).includes(fCrit)) return false;
+    return true;
   });
-  list.innerHTML = anyGroupRendered ? html : '<div class="empty" style="padding:24px">' + T('tracker_empty') + '</div>';
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty" style="padding:24px">' + T('tracker_empty') + '</div>';
+    return;
+  }
+
+  const wrs = getWineRevueStatus();
+  const sec = planningSections(filtered, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
+  const head = title => '<div class="plan-section-head">' + title + '</div>';
+  const rows = (entries, withTag) => entries.map(e => planRowHTML(e, wrs, withTag)).join('');
+  const locale = LANG === 'es' ? 'es-ES' : 'fr-FR';
+
+  let html = planSummaryHTML(sec);
+
+  if (sec.now.length) {
+    html += head(T('plan_now') + ' (' + sec.now.length + ')') + rows(sec.now, true);
+  } else if (!sec.closed.length) {
+    html += '<div class="plan-empty">' + T('plan_nothing') + '</div>';
+  }
+
+  if (sec.upcoming.length) {
+    html += head(T('plan_upcoming') + ' (' + sec.upcoming.length + ')');
+    TRIMESTRES.forEach(t => {
+      const group = sec.upcoming.filter(e => e.t.id === t.id);
+      if (!group.length) return;
+      const end = getTrimestreEnd(t.id).toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
+      html += '<div class="plan-qhead">' + trimBadge(t.id) + ' ' + T(t.id.toLowerCase() + '_label') +
+        ' <span class="plan-qdate">' + T('plan_until') + ' ' + end + '</span></div>' + rows(group, false);
+    });
+  }
+
+  if (sec.closed.length) html += planFoldHTML('closed', T('plan_closed'), sec.closed.length, rows(sec.closed, true));
+  if (sec.done.length) html += planFoldHTML('done', T('plan_done'), sec.done.length, rows(sec.done, true));
+
+  list.innerHTML = html;
 }
 function openHelpModal() {
   const sectionsAll = {
@@ -1868,7 +1934,8 @@ fr: [
     { num:'2', title:'Navigation - 3 onglets', steps:[
       '<strong>📋 Tracker</strong> - vue principale de tous vos envois : statuts, notes, tri, filtres.',
       '<strong>🍷 Catalogue</strong> - liste de tous vos vins : ajout, import groupé, suppression, taguage trimestre.',
-      '<strong>⚠️ Alertes</strong> - vue par trimestre des vins à envoyer avec code couleur.',
+      '<strong>📅 Planning</strong> - vue par trimestre des vins à envoyer avec code couleur.',
+      '<strong>Année (en haut)</strong> - chaque année est une campagne séparée : vins, envois, planning et exports. Une année passée devient une archive : modifiable, mais sans alerte.',
     ]},
     { num:'3', title:'Catalogue - gérer vos vins', steps:[
       '<strong>+ Ajouter un vin</strong> - remplissez Pays, Domaine/Marque, Dénomination, Couleur, Millésime (obligatoires). Champs optionnels : Cépage, Degré, MAD, Importateur US, Lien externe, Commentaire.',
@@ -1904,25 +1971,28 @@ fr: [
       '<strong>Refusé</strong> : le critique a décliné la dégustation/publication de ce vin.',
       'Suppression possible : enregistrement individuel (icône poubelle) ou envoi entier depuis la fiche vin. Le crayon à côté de la date d\'un envoi permet de la modifier après coup.',
     ]},
-    { num:'7', title:'Alertes - code couleur', steps:[
-      'L\'onglet Alertes affiche les vins tagués organisés par trimestre.',
+        { num:'7', title:'Planning - que dois-je envoyer ?', steps:[
+      'L\'onglet Planning répond à « que dois-je envoyer maintenant ? ». Il liste d\'abord <strong>À envoyer maintenant</strong> (vins en retard et vins du trimestre en cours), puis <strong>À venir</strong> (trimestres futurs, avec leur date limite), puis <strong>Terminés</strong> (replié).',
+      'Un vin est <strong>terminé</strong> quand tous ses critiques ciblés ont reçu l\'envoi (Envoyé, Reçu, Noté ou Refusé). Un vin à 1/2 reste donc à envoyer, avec le critique restant en pointillé.',
+      '<strong>Envoyer</strong> ouvre un nouvel envoi avec le vin et les critiques restants déjà cochés, et la date du jour.',
       '<span style="display:inline-flex;flex-direction:column;gap:5px;margin-top:2px">' +
-        [['#9e9890','Normal - plus de 30 jours avant la fin du trimestre'],
-         ['#f59e0b','Orange - 30 jours ou moins avant la fin du trimestre'],
-         ['#e24b4a','Rouge - trimestre terminé, vin non envoyé'],
-         ['#3b6d11','Vert - vin envoyé (Envoyé / Reçu / Noté)']].map(([c,l]) =>
+        [['#ef4444','Filet rouge - trimestre terminé, vin pas encore servi à tous les critiques ciblés'],
+         ['#f59e0b','Filet orange - 30 jours ou moins avant la fin du trimestre'],
+         ['#3b6d11','✓ vert - envoyé (Envoyé / Reçu / Noté)'],
+         ['#9e9890','○ pointillé - à faire ; ↗ ambre - soumis ; ✕ rouge - refusé'],
+         ['#6b7280','Gris « Clôturé » - année terminée, vin non envoyé : le 1er janvier, un vin non envoyé passe directement de l\'orange au gris, sans passer par le rouge']].map(([c,l]) =>
           '<span style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>'+l+'</span>'
         ).join('') +
       '</span>',
     ]},
     { num:'8', title:'Tracker - tri et filtres', steps:[
       '<strong>Tri</strong> - cliquez sur un en-tête de colonne (Pays, Domaine, Dénomination, Mill., Couleur, Note). Un 2ème clic inverse l\'ordre.',
-      '<strong>Filtres</strong> - Recherche texte · Pays · Revue · Statut · Trimestre, tous combinables.',
+      '<strong>Filtres</strong> - Recherche texte · Pays · Revue · Statut · Trimestre, tous combinables. Quand une revue est choisie, le statut s\'applique à cette revue : par exemple WS + Non envoyé = ce qu\'il reste à envoyer à WS.',
       '<strong>Vue tableau / cartes</strong> - boutons ▤ / ⊞ en haut à droite de la barre de filtres.',
       '<strong>↺ Réinitialiser</strong> - efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
     ]},
     { num:'9', title:'Export des données', steps:[
-      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger l\'ensemble des données (catalogue + statuts + notes par revue).',
+      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les données de l\'année affichée (catalogue + statuts + notes par revue).',
     ]},
     { num:'10', title:'Saisie assistée', steps:[
       'Dans <strong>Ajouter un vin</strong>, les champs Pays, Domaine/Marque et Cépage proposent une saisie prédictive basée sur les valeurs déjà présentes dans le catalogue.',
@@ -1935,7 +2005,8 @@ es: [
     { num:'2', title:'Navegación - 3 pestañas', steps:[
       '<strong>📋 Tracker</strong> - vista principal de todos sus envíos: estados, notas, orden, filtros.',
       '<strong>🍷 Catálogo</strong> - lista de todos sus vinos: añadir, importación agrupada, eliminar, etiquetar por trimestre.',
-      '<strong>⚠️ Alertas</strong> - vista por trimestre de los vinos por enviar con código de color.',
+      '<strong>📅 Planificación</strong> - vista por trimestre de los vinos por enviar con código de color.',
+      '<strong>Año (arriba)</strong> - cada año es una campaña separada: vinos, envíos, planificación y exportaciones. Un año pasado pasa a ser un archivo: se puede modificar, pero sin alertas.',
     ]},
     { num:'3', title:'Catálogo - gestionar sus vinos', steps:[
       '<strong>+ Añadir un vino</strong> - complete País, Dominio/Marca, Denominación, Color, Añada (obligatorios). Campos opcionales: Variedad, Grado, MAD, Importador EE. UU., Enlace externo, Comentario.',
@@ -1971,25 +2042,28 @@ es: [
       '<strong>Rechazado</strong>: el crítico ha declinado la cata/publicación de este vino.',
       'Eliminación posible: registro individual (icono papelera) o envío completo desde la ficha del vino. El lápiz junto a la fecha de un envío permite modificarla después.',
     ]},
-    { num:'7', title:'Alertas - código de color', steps:[
-      'La pestaña Alertas muestra los vinos etiquetados organizados por trimestre.',
+        { num:'7', title:'Planificación - ¿qué debo enviar?', steps:[
+      'La pestaña Planificación responde a «¿qué debo enviar ahora?». Lista primero <strong>Por enviar ahora</strong> (vinos atrasados y del trimestre en curso), luego <strong>Próximos</strong> (trimestres futuros, con su fecha límite) y por último <strong>Terminados</strong> (plegado).',
+      'Un vino está <strong>terminado</strong> cuando todos sus críticos objetivo han recibido el envío (Enviado, Recibido, Evaluado o Rechazado). Un vino a 1/2 sigue pendiente, con el crítico restante punteado.',
+      '<strong>Enviar</strong> abre un nuevo envío con el vino y los críticos restantes ya marcados, y la fecha de hoy.',
       '<span style="display:inline-flex;flex-direction:column;gap:5px;margin-top:2px">' +
-        [['#9e9890','Normal - más de 30 días hasta el fin del trimestre'],
-         ['#f59e0b','Naranja - 30 días o menos hasta el fin del trimestre'],
-         ['#e24b4a','Rojo - trimestre terminado, vino no enviado'],
-         ['#3b6d11','Verde - vino enviado (Enviado / Recibido / Evaluado)']].map(([c,l]) =>
+        [['#ef4444','Filete rojo - trimestre terminado, vino aún no enviado a todos los críticos objetivo'],
+         ['#f59e0b','Filete naranja - 30 días o menos hasta el fin del trimestre'],
+         ['#3b6d11','✓ verde - enviado (Enviado / Recibido / Evaluado)'],
+         ['#9e9890','○ punteado - por hacer; ↗ ámbar - presentado; ✕ rojo - rechazado'],
+         ['#6b7280','Gris «Cerrado» - año terminado, vino no enviado: el 1 de enero, un vino no enviado pasa directamente de naranja a gris, sin pasar por rojo']].map(([c,l]) =>
           '<span style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>'+l+'</span>'
         ).join('') +
       '</span>',
     ]},
     { num:'8', title:'Tracker - orden y filtros', steps:[
       '<strong>Orden</strong> - haga clic en un encabezado de columna (País, Dominio, Denominación, Añada, Color). Un 2º clic invierte el orden.',
-      '<strong>Filtros</strong> - Búsqueda texto · País · Revista · Estado · Trimestre, todos combinables.',
+      '<strong>Filtros</strong> - Búsqueda texto · País · Revista · Estado · Trimestre, todos combinables. Si se elige una revista, el estado se aplica a esa revista: por ejemplo WS + No enviado = lo que falta por enviar a WS.',
       '<strong>Vista tabla / tarjetas</strong> - botones ▤ / ⊞ arriba a la derecha de la barra de filtros.',
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},
     { num:'9', title:'Exportar datos', steps:[
-      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar todos los datos (catálogo + estados + notas por revista).',
+      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los datos del año mostrado (catálogo + estados + notas por revista).',
     ]},
     { num:'10', title:'Entrada asistida', steps:[
       'En <strong>Añadir un vino</strong>, los campos País, Dominio/Marca y Variedad ofrecen autocompletado basado en los valores ya presentes en el catálogo.',
@@ -2041,7 +2115,7 @@ function exportCSV() {
   const csv = [header, ...rows].map(r => r.map(c => '"' + String(c || '').replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,ï»¿' + encodeURIComponent(csv);
-  a.download = 'press_tracker_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.download = 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
 }
 
@@ -2059,7 +2133,7 @@ function exportXLSX() {
   const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Press Tracker');
-  XLSX.writeFile(wb, 'press_tracker_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  XLSX.writeFile(wb, 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
