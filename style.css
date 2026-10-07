@@ -141,6 +141,8 @@ textarea { resize: vertical; min-height: 80px; }
 .stat-key { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .stat-key i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .stat-key b { color: var(--text); font-weight: 600; }
+.stat-key.is-muted { color: var(--text-faint); }
+.stat-key.is-muted b { color: var(--text-muted); }
 .stat-strong { color: var(--text); font-weight: 600; }
 .stat-card-link { cursor: pointer; }
 .stat-link { cursor: pointer; display: inline-block; border-radius: 4px; }

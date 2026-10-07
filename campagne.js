@@ -92,18 +92,34 @@ function planningSections(wines, items, year, now, trimestres, sentStatuts) {
   return out;
 }
 
-// Nombre de vins en retard / à échéance proche pour une année donnée.
-function trimestreCounts(wines, items, year, now, trimestres, sentStatuts) {
-  let late = 0, soon = 0;
+// Un retard est « récent » pendant 15 jours après la fin du trimestre, « ancien » ensuite.
+const LATE_WINDOW_DAYS = 15;
+
+// Compteurs d'alerte d'une année : late = retards récents, soon = échéance sous 30 jours,
+// old = retards anciens (affichés mais hors alerte). total = late + soon.
+// lateQ / soonQ / oldQ : trimestres concernés, dans l'ordre du calendrier.
+function trimestreCounts(wines, items, year, now, trimestres, sentStatuts, windowDays) {
+  const win = windowDays == null ? LATE_WINDOW_DAYS : windowDays;
+  const count = { late: 0, soon: 0, old: 0 };
+  const qids = { late: new Set(), soon: new Set(), old: new Set() };
   wines.forEach(w => {
     if (!w.trimestre) return;
     const t = trimestres.find(x => x.id === w.trimestre);
     if (!t) return;
     const st = trimestreStateFor(t, isWineDone(w, items, sentStatuts), year, now);
-    if (st === 'overdue') late++;
-    else if (st === 'warning') soon++;
+    let kind = null;
+    if (st === 'warning') kind = 'soon';
+    else if (st === 'overdue') kind = (now - trimestreEndDate(t, year)) / 86400000 <= win ? 'late' : 'old';
+    if (!kind) return;
+    count[kind]++;
+    qids[kind].add(t.id);
   });
-  return { late, soon, total: late + soon };
+  const rank = id => trimestres.findIndex(x => x.id === id);
+  const list = k => [...qids[k]].sort((x, y) => rank(x) - rank(y));
+  return {
+    late: count.late, soon: count.soon, old: count.old, total: count.late + count.soon,
+    lateQ: list('late'), soonQ: list('soon'), oldQ: list('old'),
+  };
 }
 
 // Une note saisie vaut « noté » (sauf si l'envoi est refusé).
@@ -133,6 +149,6 @@ if (typeof module !== 'undefined') {
     LEGACY_CAMPAGNE, wineCampagne, campagnesDisponibles, chooseInitialCampagne,
     filterByCampagne, trimestreEndDate, trimestreStateFor, trimestreCounts,
     remainingRevues, isWineDone, trimestreStartDate, planningSections,
-    effectiveStatut, withEffectiveStatut, matchesRevueStatut,
+    LATE_WINDOW_DAYS, effectiveStatut, withEffectiveStatut, matchesRevueStatut,
   };
 }

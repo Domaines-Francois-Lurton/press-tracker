@@ -32,7 +32,7 @@ fr: {
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'📅 Planning',
   page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Planning d\'envoi',
   stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Échéances proches',
-  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_of_envois:'des envois', stat_late:'en retard', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
+  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_of_envois:'des envois', stat_late:'en retard', stat_old:'retards anciens', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
   stat_pl_envoye:'Envoyé(s)', stat_pl_recu:'Reçu(s)', stat_pl_soumis:'Soumis', stat_pl_note:'Noté(s)', stat_pl_refuse:'Refusé(s)', stat_goto_alerts:'Voir le planning',
   btn_export:'⬇ Export CSV', btn_new_shipment:'+ Nouvel envoi', btn_add_wine:'+ Ajouter un vin',
   btn_import:'📋 Import groupé', btn_cancel:'Annuler', btn_save:'Enregistrer', btn_add:'Ajouter',
@@ -93,7 +93,7 @@ es: {
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'📅 Planificación',
   page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Planificación de envíos',
   stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
-  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_of_envois:'de los envíos', stat_late:'atrasado(s)', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
+  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_of_envois:'de los envíos', stat_late:'atrasado(s)', stat_old:'atrasos antiguos', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
   stat_pl_envoye:'Enviado(s)', stat_pl_recu:'Recibido(s)', stat_pl_soumis:'Presentado(s)', stat_pl_note:'Evaluado(s)', stat_pl_refuse:'Rechazado(s)', stat_goto_alerts:'Ver la planificación',
   btn_export:'⬇ Exportar CSV', btn_new_shipment:'+ Nuevo envío', btn_add_wine:'+ Añadir un vino',
   btn_import:'📋 Importación agrupada', btn_cancel:'Cancelar', btn_save:'Guardar', btn_add:'Añadir',
@@ -722,7 +722,7 @@ function statBar(segments, total) {
 
 function statKeys(items) {
   return '<div class="stat-keys">' + items.map(it =>
-    '<span class="stat-key">' + (it.color ? '<i style="background:' + it.color + '"></i>' : '') + '<b>' + it.n + '</b> ' + it.label + '</span>'
+    '<span class="stat-key' + (it.muted ? ' is-muted' : '') + '">' + (it.color ? '<i style="background:' + it.color + '"></i>' : '') + '<b>' + it.n + '</b> ' + it.label + '</span>'
   ).join('') + '</div>';
 }
 
@@ -768,8 +768,9 @@ function renderStats() {
     ? '<div class="stat-keys"><span class="stat-key"><b>' + statPct(nbNotes, shipmentItems.length) + '%</b></span><span class="stat-key">' + T('stat_avg') + ' <b>' + avg.toFixed(1).replace('.', ',') + '</b></span><span class="stat-key">' + T('stat_best') + ' <b>' + Math.max(...notes) + '</b></span></div>'
     : '');
 
-  // 5 · Alertes trimestre : en retard / ≤ 30 j
-  const { late, soon } = trimestreCounts(wines, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
+  // 5 · Alertes trimestre : retards récents (15 jours après la fin du trimestre) / ≤ 30 j ; retards anciens en gris, hors alerte
+  const { late, soon, old, lateQ, soonQ, oldQ } = trimestreCounts(wines, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
+  const qLabel = qs => (qs.length ? ' · ' + qs.join(', ') : '');
   const total = updateAlertBadge();
   set('statAlerts', total);
   const card = document.getElementById('statAlertsCard');
@@ -777,9 +778,12 @@ function renderStats() {
     card.classList.toggle('is-alert', total > 0);
     card.title = T('stat_goto_alerts');
   }
-  set('statAlertsSub', total
-    ? statKeys([{ n: late, label: T('stat_late'), color: '#ef4444' }, { n: soon, label: T('stat_soon'), color: '#f59e0b' }].filter(k => k.n > 0))
-    : T('stat_none_alert'));
+  const alertKeys = [
+    { n: late, label: T('stat_late') + qLabel(lateQ), color: '#ef4444' },
+    { n: soon, label: T('stat_soon') + qLabel(soonQ), color: '#f59e0b' },
+    { n: old, label: T('stat_old') + qLabel(oldQ), color: '#9ca3af', muted: true },
+  ].filter(k => k.n > 0);
+  set('statAlertsSub', alertKeys.length ? statKeys(alertKeys) : T('stat_none_alert'));
 }
 
 function setTrackerView(v) {
