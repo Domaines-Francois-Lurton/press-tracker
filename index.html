@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Press Tracker - Suivi des envois presse</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261008i">
-<link rel="stylesheet" href="style.css?v=20261008i">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261014a">
+<link rel="stylesheet" href="style.css?v=20261014a">
 </head>
 <body>
 
@@ -135,6 +135,7 @@
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-danger" id="btnDeleteSelected" style="display:none" onclick="deleteSelectedWines()">Supprimer (0)</button>
           <button class="btn" id="btnTagSelected" style="display:none" onclick="openTagModal()">Taguer (0)</button>
+          <button class="btn" id="btnExportCatalogue">⬇ Export Excel</button>
           <button class="btn" id="btnPaste">📋 Import groupé</button>
           <button class="btn btn-primary" id="btnAddWine">+ Ajouter un vin</button>
         </div>
@@ -164,7 +165,7 @@
         <div class="tbl-wrap">
           <table class="cat-table">
             <thead>
-              <tr><th style="width:32px"><input type="checkbox" id="catSelectAll" onclick="toggleSelectAll()"></th><th style="width:78px">Pays</th><th style="width:138px">Domaine / Marque</th><th style="width:188px">Dénomination</th><th style="width:72px">Couleur</th><th style="width:68px">Millésime</th><th style="width:116px">Cépage</th><th style="width:72px">MAD</th><th style="width:120px">Importateur US</th><th style="width:52px">Trim.</th><th style="width:58px">Envois</th><th style="width:76px">Ajouté</th><th style="width:130px"></th></tr>
+              <tr><th style="width:32px"><input type="checkbox" id="catSelectAll" onclick="toggleSelectAll()"></th><th style="width:78px">Pays</th><th style="width:138px">Domaine / Marque</th><th style="width:188px">Dénomination</th><th style="width:72px">Couleur</th><th style="width:68px">Millésime</th><th style="width:116px">Cépage</th><th style="width:72px">MAD</th><th style="width:120px">Importateur US</th><th style="width:70px">U.S. Price</th><th style="width:92px" title="Case Production (9L)">Case Prod. (9L)</th><th style="width:92px" title="Cases Imported (9L)">Cases Imp. (9L)</th><th style="width:56px">COLA</th><th style="width:52px">Trim.</th><th style="width:58px">Envois</th><th style="width:130px"></th></tr>
             </thead>
             <tbody id="catTableBody"></tbody>
           </table>
@@ -209,8 +210,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="campagne.js?v=20261008i"></script>
-<script src="app.js?v=20261008i"></script>
+<script src="campagne.js?v=20261014a"></script>
+<script src="app.js?v=20261014a"></script>
 
 </body>
 </html>

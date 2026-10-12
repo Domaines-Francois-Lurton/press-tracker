@@ -1,6 +1,6 @@
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // CONSTANTS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 const REVUES = [
   { id: 'ws',  label: 'WS',     full: 'Wine Spectator' },
@@ -32,7 +32,7 @@ fr: {
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'📅 Planning',
   page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Planning d\'envoi',
   stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Échéances proches',
-  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_of_envois:'des envois', stat_late:'en retard', stat_old:'retards anciens', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
+  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_late:'en retard', stat_old:'retards anciens', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
   stat_pl_envoye:'Envoyé(s)', stat_pl_recu:'Reçu(s)', stat_pl_soumis:'Soumis', stat_pl_note:'Noté(s)', stat_pl_refuse:'Refusé(s)', stat_goto_alerts:'Voir le planning',
   btn_export:'⬇ Export CSV', btn_new_shipment:'+ Nouvel envoi', btn_add_wine:'+ Ajouter un vin',
   btn_import:'📋 Import groupé', btn_cancel:'Annuler', btn_save:'Enregistrer', btn_add:'Ajouter',
@@ -49,7 +49,7 @@ fr: {
   lbl_marque:'Domaine ou Marque *', lbl_cepage:'Cépage', lbl_degre:"Degré d'alcool",
   lbl_mad:'MAD (mise à disposition)', lbl_lien:'Lien externe', lbl_comment:'Commentaire', lbl_importateur_us:'Importateur US',
   lbl_statut:'Statut', lbl_note:'Note reçue', lbl_date_recep:'Date réception',
-  lbl_date_envoi:"Date d'envoi *", lbl_tracking:'Numéro de tracking', lbl_inter:'Intermédiaire',
+  lbl_date_envoi:"Date d'envoi *", lbl_inter:'Intermédiaire',
   lbl_date_envoi_opt:"Date d'envoi", lbl_date_soumission:'Date de soumission',
   hint_one_date:"Renseignez soit la date d'envoi, soit la date de soumission (une seule des deux, obligatoire).",
   detail_soumis_le:'Soumis le',
@@ -62,18 +62,18 @@ fr: {
   alert_empty:"Aucun vin tagé avec un trimestre d'envoi.",
   alert_empty_hint:"Taguez vos vins depuis l'onglet Catalogue.",
   tag_remove:'Retirer le tag',
-  legend_title:'Légende', legend_ok:'À venir (+ de 30 jours)', legend_warning:'≤ 30 jours',
-  legend_overdue:'Trimestre terminé, non envoyé', legend_sent:'Envoyé / Reçu / Noté', legend_closed:'Année clôturée', alert_closed:'Clôturé', legend_todo:'À faire', plan_todo:'À faire', plan_now:'À envoyer maintenant', plan_upcoming:'À venir', plan_upcoming_short:'à venir', plan_done:'Terminés', plan_closed:'Non envoyés (année clôturée)', plan_closed_short:'non envoyé(s)', plan_late:'En retard', plan_send:'Envoyer', plan_until:'jusqu\'au', plan_to_send:'à envoyer', plan_n_done:'terminé(s)', plan_nothing:'Rien à envoyer pour le moment.', plan_no_target:'Aucun critique ciblé',
-  tag_revues_label:'Critiques ciblés (optionnel)', alert_target:'Cible :', alert_sent_count:'envoyés', alert_remaining:'reste', camp_title:'Campagne (année)', camp_alerts_hint:'alerte(s) sur l\'année en cours', import_into:'Import dans la campagne', add_into:'Ajout dans la campagne', importing:'Import...', toast_imported:'vins importés',
+  legend_title:'Légende', legend_warning:'≤ 30 jours',
+  legend_overdue:'Trimestre terminé, non envoyé', legend_sent:'Envoyé / Reçu / Noté', alert_closed:'Clôturé', legend_todo:'À faire', plan_todo:'À faire', plan_now:'À envoyer maintenant', plan_upcoming:'À venir', plan_upcoming_short:'à venir', plan_done:'Terminés', plan_closed:'Non envoyés (année clôturée)', plan_closed_short:'non envoyé(s)', plan_late:'En retard', plan_send:'Envoyer', plan_until:'jusqu\'au', plan_to_send:'à envoyer', plan_n_done:'terminé(s)', plan_nothing:'Rien à envoyer pour le moment.', plan_no_target:'Aucun critique ciblé',
+  tag_revues_label:'Critiques ciblés (optionnel)', camp_title:'Campagne (année)', camp_alerts_hint:'alerte(s) sur l\'année en cours', add_into:'Ajout dans la campagne', importing:'Import...', toast_imported:'vin importé|vins importés', import_cols:'Pays · Domaine ou Marque · Dénomination · Couleur · Millésime · Cépage · Degré · Lien externe · Commentaire · Importateur US · U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revues ciblées', import_err_few:'Ligne {n} : moins de 5 colonnes', import_err_q:'Ligne {n} : trimestre « {v} » invalide (attendu Q1 à Q4)', import_err_revue:'Ligne {n} : critique inconnu « {v} » (WS, WE, Vinous, JS, WA, W&S, Dec.)', import_err_revues_q:'Ligne {n} : critiques ciblés sans trimestre (renseignez la colonne Q)', import_col_state:'État', import_state_new:'Nouveau', import_state_fields:'champ modifié|champs modifiés', import_state_same:'identique', import_state_exists:'Déjà présent', import_state_repeat:'Doublon dans la liste', import_rule_us:'U.S. Price en dollars ; caisses en nombre ; COLA : Oui ou Non.', import_err_us_price:'Ligne {n} : U.S. Price « {v} » invalide (attendu un nombre positif)', import_err_case_prod:'Ligne {n} : Case Production « {v} » invalide (attendu un nombre positif)', import_err_cases_imp:'Ligne {n} : Cases Imported « {v} » invalide (attendu un nombre positif)', import_err_cola:'Ligne {n} : COLA « {v} » invalide (attendu Oui ou Non)', lbl_us_price:'U.S. Price', lbl_case_prod:'Case Production (9L)', lbl_cases_imp:'Cases Imported (9L)', lbl_cola:'COLA', cola_yes:'Oui', cola_no:'Non', section_us:'Marché US', toast_us_invalid:'U.S. Price et caisses : saisissez un nombre positif.', import_campagne:'Campagne', import_step1:'1. Préparez votre liste', import_step2:'2. Collez vos lignes', import_step3:'3. Vérifiez avant d’importer', import_legend_req:'Trait plein : obligatoire.', import_legend_opt:'Pointillé : facultatif.', import_legend_tag:'Violet : pose les tags automatiquement.', import_rule_q:'Q va de Q1 à Q4. Les revues se séparent par une virgule (WS, WE) et demandent un Q.', import_rule_dup:'Un vin déjà présent dans l’année n’est pas recréé : les cellules remplies remplacent ses valeurs, une cellule vide ne supprime rien.', import_paste_hint:'Collez ici vos lignes depuis Excel (Ctrl+V)', import_lines_pasted:'ligne collée|lignes collées', import_edit:'Modifier', import_chip_new:'nouveau|nouveaux', import_chip_tag:'à mettre à jour', import_chip_skip:'ignoré (déjà présent)|ignorés (déjà présents)', import_status_empty:'Collez au moins une ligne.', import_status_lines:'ligne lue|lignes lues', import_status_errors:'erreur à corriger|erreurs à corriger', import_hover_hint:'Cépage, degré, lien, commentaire et importateur sont importés aussi : survolez une ligne pour les voir.', import_col_wine:'Vin', import_col_revues_short:'Revues', import_wines:'vin|vins', import_and_tag:'et mettre à jour', import_tag_only:'Mettre à jour', import_nothing:'Rien à importer : tous ces vins sont déjà présents et identiques.', toast_import_tagged:'vin mis à jour|vins mis à jour', toast_exported:'vin(s) exporté(s)', toast_import_skipped:'doublon ignoré|doublons ignorés', toast_wine_exists:'Ce vin existe déjà (campagne {y}).',
   edit_sent_summary_title:'Envoyé à',
   tracker_empty:'Aucun vin trouvé.',
   q1_label:'1er trimestre', q2_label:'2ème trimestre', q3_label:'3ème trimestre', q4_label:'4ème trimestre',
   q1_months:'Jan - Mars', q2_months:'Avr - Juin', q3_months:'Juil - Sept', q4_months:'Oct - Déc',
   toast_saved:'Modifications enregistrées', toast_wine_added:'Vin ajouté au catalogue',
-  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé', toast_wine_duplicated:'Vin dupliqué', toast_select_wine:'Sélectionnez au moins un vin.', toast_select_revue:'Sélectionnez au moins une revue.', saving:'Enregistrement...',
+  toast_wine_updated:'Vin modifié', toast_wine_deleted:'Vin supprimé', toast_wine_duplicated:'Vin dupliqué', modal_dup_wine:'Dupliquer un vin', dup_from:'Copie de', toast_dup_same:'Cette copie est identique au vin d’origine : modifiez le domaine, la dénomination ou le millésime.', toast_wine_exists_edit:'Un autre vin a déjà ce domaine, cette dénomination et ce millésime (campagne {y}).', toast_select_wine:'Sélectionnez au moins un vin.', toast_select_revue:'Sélectionnez au moins une revue.', saving:'Enregistrement...',
   toast_item_deleted:'Enregistrement supprimé', toast_shipment_deleted:'Envoi supprimé',
   toast_fill_required:'Remplissez tous les champs obligatoires.',
-  toast_wine_has_items:'Ce vin a des envois enregistrés et ne peut pas être supprimé.',
+  toast_wine_has_items:'Ce vin a des envois enregistrés et ne peut pas être supprimé.', toast_blocked:'vin(s) avec envois ignoré(s)',
   confirm_unsaved:'Des modifications non enregistrées seront perdues. Continuer ?',
   confirm_delete_item:'Supprimer cet enregistrement ?',
   confirm_delete_shipment:'Supprimer cet envoi et tous ses enregistrements ?',
@@ -93,7 +93,7 @@ es: {
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'📅 Planificación',
   page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Planificación de envíos',
   stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
-  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_of_envois:'de los envíos', stat_late:'atrasado(s)', stat_old:'atrasos antiguos', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
+  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_late:'atrasado(s)', stat_old:'atrasos antiguos', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
   stat_pl_envoye:'Enviado(s)', stat_pl_recu:'Recibido(s)', stat_pl_soumis:'Presentado(s)', stat_pl_note:'Evaluado(s)', stat_pl_refuse:'Rechazado(s)', stat_goto_alerts:'Ver la planificación',
   btn_export:'⬇ Exportar CSV', btn_new_shipment:'+ Nuevo envío', btn_add_wine:'+ Añadir un vino',
   btn_import:'📋 Importación agrupada', btn_cancel:'Cancelar', btn_save:'Guardar', btn_add:'Añadir',
@@ -110,7 +110,7 @@ es: {
   lbl_marque:'Dominio o Marca *', lbl_cepage:'Variedad', lbl_degre:'Grado de alcohol',
   lbl_mad:'MAD (puesta a disposición)', lbl_lien:'Enlace externo', lbl_comment:'Comentario', lbl_importateur_us:'Importador EE. UU.',
   lbl_statut:'Estado', lbl_note:'Nota recibida', lbl_date_recep:'Fecha de recepción',
-  lbl_date_envoi:'Fecha de envío *', lbl_tracking:'Número de seguimiento', lbl_inter:'Intermediario',
+  lbl_date_envoi:'Fecha de envío *', lbl_inter:'Intermediario',
   lbl_date_envoi_opt:'Fecha de envío', lbl_date_soumission:'Fecha de presentación',
   hint_one_date:'Indique la fecha de envío o la fecha de presentación (solo una de las dos, obligatoria).',
   detail_soumis_le:'Presentado el',
@@ -123,18 +123,18 @@ es: {
   alert_empty:'Ningún vino etiquetado con un trimestre de envío.',
   alert_empty_hint:'Etiqueta tus vinos desde la pestaña Catálogo.',
   tag_remove:'Quitar etiqueta',
-  legend_title:'Leyenda', legend_ok:'Próximo (+ de 30 días)', legend_warning:'≤ 30 días',
-  legend_overdue:'Trimestre terminado, no enviado', legend_sent:'Enviado / Recibido / Evaluado', legend_closed:'Año cerrado', alert_closed:'Cerrado', legend_todo:'Por hacer', plan_todo:'Por hacer', plan_now:'Por enviar ahora', plan_upcoming:'Próximos', plan_upcoming_short:'próximos', plan_done:'Terminados', plan_closed:'No enviados (año cerrado)', plan_closed_short:'no enviado(s)', plan_late:'Atrasado', plan_send:'Enviar', plan_until:'hasta el', plan_to_send:'por enviar', plan_n_done:'terminado(s)', plan_nothing:'Nada que enviar por ahora.', plan_no_target:'Sin crítico objetivo',
-  tag_revues_label:'Críticos objetivo (opcional)', alert_target:'Objetivo:', alert_sent_count:'enviados', alert_remaining:'falta', camp_title:'Campaña (año)', camp_alerts_hint:'alerta(s) en el año en curso', import_into:'Importación en la campaña', add_into:'Alta en la campaña', importing:'Importando...', toast_imported:'vinos importados',
+  legend_title:'Leyenda', legend_warning:'≤ 30 días',
+  legend_overdue:'Trimestre terminado, no enviado', legend_sent:'Enviado / Recibido / Evaluado', alert_closed:'Cerrado', legend_todo:'Por hacer', plan_todo:'Por hacer', plan_now:'Por enviar ahora', plan_upcoming:'Próximos', plan_upcoming_short:'próximos', plan_done:'Terminados', plan_closed:'No enviados (año cerrado)', plan_closed_short:'no enviado(s)', plan_late:'Atrasado', plan_send:'Enviar', plan_until:'hasta el', plan_to_send:'por enviar', plan_n_done:'terminado(s)', plan_nothing:'Nada que enviar por ahora.', plan_no_target:'Sin crítico objetivo',
+  tag_revues_label:'Críticos objetivo (opcional)', camp_title:'Campaña (año)', camp_alerts_hint:'alerta(s) en el año en curso', add_into:'Alta en la campaña', importing:'Importando...', toast_imported:'vino importado|vinos importados', import_cols:'País · Dominio o Marca · Denominación · Color · Añada · Variedad · Grado · Enlace externo · Comentario · Importador EE. UU. · U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revistas objetivo', import_err_few:'Línea {n}: menos de 5 columnas', import_err_q:'Línea {n}: trimestre «{v}» no válido (se espera Q1 a Q4)', import_err_revue:'Línea {n}: crítico desconocido «{v}» (WS, WE, Vinous, JS, WA, W&S, Dec.)', import_err_revues_q:'Línea {n}: críticos objetivo sin trimestre (rellene la columna Q)', import_col_state:'Estado', import_state_new:'Nuevo', import_state_fields:'campo modificado|campos modificados', import_state_same:'idéntico', import_state_exists:'Ya existe', import_state_repeat:'Duplicado en la lista', import_rule_us:'U.S. Price en dólares; cajas en número; COLA: Sí o No.', import_err_us_price:'Línea {n}: U.S. Price «{v}» no válido (se espera un número positivo)', import_err_case_prod:'Línea {n}: Case Production «{v}» no válido (se espera un número positivo)', import_err_cases_imp:'Línea {n}: Cases Imported «{v}» no válido (se espera un número positivo)', import_err_cola:'Línea {n}: COLA «{v}» no válido (se espera Sí o No)', lbl_us_price:'U.S. Price', lbl_case_prod:'Case Production (9L)', lbl_cases_imp:'Cases Imported (9L)', lbl_cola:'COLA', cola_yes:'Sí', cola_no:'No', section_us:'Mercado EE. UU.', toast_us_invalid:'U.S. Price y cajas: introduzca un número positivo.', import_campagne:'Campaña', import_step1:'1. Prepare su lista', import_step2:'2. Pegue sus líneas', import_step3:'3. Revise antes de importar', import_legend_req:'Trazo continuo: obligatorio.', import_legend_opt:'Punteado: opcional.', import_legend_tag:'Violeta: aplica las etiquetas automáticamente.', import_rule_q:'Q va de Q1 a Q4. Las revistas se separan con una coma (WS, WE) y requieren un Q.', import_rule_dup:'Un vino ya presente en el año no se vuelve a crear: las celdas rellenas sustituyen sus valores, una celda vacía no borra nada.', import_paste_hint:'Pegue aquí sus líneas desde Excel (Ctrl+V)', import_lines_pasted:'línea pegada|líneas pegadas', import_edit:'Modificar', import_chip_new:'nuevo|nuevos', import_chip_tag:'por actualizar', import_chip_skip:'ignorado (ya existe)|ignorados (ya existen)', import_status_empty:'Pegue al menos una línea.', import_status_lines:'línea leída|líneas leídas', import_status_errors:'error por corregir|errores por corregir', import_hover_hint:'Variedad, grado, enlace, comentario e importador también se importan: pase el cursor sobre una línea para verlos.', import_col_wine:'Vino', import_col_revues_short:'Revistas', import_wines:'vino|vinos', import_and_tag:'y actualizar', import_tag_only:'Actualizar', import_nothing:'Nada que importar: todos estos vinos ya existen y son idénticos.', toast_import_tagged:'vino actualizado|vinos actualizados', toast_exported:'vino(s) exportado(s)', toast_import_skipped:'duplicado ignorado|duplicados ignorados', toast_wine_exists:'Este vino ya existe (campaña {y}).',
   edit_sent_summary_title:'Enviado a',
   tracker_empty:'Ningún vino encontrado.',
   q1_label:'1er trimestre', q2_label:'2º trimestre', q3_label:'3er trimestre', q4_label:'4º trimestre',
   q1_months:'Ene - Mar', q2_months:'Abr - Jun', q3_months:'Jul - Sep', q4_months:'Oct - Dic',
   toast_saved:'Cambios guardados', toast_wine_added:'Vino añadido al catálogo',
-  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado', toast_wine_duplicated:'Vino duplicado', toast_select_wine:'Seleccione al menos un vino.', toast_select_revue:'Seleccione al menos una revista.', saving:'Guardando...',
+  toast_wine_updated:'Vino modificado', toast_wine_deleted:'Vino eliminado', toast_wine_duplicated:'Vino duplicado', modal_dup_wine:'Duplicar un vino', dup_from:'Copia de', toast_dup_same:'Esta copia es idéntica al vino original: cambie el dominio, la denominación o la añada.', toast_wine_exists_edit:'Otro vino ya tiene este dominio, esta denominación y esta añada (campaña {y}).', toast_select_wine:'Seleccione al menos un vino.', toast_select_revue:'Seleccione al menos una revista.', saving:'Guardando...',
   toast_item_deleted:'Registro eliminado', toast_shipment_deleted:'Envío eliminado',
   toast_fill_required:'Complete todos los campos obligatorios.',
-  toast_wine_has_items:'Este vino tiene envíos registrados y no se puede eliminar.',
+  toast_wine_has_items:'Este vino tiene envíos registrados y no se puede eliminar.', toast_blocked:'vino(s) con envíos ignorado(s)',
   confirm_unsaved:'Los cambios no guardados se perderán. ¿Continuar?',
   confirm_delete_item:'¿Eliminar este registro?',
   confirm_delete_shipment:'¿Eliminar este envío y todos sus registros?',
@@ -203,6 +203,7 @@ function applyStaticI18n() {
   // Buttons
   setText($('btnExport'), T('btn_export'));
   setText($('btnExportXlsx'), T('btn_export_xlsx'));
+  setText($('btnExportCatalogue'), T('btn_export_xlsx'));
   setText($('btnNewShipment'), T('btn_new_shipment'));
   setText($('btnAddWine'), T('btn_add_wine'));
   setText($('btnPaste'), T('btn_import'));
@@ -243,7 +244,7 @@ function applyStaticI18n() {
   const catHead = document.querySelector('.cat-table thead tr');
   if (catHead) {
     const ths = catHead.querySelectorAll('th');
-    if (ths.length >= 13) {
+    if (ths.length >= 16) {
       ths[1].textContent = T('col_pays');
       ths[2].textContent = T('col_marque');
       ths[3].textContent = T('col_denom');
@@ -252,9 +253,12 @@ function applyStaticI18n() {
       ths[6].textContent = T('col_cepage');
       ths[7].textContent = 'MAD';
       ths[8].textContent = T('lbl_importateur_us');
-      ths[9].textContent = 'Trim.';
-      ths[10].textContent = T('detail_envois');
-      ths[11].textContent = LANG==='es' ? 'Añadido' : 'Ajouté';
+      ths[9].textContent = T('lbl_us_price');
+      ths[10].textContent = 'Case Prod. (9L)'; ths[10].title = T('lbl_case_prod');
+      ths[11].textContent = 'Cases Imp. (9L)'; ths[11].title = T('lbl_cases_imp');
+      ths[12].textContent = T('lbl_cola');
+      ths[13].textContent = 'Trim.';
+      ths[14].textContent = T('detail_envois');
     }
   }
   // Trimestre filters (static options, not built by buildFilters)
@@ -301,10 +305,6 @@ const SENT_STATUTS = ['envoyé','reçu','noté','refusé'];
 
 function isWineSent(wineId) {
   return shipmentItems.some(i => i.wineId === wineId && SENT_STATUTS.includes(i.statut));
-}
-
-function isWineSoumis(wineId) {
-  return shipmentItems.some(i => i.wineId === wineId && i.statut === 'soumis');
 }
 
 function getTrimestreAlerts() {
@@ -400,9 +400,9 @@ function renderCampagneSwitch() {
 
 let unsubWines, unsubShipments, unsubItems;
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // AUTH
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
@@ -441,9 +441,9 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // FIREBASE INIT & REALTIME
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function initApp() {
   document.getElementById('loadingOverlay').style.display = 'flex';
@@ -498,9 +498,9 @@ function initApp() {
   }, err => { console.error('items:', err); loaded.items = true; checkReady(); });
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // NAVIGATION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -517,9 +517,9 @@ document.addEventListener('click', e => {
   if (tab) showPage(tab.dataset.page);
 });
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function toast(msg, type) {
   const t = document.getElementById('toast');
@@ -563,6 +563,46 @@ function fmtDate(d) {
   if (!d) return '-';
   const dt = d.toDate ? d.toDate() : new Date(d);
   return dt.toLocaleDateString(LANG === 'es' ? 'es-ES' : 'fr-FR');
+}
+
+function locale() { return LANG === 'es' ? 'es-ES' : 'fr-FR'; }
+
+// Pastille COLA : Oui (vert), Non (gris), vide = tiret.
+function colaBadge(v) {
+  if (v === 'oui') return '<span class="cola-pill is-yes">' + T('cola_yes') + '</span>';
+  if (v === 'non') return '<span class="cola-pill is-no">' + T('cola_no') + '</span>';
+  return '<span style="color:var(--text-faint)">-</span>';
+}
+
+// Champ numérique de formulaire : null si vide.
+function numField(id) {
+  const v = document.getElementById(id).value.trim();
+  return v === '' ? null : Number(v);
+}
+
+// Les quatre champs Marché US de la fiche d'un vin (préfixe aw / ew), valeurs optionnelles.
+function usFieldsHTML(prefix, w) {
+  w = w || {};
+  const val = v => (v == null ? '' : esc(String(v)));
+  return '<div class="section-title" style="margin-top:6px">' + T('section_us') + '</div>' +
+    '<div class="grid-2">' +
+      '<div class="field"><label>' + T('lbl_us_price') + '</label><input id="' + prefix + '_price" type="number" step="0.01" min="0" value="' + val(w.prixUS) + '" placeholder="ex: 24.50"></div>' +
+      '<div class="field"><label>' + T('lbl_case_prod') + '</label><input id="' + prefix + '_cprod" type="number" step="1" min="0" value="' + val(w.caseProduction) + '" placeholder="ex: 1200"></div>' +
+      '<div class="field"><label>' + T('lbl_cases_imp') + '</label><input id="' + prefix + '_cimp" type="number" step="1" min="0" value="' + val(w.casesImported) + '" placeholder="ex: 300"></div>' +
+      '<div class="field"><label>' + T('lbl_cola') + '</label><select id="' + prefix + '_cola"><option value="">-</option>' +
+        '<option value="oui"' + (w.cola === 'oui' ? ' selected' : '') + '>' + T('cola_yes') + '</option>' +
+        '<option value="non"' + (w.cola === 'non' ? ' selected' : '') + '>' + T('cola_no') + '</option></select></div>' +
+    '</div>';
+}
+
+// Valeurs Marché US d'un formulaire ; null si une valeur est invalide.
+function readUsFields(prefix) {
+  const out = {
+    prixUS: numField(prefix + '_price'), caseProduction: numField(prefix + '_cprod'), casesImported: numField(prefix + '_cimp'),
+    cola: document.getElementById(prefix + '_cola').value || null,
+  };
+  const bad = ['prixUS', 'caseProduction', 'casesImported'].some(k => out[k] !== null && (isNaN(out[k]) || out[k] < 0));
+  return bad ? null : out;
 }
 
 function couleurBadge(c) {
@@ -614,9 +654,9 @@ function renderAll() {
   applyStaticI18n();
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // WINE-REVUE STATUS MATRIX
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function getWineRevueStatus() {
   const result = {};
@@ -648,9 +688,9 @@ function getWineRevueStatus() {
 
 // getAlerts removed - replaced by getTrimestreAlerts
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // FILTERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function buildFilters() {
   const pays = [...new Set(wines.map(w => w.pays).filter(Boolean))].sort();
@@ -692,9 +732,9 @@ function resetAlertsFilters() {
   renderAlerts();
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // TRACKER
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function wineHasAlert(w) {
   return !!(w.trimestre && ['overdue','warning'].includes(getTrimestreState(w.trimestre, isWineDone(w, shipmentItems, SENT_STATUTS))));
@@ -864,9 +904,9 @@ function renderTracker() {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // WINE DETAIL MODAL
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function openWineDetail(wineId) {
   const w = wines.find(x => x.id === wineId);
@@ -889,6 +929,10 @@ function openWineDetail(wineId) {
         (w.cepage ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.cepage) + '</span>' : '') +
         (w.degre ? '<span style="font-size:12px;color:var(--text-faint)">' + esc(w.degre) + '°</span>' : '') +
         (w.importateurUS ? '<span style="font-size:12px;color:var(--text-muted)">' + T('lbl_importateur_us') + ' : ' + esc(w.importateurUS) + '</span>' : '') +
+        (w.prixUS != null ? '<span style="font-size:12px;color:var(--text-muted)">' + T('lbl_us_price') + ' : ' + esc(formatUsPrice(w.prixUS, locale())) + '</span>' : '') +
+        (w.caseProduction != null ? '<span style="font-size:12px;color:var(--text-muted)">' + T('lbl_case_prod') + ' : ' + esc(formatCount(w.caseProduction, locale())) + '</span>' : '') +
+        (w.casesImported != null ? '<span style="font-size:12px;color:var(--text-muted)">' + T('lbl_cases_imp') + ' : ' + esc(formatCount(w.casesImported, locale())) + '</span>' : '') +
+        (w.cola ? '<span style="font-size:12px;color:var(--text-muted)">' + T('lbl_cola') + ' : ' + colaBadge(w.cola) + '</span>' : '') +
       '</div>' +
       (w.lienExterne ? '<div style="margin-bottom:10px"><a href="' + esc(w.lienExterne) + '" target="_blank" rel="noopener" class="link-ext">🔗 ' + esc(w.lienExterne) + '</a></div>' : '') +
       (w.commentaire ? '<div style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;background:var(--bg);border-radius:var(--radius);padding:8px 10px;margin-bottom:14px">' + esc(w.commentaire) + '</div>' : '') +
@@ -947,9 +991,9 @@ function openWineDetail(wineId) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // EDIT SHIPMENT ITEM
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function openEditItem(itemId, wineId) {
   const item = shipmentItems.find(i => i.id === itemId);
@@ -1013,9 +1057,9 @@ async function saveItem(itemId, wineId) {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // SHIPMENT MODAL (NOUVEL ENVOI)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 let selectedWines = new Set();
 let selectedRevues = new Set();
@@ -1173,9 +1217,9 @@ async function saveShipment() {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // CATALOGUE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 let catSelected = new Set();
 
@@ -1220,7 +1264,7 @@ function deleteSelectedWines() {
   const blocked = ids.length - canDelete.length;
   if (canDelete.length === 0) { toast('Les vins sélectionnés ont des envois et ne peuvent pas être supprimés.', 'error'); return; }
   let msg = (LANG==='es'?'¿Eliminar definitivamente ':'Supprimer définitivement ') + canDelete.length + (LANG==='es'?' vino(s)?':' vin(s) ?');
-  if (blocked > 0) msg += ' (' + blocked + (LANG==='es'?' vino(s) con envíos ignorado(s).':(T('toast_blocked')))+')';
+  if (blocked > 0) msg += ' (' + blocked + ' ' + T('toast_blocked') + ')';
   confirmModal(msg, async () => {
     try {
       const batch = db.batch();
@@ -1296,15 +1340,15 @@ async function applyTrimTag(qid) {
   } catch (e) { toast('Erreur : ' + e.message, 'error'); }
 }
 
-function renderCatalogue() {
+// Vins du Catalogue après filtres (liste affichée, reprise telle quelle par l'export).
+function getCatalogueFiltered(wrs) {
   const search = (document.getElementById('catSearch').value || '').toLowerCase();
   const fPays = document.getElementById('catFilterPays').value;
   const fCouleur = document.getElementById('catFilterCouleur').value;
   const fSent = (document.getElementById('catFilterSent') || {}).value || '';
   const fCatTrimestre = (document.getElementById('catFilterTrimestre') || {}).value || '';
-  const wrs = getWineRevueStatus();
 
-  const filtered = wines.filter(w => {
+  return wines.filter(w => {
     if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.domaine || '').toLowerCase().includes(search) && !(w.importateurUS || '').toLowerCase().includes(search)) return false;
     if (fPays && w.pays !== fPays) return false;
     if (fCouleur && w.couleur !== fCouleur) return false;
@@ -1316,6 +1360,11 @@ function renderCatalogue() {
     }
     return true;
   });
+}
+
+function renderCatalogue() {
+  const wrs = getWineRevueStatus();
+  const filtered = getCatalogueFiltered(wrs);
 
   const tbody = document.getElementById('catTableBody');
   document.getElementById('catEmpty').style.display = filtered.length ? 'none' : 'block';
@@ -1344,16 +1393,19 @@ function renderCatalogue() {
       '<td style="font-size:11px;color:var(--text-muted)">' + esc(w.cepage || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)">' + (w.mad ? fmtDate(w.mad) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted)" title="' + esc(w.importateurUS || '') + '">' + (w.importateurUS ? esc(w.importateurUS) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
+      '<td style="font-size:12px;white-space:nowrap">' + (w.prixUS != null ? esc(formatUsPrice(w.prixUS, locale())) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
+      '<td style="font-size:12px">' + (w.caseProduction != null ? esc(formatCount(w.caseProduction, locale())) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
+      '<td style="font-size:12px">' + (w.casesImported != null ? esc(formatCount(w.casesImported, locale())) : '<span style="color:var(--text-faint)">-</span>') + '</td>' +
+      '<td>' + colaBadge(w.cola) + '</td>' +
       '<td>' + (trimBadge(w.trimestre || '') || '<span style="color:var(--text-faint);font-size:11px">-</span>') + '</td>' +
       '<td>' + sentBadge + '</td>' +
-      '<td style="font-size:11px;color:var(--text-muted)">' + fmtDate(w.createdAt) + '</td>' +
       '<td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-sm" title="' + T('btn_duplicate') + '" onclick="duplicateWine(\'' + w.id + '\')">⧉</button><button class="btn btn-sm btn-danger" onclick="deleteWine(\'' + w.id + '\')">' + T('btn_delete') + '</button></td>' +
     '</tr>';
   }).join('');
   updateCatSelectionUI();
 }
 
-// â”€â”€ ADD WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── ADD WINE ──────────────────────────────────────────────
 
 function uniqueVals(field) {
   return [...new Set(allWines.map(w => w[field]).filter(Boolean))].sort();
@@ -1367,7 +1419,11 @@ function datalistsHTML(suffix) {
     '<datalist id="dl_importateur_' + suffix + '">' + opts(uniqueVals('importateurUS')) + '</datalist>';
 }
 
+// Vin dont on prépare une copie (« Dupliquer ») ; null pour un ajout classique.
+let addPrefill = null;
+
 function openAddWineModal() {
+  addPrefill = null;
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal">' +
     '<div class="modal-header"><div class="modal-title">' + T('modal_add_wine') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
@@ -1384,6 +1440,7 @@ function openAddWineModal() {
         '<div class="field"><label>'+T('lbl_mad')+'</label><input id="aw_mad" type="date"></div>' +
       '</div>' +
       '<div class="field"><label>'+T('lbl_importateur_us')+'</label><input id="aw_imp" list="dl_importateur_aw" placeholder="ex: Kobrand Wine & Spirits"></div>' +
+      usFieldsHTML('aw') +
       '<div class="field"><label>'+T('lbl_lien')+'</label><input id="aw_link" placeholder="https://... (fiche technique, Dropbox...)"></div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><textarea id="aw_comment" placeholder=""></textarea></div>' +
       datalistsHTML('aw') +
@@ -1402,6 +1459,13 @@ async function saveWine() {
   const millesime = document.getElementById('aw_mil').value.trim();
   const appellation = document.getElementById('aw_app').value.trim();
   if (!pays || !nom || !millesime || !appellation) { toast(T('toast_fill_required'), 'warn'); return; }
+  const us = readUsFields('aw');
+  if (!us) { toast(T('toast_us_invalid'), 'warn'); return; }
+  const candidate = { appellation, nom, millesime };
+  if (findDuplicateWine(candidate, wines)) {
+    toast(addPrefill && wineKey(candidate) === wineKey(addPrefill) ? T('toast_dup_same') : T('toast_wine_exists').replace('{y}', currentCampagne), 'warn');
+    return;
+  }
 
   const btn = document.getElementById('btnSaveWine');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -1420,11 +1484,13 @@ async function saveWine() {
       commentaire: document.getElementById('aw_comment').value.trim() || null,
       mad: document.getElementById('aw_mad').value || null,
       importateurUS: document.getElementById('aw_imp').value.trim() || null,
+      ...us,
+      ...(addPrefill ? { trimestre: addPrefill.trimestre || null, cibleRevues: addPrefill.cibleRevues || null } : {}),
       campagne: currentCampagne,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal();
-    toast(T('toast_wine_added'));
+    toast(T(addPrefill ? 'toast_wine_duplicated' : 'toast_wine_added'));
   } catch (e) {
     toast('Erreur : ' + e.message, 'error');
     btn.disabled = false;
@@ -1432,7 +1498,7 @@ async function saveWine() {
   }
 }
 
-// â”€â”€ EDIT WINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── EDIT WINE ─────────────────────────────────────────────
 
 function openEditWineModal(wineId) {
   const w = wines.find(x => x.id === wineId);
@@ -1475,6 +1541,7 @@ function openEditWineModal(wineId) {
         '<div class="field"><label>'+T('lbl_mad')+'</label><input id="ew_mad" type="date" value="' + (w.mad || '') + '"></div>' +
       '</div>' +
       '<div class="field"><label>'+T('lbl_importateur_us')+'</label><input id="ew_imp" list="dl_importateur_ew" value="' + esc(w.importateurUS || '') + '"></div>' +
+      usFieldsHTML('ew', w) +
       '<div class="field"><label>'+T('lbl_lien')+'</label><input id="ew_link" value="' + esc(w.lienExterne || '') + '" placeholder="https://..."></div>' +
       '<div class="field"><label>'+T('lbl_comment')+'</label><textarea id="ew_comment">' + esc(w.commentaire || '') + '</textarea></div>' +
       datalistsHTML('ew') +
@@ -1496,6 +1563,14 @@ async function updateWine(wineId) {
   const appellation = document.getElementById('ew_app').value.trim();
   if (!pays || !nom || !millesime || !appellation) { toast(T('toast_fill_required'), 'warn'); return; }
 
+  const us = readUsFields('ew');
+  if (!us) { toast(T('toast_us_invalid'), 'warn'); return; }
+  const current = wines.find(x => x.id === wineId);
+  if (current && findDuplicateOnEdit(current, { appellation, nom, millesime }, wines)) {
+    toast(T('toast_wine_exists_edit').replace('{y}', currentCampagne), 'warn');
+    return;
+  }
+
   const btn = document.getElementById('btnUpdateWine');
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
@@ -1513,6 +1588,7 @@ async function updateWine(wineId) {
       commentaire: document.getElementById('ew_comment').value.trim() || null,
       mad: document.getElementById('ew_mad').value || null,
       importateurUS: document.getElementById('ew_imp').value.trim() || null,
+      ...us,
     });
     closeModal();
     toast(T('toast_wine_updated'));
@@ -1592,32 +1668,21 @@ async function updateShipmentDate(shipmentId, wineId) {
   }
 }
 
-async function duplicateWine(id) {
+// « Dupliquer » ouvre un nouveau vin prérempli : rien n'est créé tant que l'identité (Domaine + Dénomination + Millésime)
+// est identique à l'original. Le trimestre et les revues ciblées sont repris à l'enregistrement.
+function duplicateWine(id) {
   const w = wines.find(x => x.id === id);
   if (!w) return;
-  try {
-    const ref = await db.collection('wines').add({
-      pays: w.pays || null,
-      nom: w.nom || null,
-      millesime: w.millesime || null,
-      appellation: w.appellation || null,
-      couleur: w.couleur || null,
-      cepage: w.cepage || null,
-      degre: w.degre || null,
-      lienExterne: w.lienExterne || null,
-      commentaire: w.commentaire || null,
-      mad: w.mad || null,
-      importateurUS: w.importateurUS || null,
-      campagne: wineCampagne(w),
-      trimestre: w.trimestre || null,
-      cibleRevues: w.cibleRevues || null,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    toast(T('toast_wine_duplicated'));
-    setTimeout(() => openEditWineModal(ref.id), 200);
-  } catch (e) {
-    toast('Erreur : ' + e.message, 'error');
-  }
+  openAddWineModal();
+  addPrefill = w;
+  const set = (field, v) => { document.getElementById(field).value = v == null ? '' : v; };
+  set('aw_pays', w.pays); set('aw_couleur', w.couleur); set('aw_nom', w.nom); set('aw_mil', w.millesime); set('aw_app', w.appellation);
+  set('aw_cep', w.cepage); set('aw_deg', w.degre); set('aw_mad', w.mad); set('aw_imp', w.importateurUS); set('aw_link', w.lienExterne);
+  set('aw_comment', w.commentaire); set('aw_price', w.prixUS); set('aw_cprod', w.caseProduction); set('aw_cimp', w.casesImported); set('aw_cola', w.cola);
+  document.querySelector('.modal-title').textContent = T('modal_dup_wine');
+  document.querySelector('.campagne-note').textContent = T('dup_from') + ' ' + [w.appellation, w.nom, w.millesime].filter(Boolean).join(' · ');
+  const mil = document.getElementById('aw_mil');
+  mil.focus(); mil.select();
 }
 
 function deleteWine(id) {
@@ -1634,45 +1699,77 @@ function deleteWine(id) {
   });
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // PASTE IMPORT
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
+
+// Ligne d'exemple de l'onglet « Exemple » du modèle Excel.
+const IMPORT_EXAMPLE_ROW = ['France', 'Château Exemple', 'AOP Bordeaux', 'Rouge', '2022', 'Merlot, Cabernet Sauvignon', '14', 'https://www.exemple.com/fiche-vin', 'Échantillon presse', 'Kobrand Wine & Spirits', '24.50', '1200', '300', 'Oui', 'Q3', 'WS, WE'];
 
 let parsedPaste = [];
+let pasteErrors = [];
 
 function openPasteModal() {
   parsedPaste = [];
+  pasteErrors = [];
+  // noms des colonnes, dans l'ordre : 5 obligatoires, 5 facultatives, puis Q et Revues ciblées (tags automatiques)
+  const chip = (label, i) => '<span class="imp-col' + (i >= 14 ? ' is-tag' : i >= 5 ? ' is-opt' : '') + '">' + esc(label) + '</span>';
   const html = '<div class="modal-overlay" onclick="if(event.target===this)safeCloseModal()">' +
   '<div class="modal modal-lg">' +
-    '<div class="modal-header"><div class="modal-title">' + T('modal_import') + '</div><button class="btn btn-sm" onclick="safeCloseModal()">&times;</button></div>' +
+    '<div class="modal-header">' +
+      '<div class="imp-head"><div class="modal-title">' + T('modal_import') + '</div><span class="imp-campagne">' + T('import_campagne') + ' ' + currentCampagne + '</span></div>' +
+      '<button class="btn btn-sm" onclick="safeCloseModal()">&times;</button>' +
+    '</div>' +
     '<div class="modal-body">' +
-      '<div class="campagne-note">' + T('import_into') + ' ' + currentCampagne + '</div>' +
-      '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Collez un tableau (Excel ou texte) avec les colonnes :<br>' +
-        '<strong>Pays · Domaine ou Marque · Dénomination · Couleur · Millésime · Cépage · Degré · Lien externe · Commentaire · Importateur US</strong><br>' +
-        'Séparateur : tabulation ou point-virgule. Une ligne par vin. Les 5 dernières colonnes sont facultatives.</p>' +
-      '<div style="margin-bottom:12px"><button class="btn btn-sm" onclick="downloadImportTemplate()">' + T('btn_download_template') + '</button></div>' +
-      '<div class="field"><textarea class="paste-area" id="pasteInput" rows="7" oninput="parsePaste()" placeholder="France	AOP Bordeaux	Mon Château	Rouge	2022	Merlot	14"></textarea></div>' +
+      '<div class="imp-step"><span>' + T('import_step1') + '</span><button class="btn btn-sm" onclick="downloadImportTemplate()">' + T('btn_download_template') + '</button></div>' +
+      '<div class="imp-cols">' + T('import_cols').split(' · ').map(chip).join('') + '</div>' +
+      '<div class="imp-legend"><span>' + T('import_legend_req') + ' ' + T('import_legend_opt') + '</span><span class="is-tag">' + T('import_legend_tag') + '</span></div>' +
+      '<div class="imp-rule">' + T('import_rule_q') + '</div>' +
+      '<div class="imp-rule">' + T('import_rule_us') + '</div>' +
+      '<div class="imp-rule">' + T('import_rule_dup') + '</div>' +
+      '<div class="imp-step is-later"><span>' + T('import_step2') + '</span></div>' +
+      '<div class="field" id="pasteField"><textarea class="paste-area" id="pasteInput" rows="5" oninput="parsePaste()" onpaste="afterPaste()" onblur="collapsePaste()" placeholder="' + esc(T('import_paste_hint')) + '"></textarea></div>' +
+      '<div class="imp-drop" id="pasteDone" style="display:none"><span id="pasteDoneText"></span><span class="imp-edit" onclick="expandPaste()">' + T('import_edit') + '</span></div>' +
       '<div id="pastePreview"></div>' +
     '</div>' +
     '<div class="modal-footer">' +
+      '<span class="imp-status" id="importStatus">' + T('import_status_empty') + '</span>' +
       '<button class="btn btn-sm" onclick="safeCloseModal()">' + T('btn_cancel') + '</button>' +
-      '<button class="btn btn-sm btn-primary" id="btnImport" onclick="importPaste()" disabled>' + T('import_btn') + '</button>' +
+      '<button class="btn btn-sm btn-primary" id="btnImport" onclick="importPaste()">' + T('import_btn') + '</button>' +
     '</div>' +
   '</div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
+// La zone de collage se replie en « N lignes collées » une fois remplie, pour laisser la place à la vérification.
+function afterPaste() {
+  setTimeout(() => { parsePaste(); collapsePaste(); }, 0);
+}
+
+function collapsePaste() {
+  const ta = document.getElementById('pasteInput');
+  if (!ta || !ta.value.trim()) return;
+  document.getElementById('pasteField').style.display = 'none';
+  document.getElementById('pasteDone').style.display = '';
+}
+
+function expandPaste() {
+  document.getElementById('pasteDone').style.display = 'none';
+  document.getElementById('pasteField').style.display = '';
+  document.getElementById('pasteInput').focus();
+}
+
 function downloadImportTemplate() {
-  const header = ['Pays', 'Domaine ou Marque', 'Dénomination', 'Couleur', 'Millésime', 'Cépage', 'Degré', 'Lien externe', 'Commentaire', 'Importateur US'];
-  const cols = [14, 26, 26, 12, 11, 22, 8, 36, 36, 26].map(wch => ({ wch }));
+  const header = ['Pays', 'Domaine ou Marque', 'Dénomination', 'Couleur', 'Millésime', 'Cépage', 'Degré', 'Lien externe', 'Commentaire', 'Importateur US', 'U.S. Price', 'Case Production (9L)', 'Cases Imported (9L)', 'COLA', 'Q', 'Revues ciblées'];
+  const cols = [14, 26, 26, 12, 11, 22, 8, 36, 36, 26, 12, 20, 20, 8, 6, 24].map(wch => ({ wch }));
 
   const wsVins = XLSX.utils.aoa_to_sheet([header]);
   wsVins['!cols'] = cols;
-  wsVins['!autofilter'] = { ref: 'A1:J1' };
+  wsVins['!autofilter'] = { ref: 'A1:P1' };
 
   const wsEx = XLSX.utils.aoa_to_sheet([
     header,
-    ['France', 'Château Exemple', 'AOP Bordeaux', 'Rouge', '2022', 'Merlot, Cabernet Sauvignon', '14', 'https://www.exemple.com/fiche-vin', 'Échantillon presse', 'Kobrand Wine & Spirits']
+    IMPORT_EXAMPLE_ROW
   ]);
   wsEx['!cols'] = cols;
 
@@ -1681,10 +1778,14 @@ function downloadImportTemplate() {
     [],
     ["1. Remplissez l'onglet « Vins » : une ligne par vin, sans modifier l'ordre des colonnes."],
     ['2. Colonnes obligatoires : Pays · Domaine ou Marque · Dénomination · Couleur · Millésime.'],
-    ['3. Colonnes facultatives : Cépage · Degré · Lien externe · Commentaire · Importateur US.'],
+    ['3. Colonnes facultatives : Cépage · Degré · Lien externe · Commentaire · Importateur US · U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revues ciblées.'],
     ['4. Couleur : Rouge, Blanc, Rosé ou Orange (orthographe exacte, avec majuscule).'],
     ["5. Sélectionnez les lignes remplies (l'en-tête peut être inclus, il est ignoré), copiez (Ctrl+C)"],
     ["   puis collez-les (Ctrl+V) dans la zone de texte de la fenêtre « Import groupé »."],
+    [],
+    ["6. Q : Q1 à Q4 (trimestre d'envoi, tag automatique). Revues ciblées : WS, WE, Vinous, JS, WA, W&S, Dec., séparées par une virgule (nécessite un Q)."],
+    ["7. U.S. Price : montant en dollars (24 ou 24,50). Case Production et Cases Imported : nombre de caisses de 9 L. COLA : Oui ou Non."],
+    ["8. Un vin déjà présent dans l'année (même Domaine, Dénomination et Millésime) n'est pas recréé : les cellules remplies remplacent ses valeurs (par exemple un nouveau U.S. Price) ; une cellule vide ne supprime rien."],
     [],
     ["L'onglet « Exemple » montre le format attendu : ne le collez pas."]
   ]);
@@ -1697,45 +1798,111 @@ function downloadImportTemplate() {
   XLSX.writeFile(wb, 'template_import_vins.xlsx');
 }
 
+function importErrorText(err, lineNo) {
+  const key = { few_cols: 'import_err_few', us_price_invalid: 'import_err_us_price', case_prod_invalid: 'import_err_case_prod', cases_imp_invalid: 'import_err_cases_imp', cola_invalid: 'import_err_cola', q_invalid: 'import_err_q', revue_unknown: 'import_err_revue', revues_without_q: 'import_err_revues_q' }[err.code];
+  return esc(T(key).replace('{n}', lineNo).replace('{v}', err.value == null ? '' : err.value));
+}
+
 function parsePaste() {
   const raw = document.getElementById('pasteInput').value.trim();
   parsedPaste = [];
-  if (!raw) { document.getElementById('pastePreview').innerHTML = ''; document.getElementById('btnImport').disabled = true; return; }
-  const errors = [];
+  pasteErrors = [];
   raw.split('\n').filter(l => l.trim()).forEach((line, i) => {
     const sep = line.includes('\t') ? '\t' : ';';
     const cols = line.split(sep).map(c => c.trim());
     if (/^(pays|país)$/i.test(cols[0])) return; // ligne d'en-tête du template
-    if (cols.length < 5) { errors.push('Ligne ' + (i + 1) + ' : moins de 5 colonnes'); return; }
-    parsedPaste.push({ pays: cols[0], appellation: cols[1], nom: cols[2], couleur: cols[3], millesime: cols[4], cepage: cols[5] || '', degre: cols[6] || '', lienExterne: cols[7] || '', commentaire: cols[8] || '', importateurUS: cols[9] || '' });
+    const res = parseImportLine(cols, REVUES);
+    if (res.error) { pasteErrors.push(importErrorText(res.error, i + 1)); return; }
+    parsedPaste.push(res.row);
   });
-  renderPastePreview(errors);
+  renderPastePreview();
 }
 
-function renderPastePreview(errors) {
-  const html = '<div class="paste-preview">' +
-    '<div class="paste-row paste-row-header"><span>Pays</span><span>Domaine / Marque</span><span>Dénomination</span><span>Couleur</span><span>Mill.</span><span>Cépage</span><span>Degré</span><span>Lien</span><span>Commentaire</span><span>Importateur US</span><span></span></div>' +
-    parsedPaste.map((r, i) =>
-      '<div class="paste-row">' +
-        '<span>' + esc(r.pays) + '</span><span>' + esc(r.appellation) + '</span><span>' + esc(r.nom) + '</span><span>' + couleurBadge(r.couleur) + '</span><span>' + esc(r.millesime) + '</span><span>' + esc(r.cepage) + '</span><span>' + esc(r.degre) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(r.lienExterne) + '">' + esc(r.lienExterne) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(r.commentaire) + '">' + esc(r.commentaire) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(r.importateurUS) + '">' + esc(r.importateurUS) + '</span>' +
-        '<button onclick="parsedPaste.splice(' + i + ',1);renderPastePreview([])" style="background:none;border:none;cursor:pointer;color:var(--text-faint)">&times;</button>' +
-      '</div>'
-    ).join('') +
-    errors.map(e => '<div style="color:var(--red-text);font-size:11px;margin-top:4px">' + e + '</div>').join('') +
-    '<div style="font-size:12px;color:var(--text-muted);margin-top:8px">' + parsedPaste.length + ' vin(s) prêt(s) à importer</div>' +
-  '</div>';
-  document.getElementById('pastePreview').innerHTML = html;
-  document.getElementById('btnImport').disabled = parsedPaste.length === 0;
+// « 2 vins », « 1 vin » : la clé de traduction contient « singulier|pluriel ».
+function pl(n, key) {
+  const [one, many] = T(key).split('|');
+  return n + ' ' + (n > 1 ? (many || one) : one);
+}
+
+// Étape 3 : synthèse, erreurs, tableau de vérification, texte du pied et libellé du bouton.
+function renderPastePreview() {
+  const plan = classifyImport(parsedPaste, wines);
+  const hasPatch = p => Object.keys(p.patch).length > 0;
+  const nNew = plan.filter(p => p.status === 'new').length;
+  const nTag = plan.filter(p => p.status === 'exists' && hasPatch(p)).length;
+  const nSkip = plan.length - nNew - nTag;
+  const nLines = parsedPaste.length + pasteErrors.length;
+  const cols = T('import_cols').split(' · ');
+  const revLabels = ids => ids.map(id => { const rv = REVUES.find(x => x.id === id); return rv ? rv.label : id; }).join(', ');
+  const detail = r => [['lbl_cepage', r.cepage], ['lbl_degre', r.degre], ['lbl_lien', r.lienExterne], ['lbl_comment', r.commentaire], ['lbl_importateur_us', r.importateurUS],
+    ['lbl_us_price', r.prixUS == null ? '' : formatUsPrice(r.prixUS, locale())], ['lbl_case_prod', r.caseProduction == null ? '' : formatCount(r.caseProduction, locale())],
+    ['lbl_cases_imp', r.casesImported == null ? '' : formatCount(r.casesImported, locale())], ['lbl_cola', r.cola ? (r.cola === 'oui' ? T('cola_yes') : T('cola_no')) : '']]
+    .filter(([, v]) => v).map(([k, v]) => T(k) + ' : ' + v).join('\n');
+  // « U.S. Price : $24 → $26 » : libellé de la colonne, ancienne et nouvelle valeur
+  const fieldCol = { pays: 0, couleur: 3, cepage: 5, degre: 6, lienExterne: 7, commentaire: 8, importateurUS: 9, prixUS: 10, caseProduction: 11, casesImported: 12, cola: 13, trimestre: 14, cibleRevues: 15 };
+  const showVal = (field, v) => {
+    if (v == null || v === '' || (Array.isArray(v) && !v.length)) return '∅';
+    if (field === 'prixUS') return formatUsPrice(v, locale());
+    if (field === 'caseProduction' || field === 'casesImported') return formatCount(v, locale());
+    if (field === 'cola') return v === 'oui' ? T('cola_yes') : T('cola_no');
+    if (field === 'cibleRevues') return revLabels(v);
+    const t = String(v); return t.length > 28 ? t.slice(0, 27) + '…' : t;
+  };
+  const changeText = c => cols[fieldCol[c.field]] + ' : ' + showVal(c.field, c.from) + ' → ' + showVal(c.field, c.to);
+  const stateHTML = p => {
+    if (p.status === 'new') return '<span class="imp-state is-new">● ' + esc(T('import_state_new')) + '</span>';
+    if (p.status === 'exists' && hasPatch(p)) return '<span class="imp-state is-tag">● ' + esc(T('import_state_exists') + ' · ' + pl(p.changes.length, 'import_state_fields')) + '</span>';
+    return '<span class="imp-state is-skip">● ' + esc(p.status === 'repeat' ? T('import_state_repeat') : T('import_state_exists') + ' · ' + T('import_state_same')) + '</span>';
+  };
+  const none = '<span class="imp-none">-</span>';
+  const head = '<div class="imp-grid is-head"><span>' + T('import_col_state') + '</span><span>' + T('import_col_wine') + '</span><span>' + esc(cols[0]) + '</span><span>' + esc(cols[14]) + '</span><span>' + T('import_col_revues_short') + '</span><span></span></div>';
+  const rows = parsedPaste.map((r, i) =>
+    '<div class="imp-grid' + (plan[i].status === 'new' ? '' : hasPatch(plan[i]) ? ' is-tag' : ' is-skip') + '" title="' + esc((plan[i].changes.length ? plan[i].changes.map(changeText).join('\n') + '\n\n' : '') + detail(r)) + '">' +
+      stateHTML(plan[i]) +
+      '<span><b>' + esc(r.appellation) + '</b><br><span class="imp-sub">' + esc([r.nom, r.millesime, r.couleur].filter(Boolean).join(' · ')) + '</span>' +
+        (plan[i].changes.length ? '<br><span class="imp-diff">' + esc(plan[i].changes.slice(0, 2).map(changeText).join(' · ') + (plan[i].changes.length > 2 ? ' · +' + (plan[i].changes.length - 2) : '')) + '</span>' : '') + '</span>' +
+      '<span>' + esc(r.pays) + '</span>' +
+      '<span>' + (r.trimestre ? trimBadge(r.trimestre) : none) + '</span>' +
+      '<span>' + (r.cibleRevues.length ? esc(revLabels(r.cibleRevues)) : none) + '</span>' +
+      '<button class="imp-x" onclick="parsedPaste.splice(' + i + ',1);renderPastePreview()" aria-label="' + esc(T('btn_delete')) + '">&times;</button>' +
+    '</div>'
+  ).join('');
+  const pill = (n, cls, key) => n ? '<span class="imp-pill ' + cls + '">' + pl(n, key) + '</span>' : '';
+
+  document.getElementById('pastePreview').innerHTML = nLines ?
+    '<div class="imp-step is-later"><span>' + T('import_step3') + '</span></div>' +
+    '<div class="imp-chips">' + pill(nNew, 'is-new', 'import_chip_new') + pill(nTag, 'is-tag', 'import_chip_tag') + pill(nSkip, 'is-skip', 'import_chip_skip') + '</div>' +
+    (pasteErrors.length ? '<div class="imp-errors">' + pasteErrors.map(e => '<div>' + e + '</div>').join('') + '</div>' : '') +
+    (parsedPaste.length ? '<div class="imp-table-wrap">' + head + rows + '</div><div class="imp-hint">' + T('import_hover_hint') + '</div>' : '')
+    : '';
+
+  const done = document.getElementById('pasteDoneText');
+  if (done) done.textContent = pl(nLines, 'import_lines_pasted');
+  document.getElementById('importStatus').textContent = nLines
+    ? pl(nLines, 'import_status_lines') + (pasteErrors.length ? ', ' + pl(pasteErrors.length, 'import_status_errors') : '')
+    : T('import_status_empty');
+  const btn = document.getElementById('btnImport');
+  btn.disabled = false;
+  btn.textContent = nNew
+    ? T('import_btn') + ' ' + pl(nNew, 'import_wines') + (nTag ? ' ' + T('import_and_tag') + ' ' + nTag : '')
+    : nTag ? T('import_tag_only') + ' ' + pl(nTag, 'import_wines') : T('import_btn');
 }
 
 async function importPaste() {
-  if (!parsedPaste.length) return;
+  const plan = classifyImport(parsedPaste, wines);
+  const toCreate = plan.filter(p => p.status === 'new');
+  const toTag = plan.filter(p => p.status === 'exists' && Object.keys(p.patch).length);
+  const skipped = plan.length - toCreate.length - toTag.length;
+  if (!toCreate.length && !toTag.length) {
+    toast(parsedPaste.length ? T('import_nothing') : T('import_status_empty'), 'warn');
+    return;
+  }
   const btn = document.getElementById('btnImport');
   btn.innerHTML = '<span class="spinner spinner-dark"></span> ' + T('importing');
   btn.disabled = true;
   try {
     const batch = db.batch();
-    parsedPaste.forEach(r => {
+    toCreate.forEach(({ row: r }) => {
       const ref = db.collection('wines').doc();
       batch.set(ref, {
         pays: r.pays, nom: r.nom, appellation: r.appellation,
@@ -1743,23 +1910,26 @@ async function importPaste() {
         cepage: r.cepage || null, degre: r.degre || null,
         domaine: null, lienExterne: r.lienExterne || null, commentaire: r.commentaire || null,
         importateurUS: r.importateurUS || null,
+        prixUS: r.prixUS, caseProduction: r.caseProduction, casesImported: r.casesImported, cola: r.cola || null,
         campagne: currentCampagne,
+        trimestre: r.trimestre || null,
+        cibleRevues: r.cibleRevues.length ? r.cibleRevues : null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
+    toTag.forEach(p => batch.update(db.collection('wines').doc(p.existing.id), p.patch));
     await batch.commit();
     closeModal();
-    toast('✓ ' + parsedPaste.length + ' ' + T('toast_imported'));
+    toast('✓ ' + [toCreate.length ? pl(toCreate.length, 'toast_imported') : '', toTag.length ? pl(toTag.length, 'toast_import_tagged') : '', skipped ? pl(skipped, 'toast_import_skipped') : ''].filter(Boolean).join(' · '));
   } catch (e) {
     toast('Erreur : ' + e.message, 'error');
-    btn.disabled = false;
-    btn.textContent = T('import_btn');
+    renderPastePreview();
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // ALERTS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 function renderAlertsLegend() {
   const legend = document.getElementById('alertsLegend');
@@ -1942,9 +2112,10 @@ fr: [
       '<strong>Année (en haut)</strong> - chaque année est une campagne séparée : vins, envois, planning et exports. Une année passée devient une archive : modifiable, mais sans alerte.',
     ]},
     { num:'3', title:'Catalogue - gérer vos vins', steps:[
-      '<strong>+ Ajouter un vin</strong> - remplissez Pays, Domaine/Marque, Dénomination, Couleur, Millésime (obligatoires). Champs optionnels : Cépage, Degré, MAD, Importateur US, Lien externe, Commentaire.',
+      '<strong>+ Ajouter un vin</strong> - remplissez Pays, Domaine/Marque, Dénomination, Couleur, Millésime (obligatoires). Champs optionnels : Cépage, Degré, MAD, Importateur US, Marché US (U.S. Price, Case Production, Cases Imported, COLA), Lien externe, Commentaire.',
       '<strong>MAD (mise à disposition)</strong> - date à laquelle le vin est disponible pour envoi. Visible dans le tableau du Catalogue. Uniquement présent dans Ajouter/Modifier, pas dans l\'import groupé.',
-      '<strong>📋 Import groupé</strong> - téléchargez le template Excel, remplissez-le puis collez les lignes. Ordre : Pays · Domaine · Dénomination · Couleur · Millésime · Cépage · Degré · Lien · Commentaire · Importateur US.',
+      '<strong>📋 Import groupé</strong> - téléchargez le template Excel, remplissez-le puis collez les lignes. Ordre : Pays · Domaine · Dénomination · Couleur · Millésime · Cépage · Degré · Lien · Commentaire · Importateur US · U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revues ciblées (ces deux dernières posent les tags automatiquement).',
+      '<strong>Doublons</strong> - un vin déjà présent dans l\'année (même Domaine + Dénomination + Millésime) n\'est jamais recréé : ni à l\'import, ni à l\'ajout, ni à la duplication, ni à la modification (« Dupliquer » ouvre une copie à modifier : changez le domaine, la dénomination ou le millésime avant d\'enregistrer). À l\'import, il est signalé « Déjà présent » et mis à jour : les cellules remplies remplacent ses valeurs (par exemple un nouveau U.S. Price), une cellule vide ne supprime rien. L\'aperçu montre chaque changement avant l\'import.',
       '<strong>Sélection groupée</strong> - cochez des vins pour faire apparaître <em>Supprimer (N)</em> et <em>Taguer (N)</em>. La case en en-tête sélectionne tout.',
     ]},
     { num:'4', title:'Trimestres - tagger les vins', steps:[
@@ -1997,6 +2168,7 @@ fr: [
     ]},
     { num:'9', title:'Export des données', steps:[
       'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les données de l\'année affichée (catalogue + statuts + notes par revue).',
+      'Dans le Catalogue, <strong>⬇ Export Excel</strong> télécharge la liste affichée (filtres compris) : les colonnes de l\'import groupé (Q et Revues ciblées comprises), puis MAD, Envois et la date d\'ajout.',
     ]},
     { num:'10', title:'Saisie assistée', steps:[
       'Dans <strong>Ajouter un vin</strong>, les champs Pays, Domaine/Marque et Cépage proposent une saisie prédictive basée sur les valeurs déjà présentes dans le catalogue.',
@@ -2013,9 +2185,10 @@ es: [
       '<strong>Año (arriba)</strong> - cada año es una campaña separada: vinos, envíos, planificación y exportaciones. Un año pasado pasa a ser un archivo: se puede modificar, pero sin alertas.',
     ]},
     { num:'3', title:'Catálogo - gestionar sus vinos', steps:[
-      '<strong>+ Añadir un vino</strong> - complete País, Dominio/Marca, Denominación, Color, Añada (obligatorios). Campos opcionales: Variedad, Grado, MAD, Importador EE. UU., Enlace externo, Comentario.',
+      '<strong>+ Añadir un vino</strong> - complete País, Dominio/Marca, Denominación, Color, Añada (obligatorios). Campos opcionales: Variedad, Grado, MAD, Importador EE. UU., Mercado EE. UU. (U.S. Price, Case Production, Cases Imported, COLA), Enlace externo, Comentario.',
       '<strong>MAD (puesta a disposición)</strong> - fecha en que el vino está disponible para envío. Visible en la tabla del Catálogo. Solo aparece en Añadir/Modificar, no en la importación en bloque.',
-      '<strong>📋 Importación agrupada</strong> - descargue la plantilla Excel, rellénela y pegue las filas. Orden: País · Dominio · Denominación · Color · Añada · Variedad · Grado · Enlace · Comentario · Importador EE. UU.',
+      '<strong>📋 Importación agrupada</strong> - descargue la plantilla Excel, rellénela y pegue las filas. Orden: País · Dominio · Denominación · Color · Añada · Variedad · Grado · Enlace · Comentario · Importador EE. UU. · U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revistas objetivo (estas dos últimas aplican las etiquetas automáticamente).',
+      '<strong>Duplicados</strong> - un vino ya presente en el año (mismo Dominio + Denominación + Añada) nunca se vuelve a crear: ni al importar, ni al añadir, ni al duplicar, ni al modificar («Duplicar» abre una copia que hay que modificar: cambie el dominio, la denominación o la añada antes de guardar). Al importar se marca «Ya existe» y se actualiza: las celdas rellenas sustituyen sus valores (por ejemplo un nuevo U.S. Price), una celda vacía no borra nada. La vista previa muestra cada cambio antes de importar.',
       '<strong>Selección múltiple</strong> - marque vinos para ver <em>Eliminar (N)</em> y <em>Etiquetar (N)</em>. La casilla del encabezado selecciona todo.',
     ]},
     { num:'4', title:'Trimestres - etiquetar los vinos', steps:[
@@ -2067,7 +2240,8 @@ es: [
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},
     { num:'9', title:'Exportar datos', steps:[
-      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los datos del año mostrado (catálogo + estados + notas por revista).',
+      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los datos del año mostrado (catálogo + estados + notas por revista)',
+      'En el Catálogo, <strong>⬇ Exportar Excel</strong> descarga la lista mostrada (filtros incluidos): las columnas de la importación agrupada (con Q y Revistas objetivo), y luego MAD, Envíos y la fecha de alta.',
     ]},
     { num:'10', title:'Entrada asistida', steps:[
       'En <strong>Añadir un vino</strong>, los campos País, Dominio/Marca y Variedad ofrecen autocompletado basado en los valores ya presentes en el catálogo.',
@@ -2107,29 +2281,50 @@ es: [
 
 function exportCSV() {
   const wrs = getWineRevueStatus();
-  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','Cépage','Degré','Lien externe','Commentaire'].concat(
+  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','U.S. Price','Case Production (9L)','Cases Imported (9L)','COLA','Cépage','Degré','Lien externe','Commentaire'].concat(
     REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
   );
   const rows = wines.map(w => [
-    w.pays, w.nom, w.appellation, w.millesime || '', w.couleur, w.importateurUS || '',
+    w.pays, w.appellation, w.nom, w.millesime || '', w.couleur, w.importateurUS || '',
+    w.prixUS == null ? '' : w.prixUS, w.caseProduction == null ? '' : w.caseProduction, w.casesImported == null ? '' : w.casesImported,
+    w.cola === 'oui' ? 'Oui' : w.cola === 'non' ? 'Non' : '',
     w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
   ].concat(
     REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
   ));
   const csv = [header, ...rows].map(r => r.map(c => '"' + String(c || '').replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,ï»¿' + encodeURIComponent(csv);
+  a.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv);
   a.download = 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
 }
 
+function exportCatalogueXLSX() {
+  const wrs = getWineRevueStatus();
+  const list = getCatalogueFiltered(wrs);
+  if (!list.length) { toast(T('tracker_empty'), 'warn'); return; }
+  const rows = list.map(w => {
+    const statuts = {};
+    Object.entries(wrs[w.id] || {}).forEach(([rid, info]) => { statuts[rid] = info.statut; });
+    return catalogueExportRow(w, statuts, REVUES, SENT_STATUTS).concat(w.createdAt ? fmtDate(w.createdAt) : '');
+  });
+  const ws = XLSX.utils.aoa_to_sheet([CATALOGUE_EXPORT_HEADER.concat('Ajouté le'), ...rows]);
+  ws['!cols'] = [14, 26, 26, 12, 11, 22, 8, 36, 36, 26, 6, 24, 12, 8, 12].map(wch => ({ wch }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Catalogue');
+  XLSX.writeFile(wb, 'catalogue_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  toast('✓ ' + list.length + ' ' + T('toast_exported'));
+}
+
 function exportXLSX() {
   const wrs = getWineRevueStatus();
-  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','Cépage','Degré','Lien externe','Commentaire'].concat(
+  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','U.S. Price','Case Production (9L)','Cases Imported (9L)','COLA','Cépage','Degré','Lien externe','Commentaire'].concat(
     REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
   );
   const rows = wines.map(w => [
-    w.pays, w.nom, w.appellation, w.millesime || '', w.couleur, w.importateurUS || '',
+    w.pays, w.appellation, w.nom, w.millesime || '', w.couleur, w.importateurUS || '',
+    w.prixUS == null ? '' : w.prixUS, w.caseProduction == null ? '' : w.caseProduction, w.casesImported == null ? '' : w.casesImported,
+    w.cola === 'oui' ? 'Oui' : w.cola === 'non' ? 'Non' : '',
     w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
   ].concat(
     REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
@@ -2140,19 +2335,20 @@ function exportXLSX() {
   XLSX.writeFile(wb, 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 // EVENT BINDINGS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════
 
 document.getElementById('btnLogin').addEventListener('click', doLogin);
 document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 document.getElementById('btnExport').addEventListener('click', exportCSV);
 document.getElementById('btnExportXlsx').addEventListener('click', exportXLSX);
+document.getElementById('btnExportCatalogue').addEventListener('click', exportCatalogueXLSX);
 document.getElementById('btnResetTracker').addEventListener('click', resetTrackerFilters);
 document.getElementById('btnResetCatalogue').addEventListener('click', resetCatalogueFilters);
 document.getElementById('btnNewShipment').addEventListener('click', () => openShipmentModal());
-document.getElementById('btnAddWine').addEventListener('click', openAddWineModal);
+document.getElementById('btnAddWine').addEventListener('click', () => openAddWineModal());
 document.getElementById('btnPaste').addEventListener('click', openPasteModal);
 document.getElementById('vbtnTable').addEventListener('click', () => setTrackerView('table'));
 document.getElementById('vbtnCard').addEventListener('click', () => setTrackerView('card'));
