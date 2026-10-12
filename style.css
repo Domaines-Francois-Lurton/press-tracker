@@ -229,6 +229,7 @@ tr[onclick] { cursor: pointer; }
 .imp-table-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
 .imp-grid { display: grid; grid-template-columns: 170px minmax(180px, 1fr) 70px 44px 90px 24px; gap: 8px; align-items: center; min-width: 580px; padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 12px; }
 .imp-grid:last-child { border-bottom: none; }
+.imp-grid.is-sync { grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 24px; min-width: 0; }
 .imp-grid.is-head { background: var(--bg); color: var(--text-muted); padding: 6px 10px; }
 .imp-grid.is-skip { background: var(--amber-bg); }
 .imp-grid.is-tag { background: var(--blue-bg); }

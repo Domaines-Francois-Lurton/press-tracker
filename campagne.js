@@ -239,6 +239,16 @@ function importerForWine(w) {
   return IMPORTER_BY_COUNTRY[pays] || '';
 }
 
+// Vins dont l'importateur US diffère de celui de la règle : [{ wine, from, to }] (rien pour un pays sans règle).
+function importerUpdates(wines) {
+  const out = [];
+  wines.forEach(w => {
+    const to = importerForWine(w), from = String(w.importateurUS == null ? '' : w.importateurUS).trim();
+    if (to && to !== from) out.push({ wine: w, from, to });
+  });
+  return out;
+}
+
 // Pays · Domaine · Dénomination · Couleur · Millésime · Cépage · Degré · Lien · Commentaire · Importateur US ·
 // U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revues ciblées.
 // Renvoie { row } ou { error: { code, value? } } (few_cols, us_price_invalid, case_prod_invalid, cases_imp_invalid,
@@ -376,7 +386,7 @@ if (typeof module !== 'undefined') {
     remainingRevues, isWineDone, trimestreStartDate, planningSections,
     LATE_WINDOW_DAYS, effectiveStatut, withEffectiveStatut, matchesRevueStatut,
     normalizeText, normalizeQ, parseRevues, parseAmount, parseCola, formatUsPrice, formatCount,
-    parseImportLine, importerForWine, wineKey, findDuplicateWine, findDuplicateOnEdit, importChanges, importPatch, classifyImport,
+    parseImportLine, importerForWine, importerUpdates, wineKey, findDuplicateWine, findDuplicateOnEdit, importChanges, importPatch, classifyImport,
     CATALOGUE_EXPORT_HEADER, catalogueExportRow,
   };
 }
