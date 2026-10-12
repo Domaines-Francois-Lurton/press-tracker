@@ -222,6 +222,23 @@ function formatCount(v, locale) {
 }
 
 // Analyse une ligne d'import déjà découpée en colonnes :
+// Règle automatique de l'importateur US d'après le pays (et, pour l'Espagne, certaines marques).
+const IMPORTER_BY_COUNTRY = { france: 'PARDELA USA', argentine: 'PARDELA USA', argentina: 'PARDELA USA', chili: 'WINESELLERS', chile: 'WINESELLERS' };
+const SPAIN = ['espagne', 'espana', 'spain'];
+const IMPORTER_SPAIN_DEFAULT = 'PARDELA USA';
+const IMPORTER_SPAIN_BRANDS = { VINAMERICAS: ['contracorriente', 'harmonia', 'campo eliseo'] };
+
+// Importateur US d'un vin ({ pays, appellation, nom }) ; '' quand aucune règle ne s'applique.
+function importerForWine(w) {
+  const pays = normalizeText(w.pays);
+  if (SPAIN.includes(pays)) {
+    const name = normalizeText([w.appellation, w.nom].join(' '));
+    const brand = Object.keys(IMPORTER_SPAIN_BRANDS).find(imp => IMPORTER_SPAIN_BRANDS[imp].some(b => name.includes(b)));
+    return brand || IMPORTER_SPAIN_DEFAULT;
+  }
+  return IMPORTER_BY_COUNTRY[pays] || '';
+}
+
 // Pays · Domaine · Dénomination · Couleur · Millésime · Cépage · Degré · Lien · Commentaire · Importateur US ·
 // U.S. Price · Case Production (9L) · Cases Imported (9L) · COLA · Q · Revues ciblées.
 // Renvoie { row } ou { error: { code, value? } } (few_cols, us_price_invalid, case_prod_invalid, cases_imp_invalid,
@@ -242,11 +259,12 @@ function parseImportLine(cols, revues) {
   const revuesParsed = parseRevues(cols.slice(15).join(';'), revues);
   if (revuesParsed.unknown.length) return { error: { code: 'revue_unknown', value: revuesParsed.unknown.join(', ') } };
   if (revuesParsed.ids.length && !trimestre) return { error: { code: 'revues_without_q' } };
+  const wine = { pays: cols[0], appellation: cols[1], nom: cols[2] };
   return {
     row: {
       pays: cols[0], appellation: cols[1], nom: cols[2], couleur: cols[3], millesime: cols[4],
       cepage: cols[5] || '', degre: cols[6] || '', lienExterne: cols[7] || '', commentaire: cols[8] || '',
-      importateurUS: cols[9] || '',
+      importateurUS: cols[9] || importerForWine(wine),
       prixUS: price === '' ? null : price, caseProduction: caseProd === '' ? null : caseProd,
       casesImported: casesImp === '' ? null : casesImp, cola,
       trimestre, cibleRevues: revuesParsed.ids,
@@ -358,7 +376,7 @@ if (typeof module !== 'undefined') {
     remainingRevues, isWineDone, trimestreStartDate, planningSections,
     LATE_WINDOW_DAYS, effectiveStatut, withEffectiveStatut, matchesRevueStatut,
     normalizeText, normalizeQ, parseRevues, parseAmount, parseCola, formatUsPrice, formatCount,
-    parseImportLine, wineKey, findDuplicateWine, findDuplicateOnEdit, importChanges, importPatch, classifyImport,
+    parseImportLine, importerForWine, wineKey, findDuplicateWine, findDuplicateOnEdit, importChanges, importPatch, classifyImport,
     CATALOGUE_EXPORT_HEADER, catalogueExportRow,
   };
 }
