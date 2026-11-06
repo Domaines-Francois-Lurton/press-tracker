@@ -23,21 +23,82 @@ html { overflow-y: scroll; scrollbar-gutter: stable; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 
 /* LOGIN */
-.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.login-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; width: 360px; max-width: 100%; }
-.login-logo { width: 48px; height: 48px; border-radius: 13px; font-size: 17px; margin-bottom: 0.9rem; }
-.login-title { font-size: 20px; font-weight: 600; margin-bottom: 0.25rem; }
-.login-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 1.75rem; }
-.login-error { background: var(--red-bg); color: var(--red-text); border-radius: var(--radius); padding: 8px 12px; font-size: 13px; margin-bottom: 1rem; display: none; }
+/* Même page que Label Explorer (EXPLOTIQ) et Dépôts de Marques : Figtree, carte en deux panneaux.
+   --app : version plus foncée du dégradé violet Press Tracker du Portail, pour un texte blanc lisible. */
+#loginWrap { --app: oklch(0.5 0.15 320); --cx-ink: #1b1a24; --cx-muted: #6b6860; --cx-line: #d9d5cc; --cx-error: #b0362f;
+  font-family: Figtree, system-ui, sans-serif; color: var(--cx-ink); line-height: normal;
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px; background: #FAF9F7; }
+#loginWrap .cx-card { width: 100%; max-width: 820px; min-height: 500px; background: #fff; border-radius: 18px; overflow: hidden;
+  display: grid; grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  box-shadow: 0 2px 4px rgba(27,26,36,.04), 0 12px 24px rgba(27,26,36,.08), 0 32px 64px rgba(27,26,36,.10); }
+#loginWrap .cx-brand { background: var(--app); color: #fff; padding: 40px; display: flex; flex-direction: column; }
+#loginWrap .cx-badge { width: 56px; height: 56px; border-radius: 15px; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; }
+#loginWrap .cx-name { margin: auto 0 0; font-size: 30px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; }
+#loginWrap .cx-tagline { margin: 8px 0 0; font-size: 16px; }
+#loginWrap .cx-side { padding: 48px 52px; display: flex; flex-direction: column; justify-content: center; }
+#loginWrap form { margin: 0; display: flex; flex-direction: column; }
+#loginWrap h2 { margin: 0; font-size: 22px; font-weight: 600; }
+#loginWrap label { margin: 24px 0 0; font-size: 13px; font-weight: 500; color: #4a4740; }
+#loginWrap .cx-field { margin-top: 8px; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 6px 0 14px; border: 1px solid var(--cx-line); border-radius: 10px; background: #fff; }
+#loginWrap .cx-field:focus-within { border-color: var(--cx-ink); }
+#loginWrap .cx-field input { flex: 1; min-width: 0; width: auto; height: auto; padding: 0; border: 0; outline: 0; font: inherit; font-size: 15px; background: transparent; color: var(--cx-ink); }
+#loginWrap .cx-toggle { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 500; color: var(--cx-muted); cursor: pointer; padding: 6px 8px; border-radius: 6px; }
+#loginWrap .cx-toggle:hover { background: #f2f0eb; }
+#loginWrap .cx-error { display: none; margin-top: 8px; font-size: 13px; color: var(--cx-error); }
+#loginWrap form.has-error .cx-field { border: 1.5px solid #c8423a; background: #fdf6f5; }
+#loginWrap form.has-error .cx-error.mdp,
+#loginWrap form.erreur-reseau .cx-error.reseau,
+#loginWrap form.erreur-tentatives .cx-error.tentatives { display: block; }
+#loginWrap .cx-submit { margin-top: 18px; height: 48px; border: 0; border-radius: 10px; background: var(--cx-ink); color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+#loginWrap .cx-submit:hover { background: #2e2c3a; }
+#loginWrap .cx-submit:disabled { opacity: .6; cursor: progress; }
+#loginWrap .cx-logo { height: 68px; align-self: center; }
+#loginWrap .cx-sep { width: 100%; margin: 40px 0 36px; border: 0; border-top: 1px solid #ece9e3; }
+@media (max-width: 700px) {
+  #loginWrap { padding: 0; align-items: stretch; background: #fff; }
+  #loginWrap .cx-card { display: flex; flex-direction: column; min-height: 100vh; border-radius: 0; box-shadow: none; }
+  #loginWrap .cx-brand { padding: 56px 24px 28px; border-radius: 0 0 24px 24px; }
+  #loginWrap .cx-name { margin-top: 28px; font-size: 28px; }
+  #loginWrap .cx-tagline { margin-top: 6px; }
+  #loginWrap .cx-side { flex: 1; padding: 32px 24px 36px; justify-content: flex-start; }
+  #loginWrap label { margin-top: 20px; font-size: 14px; }
+  #loginWrap .cx-field { height: 52px; border-radius: 12px; padding: 0 4px 0 14px; }
+  #loginWrap .cx-field input { font-size: 16px; }
+  #loginWrap .cx-toggle { min-width: 76px; height: 44px; font-size: 14px; }
+  #loginWrap .cx-error { font-size: 14px; }
+  #loginWrap .cx-submit { margin-top: 20px; height: 52px; border-radius: 12px; font-size: 16px; }
+  #loginWrap .cx-logo { height: 52px; }
+  #loginWrap .cx-sep { margin: 28px 0 24px; }
+}
+/* Ordinateur : carte réduite de 15 %, comme Label Explorer */
+@media (min-width: 701px) {
+  #loginWrap .cx-card { max-width: 700px; min-height: 425px; border-radius: 15px; }
+  #loginWrap .cx-brand { padding: 34px; }
+  #loginWrap .cx-badge { width: 48px; height: 48px; border-radius: 13px; font-size: 17px; }
+  #loginWrap .cx-name { font-size: 26px; }
+  #loginWrap .cx-tagline { margin-top: 7px; font-size: 14px; }
+  #loginWrap .cx-side { padding: 41px 44px; }
+  #loginWrap .cx-logo { height: 58px; }
+  #loginWrap .cx-sep { margin: 34px 0 31px; }
+  #loginWrap h2 { font-size: 19px; }
+  #loginWrap label { margin-top: 20px; font-size: 12px; }
+  #loginWrap .cx-field { margin-top: 7px; height: 41px; padding: 0 5px 0 12px; border-radius: 9px; }
+  #loginWrap .cx-field input { font-size: 14px; }
+  #loginWrap .cx-toggle { font-size: 12px; }
+  #loginWrap .cx-error { font-size: 12px; }
+  #loginWrap .cx-submit { margin-top: 15px; height: 41px; border-radius: 9px; font-size: 14px; }
+}
 
 /* LAYOUT */
 .app { display: none; min-height: 100vh; flex-direction: column; }
 .topbar { background: var(--surface); color: var(--text); display: flex; align-items: center; justify-content: space-between; padding: 0 max(1.5rem, calc((100% - 1400px) / 2 + 1.5rem)); height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--border); position: relative; z-index: 2; }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
-.topbar-logo { width: 32px; height: 32px; border-radius: 9px; font-size: 12px; }
+/* Logo carré du favicon, comme l'en-tête du Portail et de Label Explorer */
+.topbar-logo { width: 34px; height: 34px; border-radius: 9px; }
+.topbar-logo::after { content: ""; width: 14px; height: 14px; border-radius: 4px; background: #fff; opacity: .95; }
 /* Logo « PT », identique à la tuile Press Tracker du Portail d'applications */
 .app-logo { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background-image: linear-gradient(160deg, oklch(0.7 0.13 320), oklch(0.56 0.16 320)); color: #fff; font-weight: 700; letter-spacing: 0.01em; line-height: 1; box-shadow: 0 4px 10px oklch(0.3 0.02 250 / 0.18), inset 0 1px 0 oklch(1 0 0 / 0.25); }
-.topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.topbar-title { white-space: nowrap; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 .topbar-version { font-size: 10px; color: var(--text-faint); font-weight: 600; letter-spacing: 0.03em; background: var(--gray-bg); border-radius: 20px; padding: 2px 8px; }
 .topbar-right { display: flex; align-items: center; gap: 10px; }
 .lang-switch { display: flex; align-items: center; background: var(--gray-bg); border-radius: 8px; padding: 2px; }
@@ -297,12 +358,17 @@ details.plan-fold[open] > summary::before { content: '▾ '; }
 @media (max-width: 768px) {
   .topbar { padding: 0 0.85rem; height: 52px; }
   .topbar-title { font-size: 13px; }
+  .topbar-logo { width: 30px; height: 30px; border-radius: 8px; }
+  .topbar-logo::after { width: 12px; height: 12px; border-radius: 3.5px; }
   .topbar-version { display: none; }
   .topbar-right { gap: 6px; }
   .lang-switch { padding: 2px; }
   .lang-btn { padding: 4px 8px; font-size: 10px; }
   .camp-btn { display: none; }
-  .camp-select { display: block; border: none; background: transparent; color: var(--accent); font: inherit; font-size: 11px; font-weight: 600; padding: 4px 4px; cursor: pointer; }
+  .topbar-left { gap: 8px; min-width: 0; }
+  .topbar-right { flex-shrink: 0; }
+  .topbar-title { overflow: hidden; text-overflow: ellipsis; }
+  .camp-select { display: block; width: auto; border: none; background: transparent; color: var(--accent); font: inherit; font-size: 11px; font-weight: 600; padding: 4px 4px; cursor: pointer; }
   .icon-btn { width: 28px; height: 28px; }
   .btn-logout { padding: 6px; }
   .btn-logout-label { display: none; }
@@ -333,4 +399,11 @@ details.plan-fold[open] > summary::before { content: '▾ '; }
 }
 @media (min-width: 769px) {
   .mobile-nav { display: none; }
+}
+
+/* Très petits téléphones (≤ 360 px) : espacements resserrés pour garder « Press Tracker » entier */
+@media (max-width: 360px) {
+  .topbar { padding: 0 8px; }
+  .topbar-left { gap: 6px; }
+  .topbar-right { gap: 4px; }
 }

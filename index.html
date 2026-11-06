@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Press Tracker - Suivi des envois presse</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261014d">
-<link rel="stylesheet" href="style.css?v=20261014d">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261106f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261106f">
 </head>
 <body>
 
@@ -26,19 +29,31 @@
 </script>
 
 <!-- LOGIN -->
-<div class="login-wrap" id="loginWrap">
-  <div class="login-box">
-    <div class="login-logo app-logo">PT</div>
-    <div class="login-title">Press Tracker</div>
-    <div class="login-sub">Suivi des envois presse</div>
-    <div class="login-error" id="loginError">Mot de passe incorrect.</div>
-    <div class="field">
-      <label>Mot de passe</label>
-      <input type="password" id="pwdInput" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px" id="btnLogin">Connexion</button>
+<main class="login-wrap" id="loginWrap" style="display:none">
+  <div class="cx-card">
+    <section class="cx-brand">
+      <div class="cx-badge">PT</div>
+      <h1 class="cx-name">Press Tracker</h1>
+      <p class="cx-tagline" id="loginSub">Suivi des envois presse</p>
+    </section>
+    <section class="cx-side">
+      <img class="cx-logo" src="assets/img/logo-fl.png" alt="François Lurton">
+      <hr class="cx-sep">
+      <form id="loginForm" novalidate>
+        <h2 id="loginTitle">Connexion</h2>
+        <label for="pwdInput" id="loginLabel">Mot de passe</label>
+        <div class="cx-field">
+          <input id="pwdInput" name="password" type="password" autocomplete="current-password" required>
+          <button type="button" class="cx-toggle" id="pwdToggle" aria-controls="pwdInput" aria-pressed="false">Afficher</button>
+        </div>
+        <div class="cx-error mdp" id="loginError" role="alert">Mot de passe incorrect. Réessayez.</div>
+        <div class="cx-error reseau" id="loginErrorNet" role="alert">Connexion impossible. Vérifiez votre réseau puis réessayez.</div>
+        <div class="cx-error tentatives" id="loginErrorMany" role="alert">Trop de tentatives. Patientez quelques minutes avant de réessayer.</div>
+        <button type="submit" class="cx-submit" id="btnLogin">Se connecter</button>
+      </form>
+    </section>
   </div>
-</div>
+</main>
 
 <!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay" style="display:none">
@@ -50,7 +65,7 @@
 <div class="app" id="theApp">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo app-logo">PT</span>
+      <span class="topbar-logo app-logo" aria-hidden="true"></span>
       <span class="topbar-title">Press Tracker</span>
       <span class="topbar-version" title="Version 3.0 - mise à jour du 08/10/2026">v3.0</span>
     </div>
@@ -179,6 +194,9 @@
     <div class="page" id="page-alerts">
       <div class="page-header">
         <div class="page-title">Planning d'envoi</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="btnExportPlanning">⬇ Export Excel</button>
+        </div>
       </div>
       <div id="alertsLegend"></div>
       <div class="tracker-toolbar">
@@ -211,8 +229,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="campagne.js?v=20261014d"></script>
-<script src="app.js?v=20261014d"></script>
+<script src="campagne.js?v=20261106f"></script>
+<script src="app.js?v=20261106f"></script>
 
 </body>
 </html>

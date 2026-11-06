@@ -27,8 +27,11 @@ let LANG = localStorage.getItem('pt_lang') || 'fr';
 
 const TRANSLATIONS = {
 fr: {
-  login_sub:'Suivi des envois presse', login_label:'Mot de passe', login_btn:'Connexion',
-  login_error:'Mot de passe incorrect.', loading:'Chargement des données...', logout:'Déconnexion',
+  login_sub:'Suivi des envois presse', login_label:'Mot de passe', login_btn:'Se connecter', login_title:'Connexion',
+  login_show:'Afficher', login_hide:'Masquer',
+  login_error_net:'Connexion impossible. Vérifiez votre réseau puis réessayez.',
+  login_error_many:'Trop de tentatives. Patientez quelques minutes avant de réessayer.',
+  login_error:'Mot de passe incorrect. Réessayez.', loading:'Chargement des données...', logout:'Déconnexion',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'📅 Planning',
   page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Planning d\'envoi',
   stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Échéances proches',
@@ -88,8 +91,11 @@ fr: {
   lbl_tracking_prefix:'Tracking',
 },
 es: {
-  login_sub:'Seguimiento de envíos de prensa', login_label:'Contraseña', login_btn:'Entrar',
-  login_error:'Contraseña incorrecta.', loading:'Cargando datos...', logout:'Cerrar sesión',
+  login_sub:'Seguimiento de envíos de prensa', login_label:'Contraseña', login_btn:'Entrar', login_title:'Iniciar sesión',
+  login_show:'Mostrar', login_hide:'Ocultar',
+  login_error_net:'No se puede conectar. Compruebe su red e inténtelo de nuevo.',
+  login_error_many:'Demasiados intentos. Espere unos minutos antes de volver a intentarlo.',
+  login_error:'Contraseña incorrecta. Inténtelo de nuevo.', loading:'Cargando datos...', logout:'Cerrar sesión',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'📅 Planificación',
   page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Planificación de envíos',
   stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
@@ -164,14 +170,19 @@ function applyStaticI18n() {
   const $ = id => document.getElementById(id);
   const setText = (el,t) => { if (el) el.textContent = t; };
   // Login
-  setText(document.querySelector('.login-sub'), T('login_sub'));
+  setText($('loginSub'), T('login_sub'));
+  setText($('loginTitle'), T('login_title'));
+  setText($('loginLabel'), T('login_label'));
   setText($('loginError'), T('login_error'));
-  const pwdLabel = document.querySelector('.login-box .field label');
-  setText(pwdLabel, T('login_label'));
+  setText($('loginErrorNet'), T('login_error_net'));
+  setText($('loginErrorMany'), T('login_error_many'));
+  const pt = $('pwdToggle'); if (pt) setText(pt, T($('pwdInput').type === 'password' ? 'login_show' : 'login_hide'));
   setText($('btnLogin'), T('login_btn'));
   setText(document.querySelector('#loadingOverlay div:last-child'), T('loading'));
   // Topbar
-  setText($('btnLogout'), T('logout'));
+  // Seul le libellé change : l'icône reste, et le libellé est masqué sur mobile.
+  setText(document.querySelector('#btnLogout .btn-logout-label'), T('logout'));
+  const bl = $('btnLogout'); if (bl) bl.title = T('logout');
   // Desktop nav
   const dNav = $('desktopNav');
   if (dNav) dNav.querySelectorAll('[data-page]').forEach(tab => {
@@ -204,6 +215,7 @@ function applyStaticI18n() {
   setText($('btnExport'), T('btn_export'));
   setText($('btnExportXlsx'), T('btn_export_xlsx'));
   setText($('btnExportCatalogue'), T('btn_export_xlsx'));
+  setText($('btnExportPlanning'), T('btn_export_xlsx'));
   setText($('btnNewShipment'), T('btn_new_shipment'));
   setText($('btnAddWine'), T('btn_add_wine'));
   setText($('btnPaste'), T('btn_import'));
@@ -408,18 +420,37 @@ let unsubWines, unsubShipments, unsubItems;
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
 
-async function doLogin() {
-  const pwd = document.getElementById('pwdInput').value;
+const LOGIN_ERRORS = ['has-error', 'erreur-reseau', 'erreur-tentatives'];
+const BAD_PASSWORD_CODES = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'];
+
+// Erreur affichée selon la cause : mot de passe, trop d'essais, ou réseau.
+async function doLogin(e) {
+  if (e) e.preventDefault();
+  const form = document.getElementById('loginForm');
+  const input = document.getElementById('pwdInput');
   const btn = document.getElementById('btnLogin');
-  document.getElementById('loginError').style.display = 'none';
+  if (!input.value) { input.focus(); return; }
+  form.classList.remove(...LOGIN_ERRORS);
   btn.disabled = true;
   try {
     await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-    await auth.signInWithEmailAndPassword(AUTH_EMAIL, pwd);
-  } catch (e) {
-    document.getElementById('loginError').style.display = 'block';
+    await auth.signInWithEmailAndPassword(AUTH_EMAIL, input.value);
+  } catch (err) {
+    form.classList.add(BAD_PASSWORD_CODES.includes(err.code) ? 'has-error'
+      : err.code === 'auth/too-many-requests' ? 'erreur-tentatives' : 'erreur-reseau');
     btn.disabled = false;
+    input.focus();
+    input.select();
   }
+}
+
+function togglePassword() {
+  const input = document.getElementById('pwdInput');
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  const t = document.getElementById('pwdToggle');
+  t.textContent = T(show ? 'login_hide' : 'login_show');
+  t.setAttribute('aria-pressed', show);
 }
 
 function doLogout() {
@@ -834,15 +865,14 @@ function setTrackerView(v) {
   renderTracker();
 }
 
-function renderTracker() {
+// Vins du Tracker après recherche et filtres (utilisé par l'affichage et les exports).
+function getTrackerFiltered(wrs) {
   const search = (document.getElementById('trackerSearch').value || '').toLowerCase();
   const fPays = document.getElementById('filterPays').value;
   const fRevue = document.getElementById('filterRevue').value;
   const fStatut = document.getElementById('filterStatut').value;
   const fTrimestre = (document.getElementById('filterTrimestre') || {}).value || '';
-  const wrs = getWineRevueStatus();
-
-  const filtered = wines.filter(w => {
+  return wines.filter(w => {
     if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.domaine || '').toLowerCase().includes(search) && !(w.importateurUS || '').toLowerCase().includes(search)) return false;
     if (fPays && w.pays !== fPays) return false;
     if (fTrimestre && w.trimestre !== fTrimestre) return false;
@@ -850,6 +880,11 @@ function renderTracker() {
     Object.entries(wrs[w.id] || {}).forEach(([rid, info]) => { statuts[rid] = info.statut; });
     return matchesRevueStatut(statuts, fRevue, fStatut, SENT_STATUTS);
   });
+}
+
+function renderTracker() {
+  const wrs = getWineRevueStatus();
+  const filtered = getTrackerFiltered(wrs);
 
   renderStats();
 
@@ -2103,6 +2138,23 @@ function sendFromPlanning(wineId) {
   openShipmentModal(wineId, w ? remainingRevues(w, shipmentItems, SENT_STATUTS) : []);
 }
 
+// Vins tagués du Planning après recherche et filtres (utilisé par l'affichage et l'export).
+function getAlertsFiltered() {
+  const val = id => { const el = document.getElementById(id); return el ? (el.value || '') : ''; };
+  const search = val('alertSearch').toLowerCase();
+  const fPays = val('alertFilterPays');
+  const fTrim = val('alertFilterTrimestre');
+  const fCrit = val('alertFilterCritique');
+  return wines.filter(w => {
+    if (!w.trimestre) return false;
+    if (fTrim && w.trimestre !== fTrim) return false;
+    if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.pays || '').toLowerCase().includes(search)) return false;
+    if (fPays && w.pays !== fPays) return false;
+    if (fCrit && !(w.cibleRevues || []).includes(fCrit)) return false;
+    return true;
+  });
+}
+
 function renderAlerts() {
   updateAlertBadge();
   renderAlertsLegend();
@@ -2110,29 +2162,13 @@ function renderAlerts() {
   const list = document.getElementById('alertsList');
   if (!list) return;
 
-  const searchEl = document.getElementById('alertSearch');
-  const fPaysEl = document.getElementById('alertFilterPays');
-  const fTrimEl = document.getElementById('alertFilterTrimestre');
-  const fCritEl = document.getElementById('alertFilterCritique');
-  const search = searchEl ? (searchEl.value || '').toLowerCase() : '';
-  const fPays = fPaysEl ? fPaysEl.value : '';
-  const fTrim = fTrimEl ? fTrimEl.value : '';
-  const fCrit = fCritEl ? fCritEl.value : '';
-
-  const tagged = wines.filter(w => w.trimestre);
-  if (!tagged.length) {
+  if (!wines.some(w => w.trimestre)) {
     list.innerHTML = '<div class="empty" style="padding:24px">' + T('alert_empty') + '<br>' +
       '<span style="font-size:12px;color:var(--text-faint)">' + T('alert_empty_hint') + '</span></div>';
     return;
   }
 
-  const filtered = tagged.filter(w => {
-    if (fTrim && w.trimestre !== fTrim) return false;
-    if (search && !(w.nom || '').toLowerCase().includes(search) && !(w.appellation || '').toLowerCase().includes(search) && !(w.pays || '').toLowerCase().includes(search)) return false;
-    if (fPays && w.pays !== fPays) return false;
-    if (fCrit && !(w.cibleRevues || []).includes(fCrit)) return false;
-    return true;
-  });
+  const filtered = getAlertsFiltered();
   if (!filtered.length) {
     list.innerHTML = '<div class="empty" style="padding:24px">' + T('tracker_empty') + '</div>';
     return;
@@ -2236,8 +2272,9 @@ fr: [
       '<strong>↺ Réinitialiser</strong> - efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
     ]},
     { num:'9', title:'Export des données', steps:[
-      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les données de l\'année affichée (catalogue + statuts + notes par revue).',
+      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les vins affichés de l\'année (filtres et tri compris) : catalogue + statuts + notes par revue.',
       'Dans le Catalogue, <strong>⬇ Export Excel</strong> télécharge la liste affichée (filtres compris) : les colonnes de l\'import groupé (Q et Revues ciblées comprises), puis MAD, Envois et la date d\'ajout.',
+      'Dans le Planning, <strong>⬇ Export Excel</strong> télécharge les vins affichés (filtres compris), section par section : trimestre, échéance, état, revues ciblées, revues restant à envoyer et statut par revue.',
     ]},
     { num:'10', title:'Saisie assistée', steps:[
       'Dans <strong>Ajouter un vin</strong>, les champs Pays, Domaine/Marque et Cépage proposent une saisie prédictive basée sur les valeurs déjà présentes dans le catalogue.',
@@ -2309,8 +2346,9 @@ es: [
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},
     { num:'9', title:'Exportar datos', steps:[
-      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los datos del año mostrado (catálogo + estados + notas por revista)',
+      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los vinos mostrados del año (filtros y orden incluidos): catálogo + estados + notas por revista.',
       'En el Catálogo, <strong>⬇ Exportar Excel</strong> descarga la lista mostrada (filtros incluidos): las columnas de la importación agrupada (con Q y Revistas objetivo), y luego MAD, Envíos y la fecha de alta.',
+      'En la Planificación, <strong>⬇ Exportar Excel</strong> descarga los vinos mostrados (filtros incluidos), sección por sección: trimestre, fecha límite, estado, revistas objetivo, revistas pendientes de envío y estado por revista.',
     ]},
     { num:'10', title:'Entrada asistida', steps:[
       'En <strong>Añadir un vino</strong>, los campos País, Dominio/Marca y Variedad ofrecen autocompletado basado en los valores ya presentes en el catálogo.',
@@ -2348,12 +2386,15 @@ es: [
 }
 
 
-function exportCSV() {
+// Données d'export du Tracker : vins filtrés, dans l'ordre de tri affiché. null si rien à exporter.
+function trackerExportData() {
   const wrs = getWineRevueStatus();
+  const list = applyTrackerSort(getTrackerFiltered(wrs), wrs);
+  if (!list.length) { toast(T('tracker_empty'), 'warn'); return null; }
   const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','U.S. Price','Case Production (9L)','Cases Imported (9L)','COLA','Cépage','Degré','Lien externe','Commentaire'].concat(
     REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
   );
-  const rows = wines.map(w => [
+  const rows = list.map(w => [
     w.pays, w.appellation, w.nom, w.millesime || '', w.couleur, w.importateurUS || '',
     w.prixUS == null ? '' : w.prixUS, w.caseProduction == null ? '' : w.caseProduction, w.casesImported == null ? '' : w.casesImported,
     w.cola === 'oui' ? 'Oui' : w.cola === 'non' ? 'Non' : '',
@@ -2361,11 +2402,18 @@ function exportCSV() {
   ].concat(
     REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
   ));
-  const csv = [header, ...rows].map(r => r.map(c => '"' + String(c || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+  return { header, rows };
+}
+
+function exportCSV() {
+  const data = trackerExportData();
+  if (!data) return;
+  const csv = [data.header, ...data.rows].map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv);
   a.download = 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
+  toast('✓ ' + data.rows.length + ' ' + T('toast_exported'));
 }
 
 function exportCatalogueXLSX() {
@@ -2386,34 +2434,58 @@ function exportCatalogueXLSX() {
 }
 
 function exportXLSX() {
-  const wrs = getWineRevueStatus();
-  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','U.S. Price','Case Production (9L)','Cases Imported (9L)','COLA','Cépage','Degré','Lien externe','Commentaire'].concat(
-    REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
-  );
-  const rows = wines.map(w => [
-    w.pays, w.appellation, w.nom, w.millesime || '', w.couleur, w.importateurUS || '',
-    w.prixUS == null ? '' : w.prixUS, w.caseProduction == null ? '' : w.caseProduction, w.casesImported == null ? '' : w.casesImported,
-    w.cola === 'oui' ? 'Oui' : w.cola === 'non' ? 'Non' : '',
-    w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
-  ].concat(
-    REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
-  ));
-  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  const data = trackerExportData();
+  if (!data) return;
+  const ws = XLSX.utils.aoa_to_sheet([data.header, ...data.rows]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Press Tracker');
   XLSX.writeFile(wb, 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  toast('✓ ' + data.rows.length + ' ' + T('toast_exported'));
+}
+
+// Export du Planning : vins filtrés, dans l'ordre et les sections affichés.
+function exportPlanningXLSX() {
+  const filtered = getAlertsFiltered();
+  if (!filtered.length) { toast(T('tracker_empty'), 'warn'); return; }
+  const wrs = getWineRevueStatus();
+  const sec = planningSections(filtered, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
+  const label = id => { const r = REVUES.find(x => x.id === id); return r ? r.label : id; };
+  const stateLabel = e => e.state === 'overdue' ? T('plan_late')
+    : e.state === 'sent' ? T('legend_sent')
+    : e.state === 'closed' ? T('alert_closed')
+    : 'J-' + e.daysLeft;
+  const sections = [['now', T('plan_now')], ['upcoming', T('plan_upcoming')], ['closed', T('plan_closed')], ['done', T('plan_done')]];
+  const header = ['Section', 'Q', 'Échéance', 'État', 'Pays', 'Domaine ou Marque', 'Dénomination', 'Millésime', 'Couleur', 'Importateur US',
+    'Revues ciblées', 'Restant à envoyer', 'Servis'].concat(REVUES.map(r => r.full));
+  const rows = [];
+  sections.forEach(([key, title]) => sec[key].forEach(e => {
+    const w = e.w;
+    const cibles = w.cibleRevues || [];
+    const end = trimestreEndDate(e.t, currentCampagne);
+    rows.push([title, e.t.id, fmtDate(end), stateLabel(e), w.pays || '', w.appellation || '', w.nom || '', w.millesime || '', w.couleur || '', w.importateurUS || '',
+      cibles.map(label).join(', '), e.remaining.map(label).join(', '), cibles.length ? (cibles.length - e.remaining.length) + '/' + cibles.length : '']
+      .concat(REVUES.map(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return i ? i.statut + (i.note ? ' (' + i.note + ')' : '') : ''; })));
+  }));
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  ws['!cols'] = [24, 5, 11, 12, 12, 26, 26, 9, 9, 20, 22, 22, 7].concat(REVUES.map(() => 16)).map(wch => ({ wch }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Planning');
+  XLSX.writeFile(wb, 'planning_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  toast('✓ ' + rows.length + ' ' + T('toast_exported'));
 }
 
 // ═══════════════════════════════════════════════════════════
 // EVENT BINDINGS
 // ═══════════════════════════════════════════════════════════
 
-document.getElementById('btnLogin').addEventListener('click', doLogin);
-document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginForm').addEventListener('submit', doLogin);
+document.getElementById('pwdToggle').addEventListener('click', togglePassword);
+document.getElementById('pwdInput').addEventListener('input', () => document.getElementById('loginForm').classList.remove(...LOGIN_ERRORS));
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 document.getElementById('btnExport').addEventListener('click', exportCSV);
 document.getElementById('btnExportXlsx').addEventListener('click', exportXLSX);
 document.getElementById('btnExportCatalogue').addEventListener('click', exportCatalogueXLSX);
+document.getElementById('btnExportPlanning').addEventListener('click', exportPlanningXLSX);
 document.getElementById('btnResetTracker').addEventListener('click', resetTrackerFilters);
 document.getElementById('btnResetCatalogue').addEventListener('click', resetCatalogueFilters);
 document.getElementById('btnNewShipment').addEventListener('click', () => openShipmentModal());
