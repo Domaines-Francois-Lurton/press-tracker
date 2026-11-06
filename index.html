@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Press Tracker - Suivi des envois presse</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261106f">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261106i">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261106f">
+<link rel="stylesheet" href="style.css?v=20261106i">
 </head>
 <body>
 
@@ -26,6 +26,12 @@
   // Identifiant fixe du compte partagé Firebase Auth (pas un secret - le mot de passe
   // réel est saisi par l'utilisateur et vérifié côté serveur Firebase, jamais stocké ici).
   const AUTH_EMAIL = "equipe@press-tracker.internal";
+  // Wine Awards Tracker : lu seulement (ses fiches sont publiques en lecture), jamais modifié d'ici.
+  const AWARDS_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyDUfjB1EU92cIpASKyvNYaWFgCft4-EVhU",
+    authDomain: "wine-awards-lurton.firebaseapp.com",
+    projectId: "wine-awards-lurton",
+  };
 </script>
 
 <!-- LOGIN -->
@@ -102,6 +108,7 @@
       <div class="page-header">
         <div class="page-title">Envois presse</div>
         <div style="display:flex;gap:8px">
+          <button class="btn" id="btnAwardsNotes">★ Notes Awards</button>
           <button class="btn" id="btnExport">⬇ Export CSV</button>
           <button class="btn" id="btnExportXlsx">⬇ Export Excel</button>
           <button class="btn btn-primary" id="btnNewShipment">+ Nouvel envoi</button>
@@ -229,8 +236,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="campagne.js?v=20261106f"></script>
-<script src="app.js?v=20261106f"></script>
+<script src="campagne.js?v=20261106i"></script>
+<script src="app.js?v=20261106i"></script>
 
 </body>
 </html>

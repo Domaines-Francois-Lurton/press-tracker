@@ -87,6 +87,15 @@ fr: {
   import_btn:'Importer', btn_download_template:'⬇ Télécharger le template Excel',
   guide_title:"Guide d'utilisation - Press Tracker",
   btn_reset_filters:'↺ Réinitialiser', btn_export_xlsx:'⬇ Export Excel',
+  btn_awards:'★ Notes Awards', aw_title:'Notes du Wine Awards Tracker', aw_loading:'Lecture...',
+  aw_intro:'Notes des revues suivies trouvées dans le Wine Awards Tracker pour les vins du Press Tracker (toutes campagnes). Chaque note est posée sur l’envoi le plus récent à ce critique, qui passe à « Noté ». Décochez une note pour l’ignorer.',
+  aw_none:'Aucune nouvelle note dans le Wine Awards Tracker.', aw_read_error:'Lecture du Wine Awards Tracker impossible',
+  aw_chip_add:'note à ajouter|notes à ajouter', aw_chip_same:'déjà à jour', aw_chip_check:'à vérifier',
+  aw_nothing_to_add:'Aucune note à ajouter automatiquement.',
+  aw_check_title:'À vérifier', aw_check_hint:'Non reportées automatiquement. « Ajouter » crée un envoi « Note reçue via Wine Awards » daté de la note (compté comme un envoi) ; « Remplacer » écrase la note du Press Tracker.',
+  aw_btn_add:'Ajouter', aw_btn_add_all:'Tout ajouter', aw_btn_replace:'Remplacer', toast_aw_replaced:'Note remplacée',
+  aw_reason_no_envoi:'Aucun envoi enregistré à ce critique', aw_reason_refused:'Envoi marqué « Refusé »', aw_reason_differ:'Note différente dans le Press Tracker : {v}',
+  aw_campagne:'campagne', aw_noted_on:'note du', aw_apply:'Ajouter', aw_notes:'note|notes', toast_aw_added:'note ajoutée|notes ajoutées',
   modal_edit_shipment:"Modifier l'envoi", toast_shipment_updated:'Envoi modifié',
   lbl_tracking_prefix:'Tracking',
 },
@@ -151,6 +160,15 @@ es: {
   import_btn:'Importar', btn_download_template:'⬇ Descargar la plantilla Excel',
   guide_title:'Guía de uso - Press Tracker',
   btn_reset_filters:'↺ Restablecer', btn_export_xlsx:'⬇ Exportar Excel',
+  btn_awards:'★ Notas Awards', aw_title:'Notas del Wine Awards Tracker', aw_loading:'Leyendo...',
+  aw_intro:'Notas de las revistas seguidas encontradas en el Wine Awards Tracker para los vinos del Press Tracker (todas las campañas). Cada nota se asigna al envío más reciente a ese crítico, que pasa a «Evaluado». Desmarque una nota para ignorarla.',
+  aw_none:'No hay notas nuevas en el Wine Awards Tracker.', aw_read_error:'No se puede leer el Wine Awards Tracker',
+  aw_chip_add:'nota por añadir|notas por añadir', aw_chip_same:'ya al día', aw_chip_check:'por revisar',
+  aw_nothing_to_add:'Ninguna nota que añadir automáticamente.',
+  aw_check_title:'Por revisar', aw_check_hint:'No se trasladan automáticamente. «Añadir» crea un envío «Nota recibida vía Wine Awards» con la fecha de la nota (cuenta como un envío); «Sustituir» reemplaza la nota del Press Tracker.',
+  aw_btn_add:'Añadir', aw_btn_add_all:'Añadir todo', aw_btn_replace:'Sustituir', toast_aw_replaced:'Nota sustituida',
+  aw_reason_no_envoi:'Ningún envío registrado a este crítico', aw_reason_refused:'Envío marcado «Rechazado»', aw_reason_differ:'Nota distinta en el Press Tracker: {v}',
+  aw_campagne:'campaña', aw_noted_on:'nota del', aw_apply:'Añadir', aw_notes:'nota|notas', toast_aw_added:'nota añadida|notas añadidas',
   modal_edit_shipment:'Modificar el envío', toast_shipment_updated:'Envío modificado',
   lbl_tracking_prefix:'Seguimiento',
 },
@@ -214,6 +232,7 @@ function applyStaticI18n() {
   // Buttons
   setText($('btnExport'), T('btn_export'));
   setText($('btnExportXlsx'), T('btn_export_xlsx'));
+  setText($('btnAwardsNotes'), T('btn_awards'));
   setText($('btnExportCatalogue'), T('btn_export_xlsx'));
   setText($('btnExportPlanning'), T('btn_export_xlsx'));
   setText($('btnNewShipment'), T('btn_new_shipment'));
@@ -2032,6 +2051,203 @@ async function applyImporterSync() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// NOTES DU WINE AWARDS TRACKER
+// ═══════════════════════════════════════════════════════════
+
+let awPlan = null;   // résultat de awardsNotesPlan
+let awSel = [];      // case cochée pour chaque note de awPlan.toAdd
+let awCheckOpen = false; // section « À vérifier » dépliée
+let awBusy = false;      // une écriture est en cours : boutons bloqués
+const AWARDS_ENVOI_LABEL = 'Note reçue via Wine Awards';
+
+// Lecture seule des fiches du Wine Awards Tracker (autre projet Firebase, lisible sans connexion).
+async function fetchAwardsWines() {
+  const app = firebase.apps.find(a => a.name === 'awards') || firebase.initializeApp(AWARDS_FIREBASE_CONFIG, 'awards');
+  const snap = await app.firestore().collection('wines').get();
+  return snap.docs.map(d => d.data());
+}
+
+async function openAwardsNotesModal() {
+  const btn = document.getElementById('btnAwardsNotes');
+  btn.disabled = true;
+  btn.textContent = T('aw_loading');
+  try {
+    const awardsWines = await fetchAwardsWines();
+    awPlan = awardsNotesPlan(awardsWines, allWines, allItems, allShipments, REVUES);
+  } catch (e) {
+    toast(T('aw_read_error') + ' : ' + e.message, 'error');
+    return;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = T('btn_awards');
+  }
+  if (!awPlan.toAdd.length && !awPlan.check.length) { toast(T('aw_none')); return; }
+  const label = e => (e.wine.appellation || '') + ' ' + (e.wine.nom || '') + ' ' + (e.wine.millesime || '');
+  awPlan.toAdd.sort((a, b) => label(a).localeCompare(label(b)));
+  awPlan.check.sort((a, b) => label(a).localeCompare(label(b)));
+  awSel = awPlan.toAdd.map(() => true);
+  awCheckOpen = !awPlan.toAdd.length;
+  awBusy = false;
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal" style="max-width:680px;width:95%">' +
+      '<div class="modal-header">' +
+        '<div class="modal-title">' + T('aw_title') + '</div>' +
+        '<button class="btn btn-sm" onclick="closeModal()">&times;</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div class="imp-rule" style="margin-bottom:10px">' + T('aw_intro') + '</div>' +
+        '<div id="awBody"></div>' +
+      '</div>' +
+      '<div class="modal-footer">' +
+        '<button class="btn btn-sm" onclick="closeModal()">' + T('btn_cancel') + '</button>' +
+        '<button class="btn btn-sm btn-primary" id="btnAwApply" onclick="applyAwardsNotes()"></button>' +
+      '</div>' +
+    '</div></div>');
+  renderAwardsNotes();
+}
+
+function awWineCell(e) {
+  return '<span><b>' + esc(e.wine.appellation) + '</b><br><span class="imp-sub">' +
+    esc([e.wine.nom, e.wine.millesime, T('aw_campagne') + ' ' + wineCampagne(e.wine)].filter(Boolean).join(' · ')) + '</span></span>';
+}
+
+function awNoteCell(e) {
+  return '<span><span class="aw-revue">' + esc(e.revue.label) + '</span> <b>' + esc(e.score) + '</b>' +
+    (e.date ? '<br><span class="imp-sub">' + T('aw_noted_on') + ' ' + esc(e.date) + '</span>' : '') + '</span>';
+}
+
+function renderAwardsNotes() {
+  const p = awPlan;
+  const n = awSel.filter(Boolean).length;
+  const pill = (count, cls, text) => count ? '<span class="imp-pill ' + cls + '">' + text + '</span>' : '';
+  const reason = c => c.reason === 'differ' ? T('aw_reason_differ').replace('{v}', esc(c.current))
+    : T(c.reason === 'refused' ? 'aw_reason_refused' : 'aw_reason_no_envoi');
+  const nNoEnvoi = p.check.filter(c => c.reason === 'no_envoi').length;
+  const action = (c, i) => c.reason === 'no_envoi'
+    ? '<button class="btn btn-sm aw-act" onclick="addAwardsWithoutEnvoi([' + i + '])">' + T('aw_btn_add') + '</button>'
+    : c.reason === 'differ'
+      ? '<button class="btn btn-sm aw-act" onclick="replaceAwardsNote(' + i + ')">' + T('aw_btn_replace') + '</button>'
+      : '<span></span>';
+  document.getElementById('awBody').innerHTML =
+    '<div class="imp-chips">' +
+      pill(p.toAdd.length, 'is-new', pl(p.toAdd.length, 'aw_chip_add')) +
+      pill(p.same, 'is-tag', p.same + ' ' + T('aw_chip_same')) +
+      pill(p.check.length, 'is-skip', p.check.length + ' ' + T('aw_chip_check')) +
+    '</div>' +
+    (p.toAdd.length
+      ? '<div class="imp-table-wrap">' + p.toAdd.map((e, i) =>
+          '<label class="imp-grid is-aw' + (awSel[i] ? '' : ' is-off') + '">' +
+            '<input type="checkbox"' + (awSel[i] ? ' checked' : '') + ' onchange="awSel[' + i + ']=this.checked;renderAwardsNotes()">' +
+            awWineCell(e) + awNoteCell(e) +
+          '</label>').join('') + '</div>'
+      : '<div class="imp-rule">' + T('aw_nothing_to_add') + '</div>') +
+    (p.check.length
+      ? '<details class="aw-check"' + (awCheckOpen ? ' open' : '') + ' ontoggle="awCheckOpen=this.open"><summary>' + T('aw_check_title') + ' (' + p.check.length + ')</summary>' +
+          '<div class="aw-check-head">' +
+            '<div class="imp-rule">' + T('aw_check_hint') + '</div>' +
+            (nNoEnvoi ? '<button class="btn btn-sm aw-act" onclick="addAwardsWithoutEnvoi(awPlan.check.map((c,i)=>c.reason===\'no_envoi\'?i:-1).filter(i=>i>=0))">' +
+              T('aw_btn_add_all') + ' (' + nNoEnvoi + ')</button>' : '') +
+          '</div>' +
+          '<div class="imp-table-wrap">' + p.check.map((c, i) =>
+            '<div class="imp-grid is-aw is-check">' + awWineCell(c) + awNoteCell(c) +
+              '<span class="imp-sub">' + reason(c) + '</span>' + action(c, i) +
+            '</div>').join('') + '</div>' +
+        '</details>'
+      : '');
+  const btn = document.getElementById('btnAwApply');
+  btn.disabled = !n || awBusy;
+  btn.style.display = p.toAdd.length ? '' : 'none';
+  btn.textContent = T('aw_apply') + ' ' + pl(n, 'aw_notes');
+  if (awBusy) document.querySelectorAll('#awBody .aw-act').forEach(b => { b.disabled = true; });
+}
+
+// Notes « À vérifier » sans envoi : crée un envoi « Note reçue via Wine Awards » par date de note
+// (date de la note si connue, sinon aujourd'hui), avec un item « Noté » par note. Compté comme un envoi normal.
+async function addAwardsWithoutEnvoi(indexes) {
+  const list = indexes.map(i => awPlan.check[i]).filter(c => c && c.reason === 'no_envoi');
+  if (!list.length || awBusy) return;
+  awBusy = true;
+  renderAwardsNotes();
+  try {
+    const byDate = new Map();
+    list.forEach(c => {
+      const d = frDateToIso(c.date) || todayISO();
+      if (!byDate.has(d)) byDate.set(d, []);
+      byDate.get(d).push(c);
+    });
+    const now = firebase.firestore.FieldValue.serverTimestamp();
+    const groups = [...byDate.entries()];
+    // Firestore : 500 écritures par lot ; un envoi et ses notes restent dans le même lot
+    let batch = db.batch(), ops = 0;
+    for (const [date, entries] of groups) {
+      if (ops && ops + entries.length + 1 > 450) { await batch.commit(); batch = db.batch(); ops = 0; }
+      const shipRef = db.collection('shipments').doc();
+      batch.set(shipRef, {
+        dateEnvoi: date, dateSoumission: null, trackingByRevue: {}, intermediaire: null,
+        commentaireGlobal: AWARDS_ENVOI_LABEL, source: 'awards', createdAt: now,
+      });
+      entries.forEach(c => batch.set(db.collection('shipmentItems').doc(), {
+        shipmentId: shipRef.id, wineId: c.wine.id, revueId: c.revue.id,
+        statut: 'noté', note: c.score, dateReception: null, tracking: null,
+        commentaire: AWARDS_ENVOI_LABEL, source: 'awards', createdAt: now,
+      }));
+      ops += entries.length + 1;
+    }
+    await batch.commit();
+    awPlan.check = awPlan.check.filter(c => !list.includes(c));
+    toast('✓ ' + pl(list.length, 'toast_aw_added'));
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'error');
+  } finally {
+    awBusy = false;
+    if (document.getElementById('awBody')) renderAwardsNotes();
+  }
+}
+
+// Note différente : remplace la note de l'envoi le plus récent par celle du Wine Awards Tracker.
+async function replaceAwardsNote(index) {
+  const c = awPlan.check[index];
+  if (!c || c.reason !== 'differ' || !c.item || awBusy) return;
+  awBusy = true;
+  renderAwardsNotes();
+  try {
+    await db.collection('shipmentItems').doc(c.item.id).update({ note: c.score, statut: effectiveStatut(c.item.statut, c.score) });
+    awPlan.check.splice(index, 1);
+    awPlan.same++;
+    toast('✓ ' + T('toast_aw_replaced'));
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'error');
+  } finally {
+    awBusy = false;
+    if (document.getElementById('awBody')) renderAwardsNotes();
+  }
+}
+
+// Pose chaque note cochée sur son envoi ; le statut passe à « Noté » (sauf « Refusé », jamais choisi ici).
+async function applyAwardsNotes() {
+  const list = awPlan.toAdd.filter((e, i) => awSel[i]);
+  if (!list.length) return;
+  const btn = document.getElementById('btnAwApply');
+  btn.innerHTML = '<span class="spinner spinner-dark"></span> ' + T('importing');
+  btn.disabled = true;
+  try {
+    for (let i = 0; i < list.length; i += 400) { // Firestore : 500 écritures par lot au maximum
+      const batch = db.batch();
+      list.slice(i, i + 400).forEach(e => batch.update(db.collection('shipmentItems').doc(e.item.id), {
+        note: e.score,
+        statut: effectiveStatut(e.item.statut, e.score),
+      }));
+      await batch.commit();
+    }
+    closeModal();
+    toast('✓ ' + pl(list.length, 'toast_aw_added'));
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'error');
+    renderAwardsNotes();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // ALERTS
 // ═══════════════════════════════════════════════════════════
 
@@ -2279,6 +2495,11 @@ fr: [
     { num:'10', title:'Saisie assistée', steps:[
       'Dans <strong>Ajouter un vin</strong>, les champs Pays, Domaine/Marque et Cépage proposent une saisie prédictive basée sur les valeurs déjà présentes dans le catalogue.',
     ]},
+    { num:'11', title:'Notes du Wine Awards Tracker', steps:[
+      'Dans le Tracker, <strong>★ Notes Awards</strong> lit les notes saisies dans le Wine Awards Tracker (sans jamais le modifier) et les rapproche des vins du Press Tracker : même domaine, dénomination et millésime, toutes campagnes.',
+      'Une fenêtre liste les notes à ajouter : chacune est posée sur l\'envoi le plus récent à ce critique encore sans note, qui passe à « Noté ». Décochez une note pour l\'ignorer, puis cliquez <strong>Ajouter</strong>.',
+      'La partie <strong>À vérifier</strong> liste ce qui n\'est pas reporté automatiquement. <strong>Aucun envoi enregistré</strong> : <strong>Ajouter</strong> (ligne par ligne) ou <strong>Tout ajouter</strong> crée un envoi « Note reçue via Wine Awards », daté de la note (ou du jour si elle n\'a pas de date), compté comme un envoi normal. <strong>Note différente</strong> : <strong>Remplacer</strong>, ligne par ligne uniquement. <strong>Envoi refusé</strong> : rien n\'est proposé.',
+    ]},
   ],
 es: [
     { num:'1', title:'Inicio de sesión', steps:[
@@ -2352,6 +2573,11 @@ es: [
     ]},
     { num:'10', title:'Entrada asistida', steps:[
       'En <strong>Añadir un vino</strong>, los campos País, Dominio/Marca y Variedad ofrecen autocompletado basado en los valores ya presentes en el catálogo.',
+    ]},
+    { num:'11', title:'Notas del Wine Awards Tracker', steps:[
+      'En el Tracker, <strong>★ Notas Awards</strong> lee las notas introducidas en el Wine Awards Tracker (sin modificarlo nunca) y las relaciona con los vinos del Press Tracker: mismo dominio, denominación y añada, todas las campañas.',
+      'Una ventana muestra las notas por añadir: cada una se asigna al envío más reciente a ese crítico aún sin nota, que pasa a «Evaluado». Desmarque una nota para ignorarla y haga clic en <strong>Añadir</strong>.',
+      'La parte <strong>Por revisar</strong> muestra lo que no se traslada automáticamente. <strong>Ningún envío registrado</strong>: <strong>Añadir</strong> (línea por línea) o <strong>Añadir todo</strong> crea un envío «Nota recibida vía Wine Awards», con la fecha de la nota (o la del día si no tiene), que cuenta como un envío normal. <strong>Nota distinta</strong>: <strong>Sustituir</strong>, solo línea por línea. <strong>Envío rechazado</strong>: no se propone nada.',
     ]},
   ],
 };
@@ -2482,6 +2708,7 @@ document.getElementById('loginForm').addEventListener('submit', doLogin);
 document.getElementById('pwdToggle').addEventListener('click', togglePassword);
 document.getElementById('pwdInput').addEventListener('input', () => document.getElementById('loginForm').classList.remove(...LOGIN_ERRORS));
 document.getElementById('btnLogout').addEventListener('click', doLogout);
+document.getElementById('btnAwardsNotes').addEventListener('click', openAwardsNotesModal);
 document.getElementById('btnExport').addEventListener('click', exportCSV);
 document.getElementById('btnExportXlsx').addEventListener('click', exportXLSX);
 document.getElementById('btnExportCatalogue').addEventListener('click', exportCatalogueXLSX);

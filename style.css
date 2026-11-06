@@ -291,6 +291,20 @@ tr[onclick] { cursor: pointer; }
 .imp-grid { display: grid; grid-template-columns: 170px minmax(180px, 1fr) 70px 44px 90px 24px; gap: 8px; align-items: center; min-width: 580px; padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 12px; }
 .imp-grid:last-child { border-bottom: none; }
 .imp-grid.is-sync { grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 24px; min-width: 0; }
+/* Notes du Wine Awards Tracker */
+.imp-grid.is-aw { grid-template-columns: 18px minmax(160px, 1fr) minmax(110px, 0.6fr); min-width: 0; cursor: pointer; }
+.imp-grid.is-aw input[type="checkbox"] { width: auto; margin: 0; }
+.imp-grid.is-aw.is-off { opacity: .5; }
+.imp-grid.is-aw.is-check { grid-template-columns: minmax(150px, 1fr) minmax(100px, 0.6fr) minmax(130px, 1fr) auto; cursor: default; }
+.aw-check-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 8px; }
+.aw-act { white-space: nowrap; padding: 4px 10px; font-size: 12px; }
+@media (max-width: 600px) {
+  .imp-grid.is-aw.is-check { grid-template-columns: 1fr auto; }
+  .aw-check-head { flex-direction: column; align-items: flex-start; }
+}
+.aw-revue { font-size: 11px; font-weight: 600; color: var(--purple-text); background: var(--purple-bg); border-radius: 10px; padding: 1px 7px; }
+.aw-check { margin-top: 12px; }
+.aw-check > summary { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--amber-text); }
 .imp-grid.is-head { background: var(--bg); color: var(--text-muted); padding: 6px 10px; }
 .imp-grid.is-skip { background: var(--amber-bg); }
 .imp-grid.is-tag { background: var(--blue-bg); }

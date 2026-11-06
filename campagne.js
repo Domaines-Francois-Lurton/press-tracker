@@ -379,6 +379,68 @@ function catalogueExportRow(w, statuts, revues, sentStatuts) {
     w.trimestre || '', cibles.map(label).join(', '), w.mad || '', envois];
 }
 
+// ---- Notes du Wine Awards Tracker ----
+
+// Date du Wine Awards Tracker (JJ/MM/AAAA) vers le format des envois (AAAA-MM-JJ) ; '' si invalide.
+function frDateToIso(s) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(s == null ? '' : s).trim());
+  if (!m) return '';
+  const d = new Date(+m[3], +m[2] - 1, +m[1]);
+  return d.getFullYear() === +m[3] && d.getMonth() === +m[2] - 1 && d.getDate() === +m[1] ? m[3] + '-' + m[2] + '-' + m[1] : '';
+}
+
+// Valeur comparable d'une note : son premier nombre (« 87 - Best Buy » = « 87 »), sinon le texte normalisé.
+function scoreValue(s) {
+  const m = /\d+(?:[.,]\d+)?/.exec(String(s == null ? '' : s));
+  return m ? m[0].replace(',', '.') : normalizeText(s);
+}
+
+// Rapproche les notes des fiches Awards ({ 'Domaine ou Marque', 'Nom du vin', 'Millésime', notes: [{ critic, score, date }] })
+// des envois du Press Tracker, toutes campagnes confondues (même domaine, dénomination et millésime).
+// toAdd : note à poser sur l'envoi le plus récent au critique, encore sans note et non refusé.
+// same : notes déjà identiques. check : non reportées — 'differ' (autre note), 'no_envoi', 'refused'.
+// Seules les revues suivies comptent ; une note par vin et par critique (la première de la fiche).
+function awardsNotesPlan(awardsWines, pressWines, items, shipments, revues) {
+  const byKey = new Map();
+  (pressWines || []).forEach(w => { const k = wineKey(w); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(w); });
+  const revueOf = new Map((revues || []).map(r => [normalizeText(r.full), r]));
+  const shipDate = new Map((shipments || []).map(s => [s.id, s.dateEnvoi || s.dateSoumission || '']));
+  const wineById = new Map((pressWines || []).map(w => [w.id, w]));
+  const plan = { toAdd: [], same: 0, check: [] };
+  const seen = new Set();
+  (awardsWines || []).forEach(a => {
+    const group = byKey.get(wineKey({ appellation: a['Domaine ou Marque'], nom: a['Nom du vin'], millesime: a['Millésime'] }));
+    if (!group) return;
+    const ids = new Set(group.map(w => w.id));
+    (a.notes || []).forEach(n => {
+      const revue = revueOf.get(normalizeText(n && n.critic));
+      const score = String((n && n.score) == null ? '' : n.score).trim();
+      if (!revue || !score) return;
+      const seenKey = wineKey(group[0]) + '|' + revue.id;
+      if (seen.has(seenKey)) return;
+      seen.add(seenKey);
+      const its = (items || []).filter(i => ids.has(i.wineId) && i.revueId === revue.id)
+        .sort((x, y) => (shipDate.get(y.shipmentId) || '').localeCompare(shipDate.get(x.shipmentId) || ''));
+      const base = { revue, score, date: String((n && n.date) || '').trim() };
+      const noted = its.filter(i => String(i.note == null ? '' : i.note).trim());
+      if (noted.length) {
+        if (noted.some(i => scoreValue(i.note) === scoreValue(score))) plan.same++;
+        else plan.check.push(Object.assign({ wine: wineById.get(noted[0].wineId), item: noted[0], reason: 'differ', current: noted.map(i => i.note).join(' / ') }, base));
+        return;
+      }
+      const target = its.find(i => i.statut !== 'refusé');
+      if (target) plan.toAdd.push(Object.assign({ wine: wineById.get(target.wineId), item: target }, base));
+      else if (its.length) plan.check.push(Object.assign({ wine: wineById.get(its[0].wineId), reason: 'refused' }, base));
+      else {
+        // Sans envoi : le vin de la campagne la plus récente recevra l'envoi créé
+        const latest = group.reduce((a, b) => (wineCampagne(b) > wineCampagne(a) ? b : a));
+        plan.check.push(Object.assign({ wine: latest, reason: 'no_envoi' }, base));
+      }
+    });
+  });
+  return plan;
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     LEGACY_CAMPAGNE, wineCampagne, campagnesDisponibles, chooseInitialCampagne,
@@ -388,5 +450,6 @@ if (typeof module !== 'undefined') {
     normalizeText, normalizeQ, parseRevues, parseAmount, parseCola, formatUsPrice, formatCount,
     parseImportLine, importerForWine, importerUpdates, wineKey, findDuplicateWine, findDuplicateOnEdit, importChanges, importPatch, classifyImport,
     CATALOGUE_EXPORT_HEADER, catalogueExportRow,
+    scoreValue, awardsNotesPlan, frDateToIso,
   };
 }
