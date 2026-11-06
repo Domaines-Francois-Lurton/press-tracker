@@ -29,13 +29,14 @@ const TRANSLATIONS = {
 fr: {
   login_sub:'Suivi des envois presse', login_label:'Mot de passe', login_btn:'Se connecter', login_title:'Connexion',
   login_show:'Afficher', login_hide:'Masquer',
+  login_remember:'Rester connecté', login_remember_hint:'À cocher seulement sur un ordinateur personnel',
   login_error_net:'Connexion impossible. Vérifiez votre réseau puis réessayez.',
   login_error_many:'Trop de tentatives. Patientez quelques minutes avant de réessayer.',
   login_error:'Mot de passe incorrect. Réessayez.', loading:'Chargement des données...', logout:'Déconnexion',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catalogue', nav_alertes:'📅 Planning',
   page_tracker:'Envois presse', page_catalogue:'Catalogue des vins', page_alertes:'Planning d\'envoi',
   stat_vins:'Vins suivis', stat_vins_envoyes:'Vins envoyés', stat_envois:'Tous les envois', stat_notes:'Notes reçues', stat_deadlines:'⚠ Échéances proches',
-  stat_of_catalogue:'du catalogue', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_late:'en retard', stat_old:'retards anciens', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
+  stat_of_catalogue:'du catalogue', stat_of_selection:'de la sélection', stat_never_sent:'jamais envoyé(s)', stat_show_never_sent:'Afficher les vins jamais envoyés', stat_all_sent:'Tous envoyés', filter_never_sent:'Non envoyé', stat_avg:'Moyenne', stat_best:'Meilleure', stat_late:'en retard', stat_old:'retards anciens', stat_soon:'≤ 30 j', stat_none_alert:'Rien à signaler',
   stat_pl_envoye:'Envoyé(s)', stat_pl_recu:'Reçu(s)', stat_pl_soumis:'Soumis', stat_pl_note:'Noté(s)', stat_pl_refuse:'Refusé(s)', stat_goto_alerts:'Voir le planning',
   btn_export:'⬇ Export CSV', btn_new_shipment:'+ Nouvel envoi', btn_add_wine:'+ Ajouter un vin',
   btn_import:'📋 Import groupé', btn_cancel:'Annuler', btn_save:'Enregistrer', btn_add:'Ajouter',
@@ -102,13 +103,14 @@ fr: {
 es: {
   login_sub:'Seguimiento de envíos de prensa', login_label:'Contraseña', login_btn:'Entrar', login_title:'Iniciar sesión',
   login_show:'Mostrar', login_hide:'Ocultar',
+  login_remember:'Mantener la sesión iniciada', login_remember_hint:'Marcar solo en un ordenador personal',
   login_error_net:'No se puede conectar. Compruebe su red e inténtelo de nuevo.',
   login_error_many:'Demasiados intentos. Espere unos minutos antes de volver a intentarlo.',
   login_error:'Contraseña incorrecta. Inténtelo de nuevo.', loading:'Cargando datos...', logout:'Cerrar sesión',
   nav_tracker:'📋 Tracker', nav_catalogue:'🍷 Catálogo', nav_alertes:'📅 Planificación',
   page_tracker:'Envíos de prensa', page_catalogue:'Catálogo de vinos', page_alertes:'Planificación de envíos',
   stat_vins:'Vinos seguidos', stat_vins_envoyes:'Vinos enviados', stat_envois:'Todos los envíos', stat_notes:'Notas recibidas', stat_deadlines:'⚠ Plazos próximos',
-  stat_of_catalogue:'del catálogo', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_late:'atrasado(s)', stat_old:'atrasos antiguos', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
+  stat_of_catalogue:'del catálogo', stat_of_selection:'de la selección', stat_never_sent:'nunca enviado(s)', stat_show_never_sent:'Mostrar los vinos nunca enviados', stat_all_sent:'Todos enviados', filter_never_sent:'No enviado', stat_avg:'Media', stat_best:'Mejor', stat_late:'atrasado(s)', stat_old:'atrasos antiguos', stat_soon:'≤ 30 d', stat_none_alert:'Nada que señalar',
   stat_pl_envoye:'Enviado(s)', stat_pl_recu:'Recibido(s)', stat_pl_soumis:'Presentado(s)', stat_pl_note:'Evaluado(s)', stat_pl_refuse:'Rechazado(s)', stat_goto_alerts:'Ver la planificación',
   btn_export:'⬇ Exportar CSV', btn_new_shipment:'+ Nuevo envío', btn_add_wine:'+ Añadir un vino',
   btn_import:'📋 Importación agrupada', btn_cancel:'Cancelar', btn_save:'Guardar', btn_add:'Añadir',
@@ -196,6 +198,8 @@ function applyStaticI18n() {
   setText($('loginErrorMany'), T('login_error_many'));
   const pt = $('pwdToggle'); if (pt) setText(pt, T($('pwdInput').type === 'password' ? 'login_show' : 'login_hide'));
   setText($('btnLogin'), T('login_btn'));
+  setText($('rememberLabel'), T('login_remember'));
+  const rw = $('rememberWrap'); if (rw) rw.title = T('login_remember_hint');
   setText(document.querySelector('#loadingOverlay div:last-child'), T('loading'));
   // Topbar
   // Seul le libellé change : l'icône reste, et le libellé est masqué sur mobile.
@@ -440,6 +444,9 @@ firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
 
 const LOGIN_ERRORS = ['has-error', 'erreur-reseau', 'erreur-tentatives'];
+// Dernier choix de la case « Rester connecté » sur ce navigateur (décochée par défaut)
+const REMEMBER_KEY = 'pt_remember';
+try { document.getElementById('rememberMe').checked = localStorage.getItem(REMEMBER_KEY) === '1'; } catch (e) {}
 const BAD_PASSWORD_CODES = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'];
 
 // Erreur affichée selon la cause : mot de passe, trop d'essais, ou réseau.
@@ -451,8 +458,11 @@ async function doLogin(e) {
   if (!input.value) { input.focus(); return; }
   form.classList.remove(...LOGIN_ERRORS);
   btn.disabled = true;
+  // « Rester connecté » : session gardée dans le navigateur jusqu'à la déconnexion ; sinon limitée à l'onglet.
+  const remember = document.getElementById('rememberMe').checked;
+  try { localStorage.setItem(REMEMBER_KEY, remember ? '1' : '0'); } catch (e) {}
   try {
-    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    await auth.setPersistence(remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
     await auth.signInWithEmailAndPassword(AUTH_EMAIL, input.value);
   } catch (err) {
     form.classList.add(BAD_PASSWORD_CODES.includes(err.code) ? 'has-error'
@@ -824,14 +834,21 @@ function showNeverSentWines() {
   document.getElementById('trackerContent').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function renderStats() {
+// Tableau de bord du Tracker, calculé sur les vins affichés (recherche et filtres compris).
+// Avec un filtre Revue, les envois et les notes ne comptent que cette revue.
+function renderStats(list) {
   const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
-  const nbVins = wines.length;
-  const nbSent = wines.filter(w => isWineSent(w.id)).length;
+  const fRevue = document.getElementById('filterRevue').value;
+  const ids = new Set(list.map(w => w.id));
+  const items = shipmentItems.filter(i => ids.has(i.wineId) && (!fRevue || i.revueId === fRevue));
+  const filtered = list.length !== wines.length || !!fRevue;
+  const nbVins = list.length;
+  const nbSent = list.filter(w => items.some(i => i.wineId === w.id && SENT_STATUTS.includes(i.statut))).length;
+  document.querySelector('.stats-row')?.classList.toggle('is-filtered', filtered);
 
   // 1 · Vins suivis
   // "Jamais envoyé(s)" = en attente + soumis sans envoi (même règle que le filtre Statut > Jamais envoyé)
-  set('statVins', nbVins);
+  set('statVins', nbVins + (filtered ? '<span class="stat-of"> / ' + wines.length + '</span>' : ''));
   set('statVinsSub', nbVins - nbSent > 0
     ? '<span class="stat-link" onclick="showNeverSentWines()" title="' + esc(T('stat_show_never_sent')) + '">' +
         statKeys([{ n: nbVins - nbSent, label: T('stat_never_sent'), color: 'var(--border-strong)' }]) + '</span>'
@@ -840,29 +857,30 @@ function renderStats() {
   // 2 · Vins envoyés : % du catalogue + jauge
   set('statVinsEnvoyes', nbSent);
   set('statVinsEnvoyesSub', '<div class="stat-bar"><span style="width:' + statPct(nbSent, nbVins) + '%;background:' + STAT_COLORS['envoyé'] + '" title="' + esc(nbSent + ' / ' + nbVins) + '"></span></div>' +
-    '<b class="stat-strong">' + statPct(nbSent, nbVins) + '%</b> ' + T('stat_of_catalogue'));
+    '<b class="stat-strong">' + statPct(nbSent, nbVins) + '%</b> ' + T(filtered ? 'stat_of_selection' : 'stat_of_catalogue'));
 
   // 3 · Tous les envois : répartition par statut
   const byStatut = {};
-  shipmentItems.forEach(i => { const st = i.note ? 'noté' : i.statut; byStatut[st] = (byStatut[st] || 0) + 1; });
+  items.forEach(i => { const st = i.note ? 'noté' : i.statut; byStatut[st] = (byStatut[st] || 0) + 1; });
   const order = [['envoyé', 'stat_pl_envoye'], ['reçu', 'stat_pl_recu'], ['soumis', 'stat_pl_soumis'], ['noté', 'stat_pl_note'], ['refusé', 'stat_pl_refuse']];
   const segs = order.map(([st, key]) => ({ n: byStatut[st] || 0, color: STAT_COLORS[st], label: T(key) }));
-  set('statEnvois', shipmentItems.length);
-  set('statEnvoisSub', statBar(segs, shipmentItems.length) + statKeys(segs.filter(s => s.n > 0)));
+  set('statEnvois', items.length);
+  set('statEnvoisSub', statBar(segs, items.length) + statKeys(segs.filter(s => s.n > 0)));
 
   // 4 · Notes reçues : % des envois, moyenne, meilleure
-  const notes = shipmentItems.map(i => parseFloat(String(i.note || '').replace(',', '.'))).filter(n => !isNaN(n));
-  const nbNotes = shipmentItems.filter(i => i.note).length;
+  const notes = items.map(i => parseFloat(String(i.note || '').replace(',', '.'))).filter(n => !isNaN(n));
+  const nbNotes = items.filter(i => i.note).length;
   const avg = notes.length ? (notes.reduce((a, b) => a + b, 0) / notes.length) : null;
   set('statNotes', nbNotes);
   set('statNotesSub', avg !== null
-    ? '<div class="stat-keys"><span class="stat-key"><b>' + statPct(nbNotes, shipmentItems.length) + '%</b></span><span class="stat-key">' + T('stat_avg') + ' <b>' + avg.toFixed(1).replace('.', ',') + '</b></span><span class="stat-key">' + T('stat_best') + ' <b>' + Math.max(...notes) + '</b></span></div>'
+    ? '<div class="stat-keys"><span class="stat-key"><b>' + statPct(nbNotes, items.length) + '%</b></span><span class="stat-key">' + T('stat_avg') + ' <b>' + avg.toFixed(1).replace('.', ',') + '</b></span><span class="stat-key">' + T('stat_best') + ' <b>' + Math.max(...notes) + '</b></span></div>'
     : '');
 
-  // 5 · Alertes trimestre : retards récents (15 jours après la fin du trimestre) / ≤ 30 j ; retards anciens en gris, hors alerte
-  const { late, soon, old, lateQ, soonQ, oldQ } = trimestreCounts(wines, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
+  // 5 · Alertes trimestre des vins affichés : retards récents (15 jours après la fin du trimestre) / ≤ 30 j ; retards anciens en gris, hors alerte.
+  // Un vin est « terminé » selon tous ses envois (pas seulement la revue filtrée) ; le badge de l'onglet Planning reste global.
+  const { late, soon, old, lateQ, soonQ, oldQ, total } = trimestreCounts(list, shipmentItems, currentCampagne, new Date(), TRIMESTRES, SENT_STATUTS);
   const qLabel = qs => (qs.length ? ' · ' + qs.join(', ') : '');
-  const total = updateAlertBadge();
+  updateAlertBadge();
   set('statAlerts', total);
   const card = document.getElementById('statAlertsCard');
   if (card) {
@@ -905,7 +923,7 @@ function renderTracker() {
   const wrs = getWineRevueStatus();
   const filtered = getTrackerFiltered(wrs);
 
-  renderStats();
+  renderStats(filtered);
 
   const c = document.getElementById('trackerContent');
   if (!filtered.length) { c.innerHTML = '<div class="empty">' + T('tracker_empty') + '</div>'; return; }
@@ -2424,7 +2442,7 @@ function openHelpModal() {
   const sectionsAll = {
 fr: [
     { num:'1', title:'Connexion', steps:[
-      'Saisissez le mot de passe fourni par l\'administrateur. La session reste active dans l\'onglet.',
+      'Saisissez le mot de passe fourni par l\'administrateur. Par défaut, la session ne dure que le temps de l\'onglet. Cochez <strong>Rester connecté</strong> pour ne plus retaper le mot de passe sur ce navigateur jusqu\'à la <strong>Déconnexion</strong> : à réserver à un ordinateur personnel.',
     ]},
     { num:'2', title:'Navigation - 3 onglets', steps:[
       '<strong>📋 Tracker</strong> - vue principale de tous vos envois : statuts, notes, tri, filtres.',
@@ -2484,6 +2502,7 @@ fr: [
     { num:'8', title:'Tracker - tri et filtres', steps:[
       '<strong>Tri</strong> - cliquez sur un en-tête de colonne (Pays, Domaine, Dénomination, Mill., Couleur, Q, Note). Un 2ème clic inverse l\'ordre.',
       '<strong>Filtres</strong> - Recherche texte · Pays · Revue · Statut · Trimestre, tous combinables. Quand une revue est choisie, le statut s\'applique à cette revue : par exemple WS + Non envoyé = ce qu\'il reste à envoyer à WS.',
+      '<strong>Tableau de bord</strong> - les 5 compteurs du haut suivent les filtres : ils ne comptent que les vins affichés (« 12 / 99 » rappelle le total). Avec une revue choisie, envois et notes ne comptent que cette revue.',
       '<strong>Vue tableau / cartes</strong> - boutons ▤ / ⊞ en haut à droite de la barre de filtres.',
       '<strong>↺ Réinitialiser</strong> - efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
     ]},
@@ -2503,7 +2522,7 @@ fr: [
   ],
 es: [
     { num:'1', title:'Inicio de sesión', steps:[
-      'Introduzca la contraseña proporcionada por el administrador. La sesión permanece activa en la pestaña.',
+      'Introduzca la contraseña proporcionada por el administrador. Por defecto, la sesión solo dura lo que la pestaña. Marque <strong>Mantener la sesión iniciada</strong> para no volver a escribir la contraseña en este navegador hasta <strong>Cerrar sesión</strong>: solo en un ordenador personal.',
     ]},
     { num:'2', title:'Navegación - 3 pestañas', steps:[
       '<strong>📋 Tracker</strong> - vista principal de todos sus envíos: estados, notas, orden, filtros.',
@@ -2563,6 +2582,7 @@ es: [
     { num:'8', title:'Tracker - orden y filtros', steps:[
       '<strong>Orden</strong> - haga clic en un encabezado de columna (País, Dominio, Denominación, Añada, Color, Q). Un 2º clic invierte el orden.',
       '<strong>Filtros</strong> - Búsqueda texto · País · Revista · Estado · Trimestre, todos combinables. Si se elige una revista, el estado se aplica a esa revista: por ejemplo WS + No enviado = lo que falta por enviar a WS.',
+      '<strong>Panel</strong> - los 5 contadores de arriba siguen los filtros: solo cuentan los vinos mostrados («12 / 99» recuerda el total). Con una revista elegida, envíos y notas solo cuentan esa revista.',
       '<strong>Vista tabla / tarjetas</strong> - botones ▤ / ⊞ arriba a la derecha de la barra de filtros.',
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},

@@ -49,6 +49,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 #loginWrap form.has-error .cx-error.mdp,
 #loginWrap form.erreur-reseau .cx-error.reseau,
 #loginWrap form.erreur-tentatives .cx-error.tentatives { display: block; }
+#loginWrap .cx-remember { margin: 14px 0 0; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #4a4740; cursor: pointer; user-select: none; align-self: flex-start; }
+#loginWrap .cx-remember input { width: 16px; height: 16px; margin: 0; padding: 0; accent-color: var(--cx-ink); cursor: pointer; }
 #loginWrap .cx-submit { margin-top: 18px; height: 48px; border: 0; border-radius: 10px; background: var(--cx-ink); color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
 #loginWrap .cx-submit:hover { background: #2e2c3a; }
 #loginWrap .cx-submit:disabled { opacity: .6; cursor: progress; }
@@ -66,6 +68,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   #loginWrap .cx-field input { font-size: 16px; }
   #loginWrap .cx-toggle { min-width: 76px; height: 44px; font-size: 14px; }
   #loginWrap .cx-error { font-size: 14px; }
+  #loginWrap .cx-remember { margin-top: 16px; font-size: 14px; min-height: 32px; }
+  #loginWrap .cx-remember input { width: 18px; height: 18px; }
   #loginWrap .cx-submit { margin-top: 20px; height: 52px; border-radius: 12px; font-size: 16px; }
   #loginWrap .cx-logo { height: 52px; }
   #loginWrap .cx-sep { margin: 28px 0 24px; }
@@ -86,6 +90,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   #loginWrap .cx-field input { font-size: 14px; }
   #loginWrap .cx-toggle { font-size: 12px; }
   #loginWrap .cx-error { font-size: 12px; }
+  #loginWrap .cx-remember { margin-top: 12px; font-size: 12px; }
   #loginWrap .cx-submit { margin-top: 15px; height: 41px; border-radius: 9px; font-size: 14px; }
 }
 
@@ -143,6 +148,7 @@ textarea { resize: vertical; min-height: 80px; }
 .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); font-weight: 600; margin-bottom: 10px; }
 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 12px; flex-wrap: wrap; }
 .page-title { font-size: 18px; font-weight: 600; }
+.page-header-end { justify-content: flex-end; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
 .badge-soumis { background: var(--amber-bg); color: var(--amber-text); }
 .badge-envoyé { background: var(--green-bg); color: var(--green-text); }
@@ -189,6 +195,7 @@ textarea { resize: vertical; min-height: 80px; }
 .stat-card:hover { border-color: var(--border-strong); }
 .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .stat-val { font-size: 24px; font-weight: 600; margin-top: 2px; display: flex; align-items: baseline; gap: 8px; }
+.stat-of { font-size: 14px; font-weight: 500; color: var(--text-faint); }
 /* Stats enrichies : % à côté du chiffre, jauge ou barre empilée, mini-légende */
 .stat-card { display: flex; flex-direction: column; }
 .stat-pct { font-size: 13px; font-weight: 600; color: var(--text-muted); }

@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Press Tracker - Suivi des envois presse</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261106i">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261106l">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261106i">
+<link rel="stylesheet" href="style.css?v=20261106l">
 </head>
 <body>
 
@@ -55,6 +55,10 @@
         <div class="cx-error mdp" id="loginError" role="alert">Mot de passe incorrect. Réessayez.</div>
         <div class="cx-error reseau" id="loginErrorNet" role="alert">Connexion impossible. Vérifiez votre réseau puis réessayez.</div>
         <div class="cx-error tentatives" id="loginErrorMany" role="alert">Trop de tentatives. Patientez quelques minutes avant de réessayer.</div>
+        <label class="cx-remember" id="rememberWrap" title="À cocher seulement sur un ordinateur personnel">
+          <input type="checkbox" id="rememberMe">
+          <span id="rememberLabel">Rester connecté</span>
+        </label>
         <button type="submit" class="cx-submit" id="btnLogin">Se connecter</button>
       </form>
     </section>
@@ -105,8 +109,7 @@
 
     <!-- TRACKER PAGE -->
     <div class="page active" id="page-tracker">
-      <div class="page-header">
-        <div class="page-title">Envois presse</div>
+      <div class="page-header page-header-end">
         <div style="display:flex;gap:8px">
           <button class="btn" id="btnAwardsNotes">★ Notes Awards</button>
           <button class="btn" id="btnExport">⬇ Export CSV</button>
@@ -236,8 +239,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <!-- XLSX EXPORT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="campagne.js?v=20261106i"></script>
-<script src="app.js?v=20261106i"></script>
+<script src="campagne.js?v=20261106l"></script>
+<script src="app.js?v=20261106l"></script>
 
 </body>
 </html>
