@@ -2488,7 +2488,7 @@ fr: [
       '<strong>↺ Réinitialiser</strong> - efface tous les filtres actifs, dans le Tracker comme dans le Catalogue.',
     ]},
     { num:'9', title:'Export des données', steps:[
-      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les vins affichés de l\'année (filtres et tri compris) : catalogue + statuts + notes par revue.',
+      'Cliquez <strong>⬇ Export CSV</strong> ou <strong>⬇ Export Excel</strong> dans le Tracker pour télécharger les vins affichés de l\'année (filtres et tri compris) : les mêmes colonnes, dans le même ordre, que l\'export du Catalogue, puis le statut et la note de chaque revue.',
       'Dans le Catalogue, <strong>⬇ Export Excel</strong> télécharge la liste affichée (filtres compris) : les colonnes de l\'import groupé (Q et Revues ciblées comprises), puis MAD, Envois et la date d\'ajout.',
       'Dans le Planning, <strong>⬇ Export Excel</strong> télécharge les vins affichés (filtres compris), section par section : trimestre, échéance, état, revues ciblées, revues restant à envoyer et statut par revue.',
     ]},
@@ -2567,7 +2567,7 @@ es: [
       '<strong>↺ Restablecer</strong> - borra todos los filtros activos, tanto en el Tracker como en el Catálogo.',
     ]},
     { num:'9', title:'Exportar datos', steps:[
-      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los vinos mostrados del año (filtros y orden incluidos): catálogo + estados + notas por revista.',
+      'Haga clic en <strong>⬇ Exportar CSV</strong> o <strong>⬇ Exportar Excel</strong> en el Tracker para descargar los vinos mostrados del año (filtros y orden incluidos): las mismas columnas, en el mismo orden, que la exportación del Catálogo, y luego el estado y la nota de cada revista.',
       'En el Catálogo, <strong>⬇ Exportar Excel</strong> descarga la lista mostrada (filtros incluidos): las columnas de la importación agrupada (con Q y Revistas objetivo), y luego MAD, Envíos y la fecha de alta.',
       'En la Planificación, <strong>⬇ Exportar Excel</strong> descarga los vinos mostrados (filtros incluidos), sección por sección: trimestre, fecha límite, estado, revistas objetivo, revistas pendientes de envío y estado por revista.',
     ]},
@@ -2617,15 +2617,9 @@ function trackerExportData() {
   const wrs = getWineRevueStatus();
   const list = applyTrackerSort(getTrackerFiltered(wrs), wrs);
   if (!list.length) { toast(T('tracker_empty'), 'warn'); return null; }
-  const header = ['Pays','Domaine ou Marque','Dénomination','Millésime','Couleur','Importateur US','U.S. Price','Case Production (9L)','Cases Imported (9L)','COLA','Cépage','Degré','Lien externe','Commentaire'].concat(
-    REVUES.flatMap(r => [r.full + ' statut', r.full + ' note'])
-  );
-  const rows = list.map(w => [
-    w.pays, w.appellation, w.nom, w.millesime || '', w.couleur, w.importateurUS || '',
-    w.prixUS == null ? '' : w.prixUS, w.caseProduction == null ? '' : w.caseProduction, w.casesImported == null ? '' : w.casesImported,
-    w.cola === 'oui' ? 'Oui' : w.cola === 'non' ? 'Non' : '',
-    w.cepage || '', w.degre || '', w.lienExterne || '', w.commentaire || ''
-  ].concat(
+  // Mêmes colonnes et même ordre que l'export Catalogue (donc que l'Import groupé), puis statut et note par revue.
+  const header = catalogueExportHeader().concat(REVUES.flatMap(r => [r.full + ' statut', r.full + ' note']));
+  const rows = list.map(w => catalogueExportLine(w, wrs).concat(
     REVUES.flatMap(r => { const i = wrs[w.id] && wrs[w.id][r.id]; return [i ? i.statut : 'pending', i ? i.note : '']; })
   ));
   return { header, rows };
@@ -2642,17 +2636,27 @@ function exportCSV() {
   toast('✓ ' + data.rows.length + ' ' + T('toast_exported'));
 }
 
+// Colonnes communes aux exports Catalogue et Tracker : celles de l'Import groupé, puis MAD, Envois, Ajouté le.
+// Largeurs (en caractères) des 19 colonnes communes.
+const CATALOGUE_EXPORT_WIDTHS = [12, 24, 30, 9, 9, 16, 7, 26, 26, 18, 10, 12, 12, 7, 5, 22, 12, 8, 12];
+
+function catalogueExportHeader() {
+  return CATALOGUE_EXPORT_HEADER.concat('Ajouté le');
+}
+
+function catalogueExportLine(w, wrs) {
+  const statuts = {};
+  Object.entries(wrs[w.id] || {}).forEach(([rid, info]) => { statuts[rid] = info.statut; });
+  return catalogueExportRow(w, statuts, REVUES, SENT_STATUTS).concat(w.createdAt ? fmtDate(w.createdAt) : '');
+}
+
 function exportCatalogueXLSX() {
   const wrs = getWineRevueStatus();
   const list = getCatalogueFiltered(wrs);
   if (!list.length) { toast(T('tracker_empty'), 'warn'); return; }
-  const rows = list.map(w => {
-    const statuts = {};
-    Object.entries(wrs[w.id] || {}).forEach(([rid, info]) => { statuts[rid] = info.statut; });
-    return catalogueExportRow(w, statuts, REVUES, SENT_STATUTS).concat(w.createdAt ? fmtDate(w.createdAt) : '');
-  });
-  const ws = XLSX.utils.aoa_to_sheet([CATALOGUE_EXPORT_HEADER.concat('Ajouté le'), ...rows]);
-  ws['!cols'] = [14, 26, 26, 12, 11, 22, 8, 36, 36, 26, 6, 24, 12, 8, 12].map(wch => ({ wch }));
+  const rows = list.map(w => catalogueExportLine(w, wrs));
+  const ws = XLSX.utils.aoa_to_sheet([catalogueExportHeader(), ...rows]);
+  ws['!cols'] = CATALOGUE_EXPORT_WIDTHS.map(wch => ({ wch }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Catalogue');
   XLSX.writeFile(wb, 'catalogue_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
@@ -2663,6 +2667,7 @@ function exportXLSX() {
   const data = trackerExportData();
   if (!data) return;
   const ws = XLSX.utils.aoa_to_sheet([data.header, ...data.rows]);
+  ws['!cols'] = CATALOGUE_EXPORT_WIDTHS.concat(Array(data.header.length - CATALOGUE_EXPORT_WIDTHS.length).fill(12)).map(wch => ({ wch }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Press Tracker');
   XLSX.writeFile(wb, 'press_tracker_' + currentCampagne + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
